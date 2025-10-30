@@ -11,6 +11,8 @@ namespace Gekimini.Avalonia.Framework.Services
 {
     public interface IShell
     {
+        event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
+        
         bool ShowFloatingWindowsInTaskbar { get; set; }
         /*
         IMenu MainMenu { get; }

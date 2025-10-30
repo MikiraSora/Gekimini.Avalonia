@@ -142,17 +142,12 @@ public class ShellDockFactory : Factory, IFactory
     public void AddDocument(IDocument dockable)
     {
         dockable.CanFloat = false;
-        
-        AddDockable(documentDock,dockable);
+
+        AddDockable(documentDock, dockable);
         //documentDock.AddDocument(dockable);
 
         documentDock.ActiveDockable = dockable;
         documentDock.FocusedDockable = dockable;
-    }
-    
-    public void RemoveDocument(IDocument dockable)
-    {
-        RemoveDockable(dockable, true);
     }
 
     public void AddTool(ITool dockable)
@@ -170,15 +165,20 @@ public class ShellDockFactory : Factory, IFactory
         };
 
 
-        AddDockable(addDock,dockable);
+        AddDockable(addDock, dockable);
         //AddVisibleDockable(addDock, dockable);
-        
+
         addDock.ActiveDockable = dockable;
         addDock.FocusedDockable = dockable;
     }
 
     public void RemoveTool(ITool dockable)
     {
-        RemoveDockable(dockable, true);
+        RemoveDockable(dockable, false);
+    }
+
+    public void RemoveDocument(IDocument dockable)
+    {
+        RemoveDockable(dockable, false);
     }
 }
