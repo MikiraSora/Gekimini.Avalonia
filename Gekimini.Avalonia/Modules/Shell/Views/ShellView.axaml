@@ -1,0 +1,28 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.Shell.ViewModels"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:ShellViewModel"
+                x:Class="Gekimini.Avalonia.Modules.Shell.Views.ShellView">
+    <Design.DataContext>
+        <viewModels:ShellViewModel />
+    </Design.DataContext>
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding AddDocumentCommand}" Content="Add Document" />
+            <Button Command="{Binding AddToolCommand}" CommandParameter="Left" Content="Add Left Tool" />
+            <Button Command="{Binding AddToolCommand}" CommandParameter="Top" Content="Add Top Tool" />
+            <Button Command="{Binding AddToolCommand}" CommandParameter="Right" Content="Add Right Tool" />
+            <Button Command="{Binding AddToolCommand}" CommandParameter="Bottom" Content="Add Bottom Tool" />
+            <Button Command="{Binding RemoveLastCreatedToolCommand}" Content="Hide Last Created Tool" />
+            <Button Command="{Binding RemoveLastCreatedDocumentCommand}" Content="Hide Last Created Document" />
+        </StackPanel>
+        <Grid Grid.Row="1" Background="DarkCyan">
+            <DockControl Factory="{Binding Factory}" Background="MediumPurple" Grid.Row="1" Layout="{Binding Layout }"
+                         Loaded="Control_OnLoaded" />
+        </Grid>
+    </Grid>
+</views:ViewBase>

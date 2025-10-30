@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Gekimini.Avalonia": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Gekimini.Avalonia\\Gekimini.Avalonia.csproj"
+    }
+  }
+}
