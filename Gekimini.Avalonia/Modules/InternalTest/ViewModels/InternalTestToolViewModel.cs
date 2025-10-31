@@ -1,4 +1,5 @@
-﻿using Gekimini.Avalonia.Framework;
+﻿using System.Runtime.Serialization;
+using Gekimini.Avalonia.Framework;
 
 namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels;
 

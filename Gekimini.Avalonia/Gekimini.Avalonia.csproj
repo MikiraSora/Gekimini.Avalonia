@@ -23,6 +23,7 @@
 		<PackageReference Include="Irihi.Ursa" Version="1.13.0" />
 		<PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.13.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
 		<PackageReference Include="Xaml.Behaviors" Version="11.3.6.5" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10" />
@@ -39,10 +40,13 @@
 	  <ProjectReference Include="..\..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
 	  <ProjectReference Include="..\..\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj" />
 	  <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
-	  <ProjectReference Include="..\..\Dock\src\Dock.Serializer.SystemTextJson\Dock.Serializer.SystemTextJson.csproj" />
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\..\Injectio\src\Injectio.Attributes\Injectio.Attributes.csproj" />
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\..\Injectio\src\Injectio.Generators\Injectio.Generators.csproj" />
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\Gekimini.Avalonia.Attributes\Gekimini.Avalonia.Attributes.csproj" />
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\Gekimini.Avalonia.Generator\Gekimini.Avalonia.Generator.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Modules\StatusBar\" />
 	</ItemGroup>
 </Project>

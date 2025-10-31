@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Runtime.Serialization;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Documents.UndoRedo;
 

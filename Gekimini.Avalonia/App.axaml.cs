@@ -9,6 +9,7 @@ using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IO;
 
 namespace Gekimini.Avalonia;
 
@@ -35,7 +36,7 @@ public abstract class App : Application
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
-        
+
         var viewLocator = ServiceProvider.GetService<ViewLocator>();
         DataTemplates.Add(viewLocator);
 
@@ -55,12 +56,17 @@ public abstract class App : Application
 
     protected virtual void RegisterServices(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<App>(this);
-        
+        serviceCollection.AddSingleton<RecyclableMemoryStreamManager>(new RecyclableMemoryStreamManager(new RecyclableMemoryStreamManager.Options()
+        {
+            ThrowExceptionOnToArray = true
+        }));
+
+        serviceCollection.AddSingleton(this);
+
         serviceCollection.AddLogging(o => { o.SetMinimumLevel(LogLevel.Debug); });
-        
+
         serviceCollection.AddTypeCollectedActivator(ViewTypeCollectedActivator.Default);
-        
+
         serviceCollection.AddGekiminiAvalonia();
     }
 

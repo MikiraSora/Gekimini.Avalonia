@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -18,6 +20,7 @@ using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
+using Microsoft.IO;
 
 namespace Gekimini.Avalonia.Modules.Shell.ViewModels;
 
@@ -28,6 +31,8 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
     private readonly List<IDocumentViewModel> addedDocuments = new();
     private readonly List<IToolViewModel> addTools = new();
+    private readonly IDockSerializer dockSerializer;
+    private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly ILogger<ShellViewModel> logger;
     private readonly IServiceProvider serviceProvider;
 
@@ -39,15 +44,19 @@ public partial class ShellViewModel : ViewModelBase, IShell
     [ObservableProperty]
     private IRootDock layout;
 
+    private string prevDocumentId;
+
     [ObservableProperty]
     private bool showFloatingWindowsInTaskbar;
 
-    private string prevDocumentId;
-
-    public ShellViewModel(IServiceProvider serviceProvider, IEnumerable<IModule> modules,
+    public ShellViewModel(IServiceProvider serviceProvider, IDockSerializer dockSerializer,
+        RecyclableMemoryStreamManager memoryStreamManager,
+        IEnumerable<IModule> modules,
         ILogger<ShellViewModel> logger)
     {
         this.serviceProvider = serviceProvider;
+        this.dockSerializer = dockSerializer;
+        this.memoryStreamManager = memoryStreamManager;
         _modules = modules;
         this.logger = logger;
 
@@ -110,7 +119,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
     {
         //todo
     }
-    
+
     partial void OnFactoryChanged(ShellDockFactory oldValue, ShellDockFactory newValue)
     {
         if (oldValue != null)
@@ -230,6 +239,21 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private async void RemoveLastCreatedDocument()
     {
         CloseDocumentAsync(Documents.LastOrDefault());
+    }
+
+    [RelayCommand]
+    private async void SaveLayout()
+    {
+        //todo
+        using var stream = memoryStreamManager.GetStream();
+        dockSerializer.Save(stream, Layout);
+        var result = Encoding.UTF8.GetString(stream.GetReadOnlySequence());
+    }
+
+    [RelayCommand]
+    private async void LoadLayout()
+    {
+        //todo
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)
