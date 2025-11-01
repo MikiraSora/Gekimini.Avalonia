@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Dock.Model.Core;
 
 namespace Gekimini.Avalonia.Modules.Shell.Serializations.Layouts;
 
-public abstract class LayoutDock : LayoutDockable
+public class LayoutDock : LayoutDockable
 {
-    public IList<LayoutDockable> VisibleDockables { get; set; }
+    public IList<LayoutDockable> VisibleDockables { get; set; } = new List<LayoutDockable>();
 
     //public IDockable ActiveDockable { get; set; }
     //public IDockable DefaultDockable { get; set; }

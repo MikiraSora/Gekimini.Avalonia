@@ -5,5 +5,5 @@ namespace Gekimini.Avalonia.Modules.Shell.Serializations.Layouts;
 
 public class LayoutTool : LayoutDockable
 {
-    
+    public string ToolType { get; set; }
 }

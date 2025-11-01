@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Services;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
@@ -66,6 +67,8 @@ public abstract class App : Application
         serviceCollection.AddLogging(o => { o.SetMinimumLevel(LogLevel.Debug); });
 
         serviceCollection.AddTypeCollectedActivator(ViewTypeCollectedActivator.Default);
+        
+        serviceCollection.AddTypeCollectedActivator(ToolViewModelTypeCollectedActivator.Default);
 
         serviceCollection.AddGekiminiAvalonia();
     }

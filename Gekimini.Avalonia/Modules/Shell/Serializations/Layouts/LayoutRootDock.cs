@@ -15,7 +15,7 @@ public class LayoutRootDock : LayoutDock
     //public IList<IDockable> BottomPinnedDockables { get; set; }
     //public IToolDock PinnedDock { get; set; }
     public LayoutDockWindow Window { get; set; }
-    public IList<LayoutDockWindow> Windows { get; set; }
+    public IList<LayoutDockWindow> Windows { get; set; } = new List<LayoutDockWindow>();
     //public ICommand ShowWindows { get; }
     //public ICommand ExitWindows { get; }
     public bool EnableAdaptiveGlobalDockTargets { get; set; }

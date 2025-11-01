@@ -3,10 +3,28 @@ using Dock.Model.Core;
 
 namespace Gekimini.Avalonia.Modules.Shell.Serializations.Layouts;
 
-public abstract class LayoutDockable
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "LayoutType")]
+[JsonDerivedType(typeof(LayoutDockDock), nameof(LayoutDockDock))]
+[JsonDerivedType(typeof(LayoutRootDock), nameof(LayoutRootDock))]
+[JsonDerivedType(typeof(LayoutStackDock), nameof(LayoutStackDock))]
+[JsonDerivedType(typeof(LayoutGridDock), nameof(LayoutGridDock))]
+[JsonDerivedType(typeof(LayoutProportionalDock), nameof(LayoutProportionalDock))]
+[JsonDerivedType(typeof(LayoutToolDock), nameof(LayoutToolDock))]
+[JsonDerivedType(typeof(LayoutDocumentDock), nameof(LayoutDocumentDock))]
+[JsonDerivedType(typeof(LayoutUniformGridDock), nameof(LayoutUniformGridDock))]
+[JsonDerivedType(typeof(LayoutWrapDock), nameof(LayoutWrapDock))]
+[JsonDerivedType(typeof(LayoutDock), nameof(LayoutDock))]
+[JsonDerivedType(typeof(LayoutDocument), nameof(LayoutDocument))]
+[JsonDerivedType(typeof(LayoutTool), nameof(LayoutTool))]
+[JsonDerivedType(typeof(LayoutSplitter), nameof(LayoutSplitter))]
+[JsonDerivedType(typeof(LayoutProportionalDockSplitter), nameof(LayoutProportionalDockSplitter))]
+[JsonDerivedType(typeof(LayoutGridDockSplitter), nameof(LayoutGridDockSplitter))]
+public class LayoutDockable
 {
     public string Id { get; set; }
+
     public string Title { get; set; }
+
     //public object Context { get; set; }
     //public IDockable Owner { get; set; }
     //public IDockable OriginalOwner { get; set; }
@@ -58,7 +76,7 @@ public abstract class LayoutDockable
         to.DockGroup = DockGroup;
         to.Dock = Dock;
     }
-    
+
     public virtual void CopyFrom(IDockable from)
     {
         Id = from.Id;

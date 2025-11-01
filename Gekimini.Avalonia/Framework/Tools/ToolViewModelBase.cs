@@ -4,6 +4,7 @@ using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
 using Gekimini.Avalonia.Framework.Documents.UndoRedo;
 using Gekimini.Avalonia.ViewModels;
+using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Framework;
 
@@ -11,7 +12,7 @@ public abstract class ToolViewModelBase : Tool, IToolViewModel
 {
     public ToolViewModelBase()
     {
-        Id = Guid.NewGuid().ToString();
+        Id = GetType().FullName;
         Title = GetType().Name;
         Dock = DockMode.Left;
     }
