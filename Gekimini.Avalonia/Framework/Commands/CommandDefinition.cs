@@ -1,0 +1,10 @@
+﻿using System;
+
+namespace Gekimini.Avalonia.Framework.Commands;
+
+public abstract class CommandDefinition : CommandDefinitionBase
+{
+    public override Uri IconSource => null;
+
+    public sealed override bool IsList => false;
+}

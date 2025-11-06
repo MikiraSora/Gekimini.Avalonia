@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Dock.Model.Controls;
 using Gekimini.Avalonia.Framework.Documents;
-using Gekimini.Avalonia.Framework.Services;
 
 namespace Gekimini.Avalonia.Framework;
 

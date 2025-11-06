@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,10 +11,13 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Services;
+using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Modules.InternalTest.ViewModels;
 using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
+using Gekimini.Avalonia.Modules.StatusBar;
+using Gekimini.Avalonia.Platforms.Services.Settings;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
@@ -31,12 +32,20 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
     private readonly List<IDocumentViewModel> addedDocuments = new();
     private readonly List<IToolViewModel> addTools = new();
+    private readonly IDialogManager dialogManager;
     private readonly IDockSerializer dockSerializer;
-    private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly ILogger<ShellViewModel> logger;
+    private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly IServiceProvider serviceProvider;
+    private readonly ISettingManager settingManager;
 
     private IShellView _shellView;
+
+    [ObservableProperty]
+    private IDockable activeDockable;
+
+    [ObservableProperty]
+    private IDocumentViewModel activeDocument;
 
     [ObservableProperty]
     private ShellDockFactory factory;
@@ -49,22 +58,27 @@ public partial class ShellViewModel : ViewModelBase, IShell
     [ObservableProperty]
     private bool showFloatingWindowsInTaskbar;
 
+    [ObservableProperty]
+    private IStatusBar statusBar;
+
     public ShellViewModel(IServiceProvider serviceProvider, IDockSerializer dockSerializer,
         RecyclableMemoryStreamManager memoryStreamManager,
+        ISettingManager settingManager,
         IEnumerable<IModule> modules,
+        IStatusBar statusBar,
+        IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
     {
         this.serviceProvider = serviceProvider;
         this.dockSerializer = dockSerializer;
         this.memoryStreamManager = memoryStreamManager;
+        this.settingManager = settingManager;
         _modules = modules;
+        this.dialogManager = dialogManager;
         this.logger = logger;
 
         Factory = this.serviceProvider.Resolve<ShellDockFactory>();
-
-        var l = factory.CreateLayout();
-        factory.InitLayout(l);
-        Layout = l;
+        StatusBar = statusBar;
     }
 
     public event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
@@ -118,6 +132,25 @@ public partial class ShellViewModel : ViewModelBase, IShell
     public void Close()
     {
         //todo
+    }
+
+    private async void InitLayout()
+    {
+        try
+        {
+            await LoadLayout();
+        }
+        catch (Exception e)
+        {
+            logger.LogErrorEx(e, e.Message);
+
+            var l = Factory.CreateLayout();
+            Factory.InitLayout(l);
+            Layout = l;
+
+            await dialogManager.ShowMessageDialog("Load stored layout failed, we will use default layout.",
+                DialogMessageType.Error);
+        }
     }
 
     partial void OnFactoryChanged(ShellDockFactory oldValue, ShellDockFactory newValue)
@@ -211,10 +244,19 @@ public partial class ShellViewModel : ViewModelBase, IShell
             foreach (var module in _modules)
                 await module.PostInitializeAsync();
         });
+
+        if (Layout == null)
+            InitLayout();
+    }
+
+    public override void OnViewBeforeUnload(Control view)
+    {
+        base.OnViewBeforeUnload(view);
+        SaveLayout().NoWait();
     }
 
     [RelayCommand]
-    private async void AddDocument()
+    private async Task AddDocument()
     {
         var document = serviceProvider.Resolve<InternalTestDocumentViewModel>();
         document.Text = Guid.NewGuid().ToString();
@@ -222,7 +264,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
     }
 
     [RelayCommand]
-    private async void AddTool(string dockEnum)
+    private void AddTool(string dockEnum)
     {
         var tool = serviceProvider.Resolve<InternalTestToolViewModel>();
         tool.Dock = Enum.Parse<DockMode>(dockEnum);
@@ -230,30 +272,48 @@ public partial class ShellViewModel : ViewModelBase, IShell
     }
 
     [RelayCommand]
-    private async void RemoveLastCreatedTool()
+    private void RemoveLastCreatedTool()
     {
         HideTool(Tools.LastOrDefault());
     }
 
     [RelayCommand]
-    private async void RemoveLastCreatedDocument()
+    private void RemoveLastCreatedDocument()
     {
         CloseDocumentAsync(Documents.LastOrDefault());
     }
 
     [RelayCommand]
-    private async void SaveLayout()
+    private async Task SaveLayout()
     {
-        //todo
-        using var stream = memoryStreamManager.GetStream();
-        dockSerializer.Save(stream, Layout);
-        var result = Encoding.UTF8.GetString(stream.GetReadOnlySequence());
+        if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
+            return;
+
+        var json = dockSerializer.Serialize(Layout);
+
+        await settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
     }
 
     [RelayCommand]
-    private async void LoadLayout()
+    private async Task LoadLayout()
     {
-        //todo
+        if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
+            return;
+
+        var setting = await settingManager.Load(GekiminiSetting.JsonTypeInfo);
+        var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
+        if (dockable is null)
+            //todo log
+            return;
+
+        Factory.InitLayout(dockable);
+        Layout = dockable;
+
+        addTools.Clear();
+        addedDocuments.Clear();
+
+        addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
+        addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)

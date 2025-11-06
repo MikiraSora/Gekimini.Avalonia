@@ -4,6 +4,7 @@
 			 xmlns:semi="https://irihi.tech/semi"
 			 xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
 			 xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+			 xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
 			 RequestedThemeVariant="Default">
 	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -12,5 +13,6 @@
 		<u-semi:SemiTheme Locale="zh-CN"/>
 		<dialogHostAvalonia:DialogHostStyles />
 		<DockFluentTheme />
+		<status:StatusBarTheme/>
 	</Application.Styles>
 </Application>

@@ -3,9 +3,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.VisualTree;
 using Gekimini.Avalonia.Utils;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Views;
@@ -107,5 +109,14 @@ public class ViewLocator : IDataTemplate
         }
 
         return instance;
+    }
+
+    public IView LocateForModel(object activeItemViewModel)
+    {
+        var topLevel = serviceProvider.GetService<App>().TopLevel;
+
+        if (topLevel?.GetVisualDescendants().FirstOrDefault(x => x.DataContext == activeItemViewModel) is IView result)
+            return result;
+        return default;
     }
 }

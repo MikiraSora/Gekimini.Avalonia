@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gekimini.Avalonia.Framework.Services;
+using Gekimini.Avalonia.Modules.Shell;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;

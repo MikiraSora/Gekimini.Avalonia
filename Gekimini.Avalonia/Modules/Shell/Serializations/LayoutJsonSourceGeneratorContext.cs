@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Gekimini.Avalonia.Modules.Shell.Serializations.Layouts;
 
-namespace Gekimini.Avalonia.Utils;
+namespace Gekimini.Avalonia.Modules.Shell.Serializations;
 
 [JsonSourceGenerationOptions(
     WriteIndented = true,

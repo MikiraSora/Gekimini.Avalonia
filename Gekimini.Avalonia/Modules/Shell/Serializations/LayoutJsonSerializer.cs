@@ -156,7 +156,7 @@ public class LayoutJsonSerializer : IDockSerializer
             case LayoutDockDock dockDock:
                 return DeserializeToDockableObject(factory.CreateDockDock(), dockDock);
             case LayoutRootDock rootDock:
-                return DeserializeToDockableObject(factory.CreateDockDock(), rootDock);
+                return DeserializeToDockableObject(factory.CreateRootDock(), rootDock);
             case LayoutStackDock stackDock:
                 return DeserializeToDockableObject(factory.CreateStackDock(), stackDock);
             case LayoutGridDock gridDock:
@@ -215,15 +215,21 @@ public class LayoutJsonSerializer : IDockSerializer
         foreach (var layoutDockWindow in layoutRootDock.Windows)
         {
             var dockWindow = factory.CreateDockWindow();
-            layoutDockWindow.CopyTo(dockWindow);
-            rootDock.Windows.Add(dockWindow);
+            if (dockWindow != null)
+            {
+                layoutDockWindow.CopyTo(dockWindow);
+                rootDock.Windows.Add(dockWindow);
+            }
         }
 
         if (layoutRootDock.Window is { } defaultLayoutDockWindow)
         {
             var dockWindow = factory.CreateDockWindow();
-            defaultLayoutDockWindow.CopyTo(dockWindow);
-            rootDock.Window = dockWindow;
+            if (dockWindow != null)
+            {
+                defaultLayoutDockWindow.CopyTo(dockWindow);
+                rootDock.Window = dockWindow;
+            }
         }
 
         return rootDock;
@@ -238,7 +244,8 @@ public class LayoutJsonSerializer : IDockSerializer
         foreach (var childLayoutDockable in layoutDock.VisibleDockables)
         {
             var childDockable = DeserializeLayout(childLayoutDockable);
-            dock.VisibleDockables.Add(childDockable);
+            if (childDockable != null)
+                dock.VisibleDockables.Add(childDockable);
         }
 
         return dock;

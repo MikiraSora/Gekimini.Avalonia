@@ -24,6 +24,7 @@
 		<PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.13.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
 		<PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
+		<PackageReference Include="StatusBar.Avalonia" Version="0.0.2" />
 		<PackageReference Include="Xaml.Behaviors" Version="11.3.6.5" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10" />
@@ -44,9 +45,5 @@
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\..\Injectio\src\Injectio.Generators\Injectio.Generators.csproj" />
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\Gekimini.Avalonia.Attributes\Gekimini.Avalonia.Attributes.csproj" />
 	  <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\Gekimini.Avalonia.Generator\Gekimini.Avalonia.Generator.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Modules\StatusBar\" />
 	</ItemGroup>
 </Project>

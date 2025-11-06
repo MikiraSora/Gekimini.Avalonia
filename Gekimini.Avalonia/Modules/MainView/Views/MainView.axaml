@@ -13,7 +13,7 @@
     </Design.DataContext>
 
     <views:ReactiveDialogHost OverlayBackground="WhiteSmoke">
-        <Grid RowDefinitions="Auto,*">
+        <Grid RowDefinitions="Auto,*,Auto">
             <Grid Height="20" Background="BurlyWood" />
             <Grid Grid.Row="1">
                 <TransitioningContentControl Content="{Binding Shell}" />

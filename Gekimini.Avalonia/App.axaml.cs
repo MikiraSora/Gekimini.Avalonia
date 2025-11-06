@@ -4,8 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Services;
+using Gekimini.Avalonia.Models.GlobalEvents;
+using Gekimini.Avalonia.Modules.MainView;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,19 +47,29 @@ public abstract class App : Application
         mainView = ServiceProvider.GetService<ViewLocator>().Build(mainViewModel);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
             desktop.MainWindow = new MainWindow
             {
                 Content = mainView
             };
+            desktop.Exit += OnExit;
+        }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        {
             singleViewPlatform.MainView = mainView;
+        }
 
         base.OnFrameworkInitializationCompleted();
     }
 
+    protected virtual void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+        CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default.Send(new ApplicationQuitEvent());
+    }
+
     protected virtual void RegisterServices(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<RecyclableMemoryStreamManager>(new RecyclableMemoryStreamManager(new RecyclableMemoryStreamManager.Options()
+        serviceCollection.AddSingleton(new RecyclableMemoryStreamManager(new RecyclableMemoryStreamManager.Options
         {
             ThrowExceptionOnToArray = true
         }));
@@ -67,7 +79,7 @@ public abstract class App : Application
         serviceCollection.AddLogging(o => { o.SetMinimumLevel(LogLevel.Debug); });
 
         serviceCollection.AddTypeCollectedActivator(ViewTypeCollectedActivator.Default);
-        
+
         serviceCollection.AddTypeCollectedActivator(ToolViewModelTypeCollectedActivator.Default);
 
         serviceCollection.AddGekiminiAvalonia();

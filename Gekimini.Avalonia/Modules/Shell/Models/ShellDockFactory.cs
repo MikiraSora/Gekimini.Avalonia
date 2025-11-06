@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dock.Model;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
@@ -13,13 +14,8 @@ namespace Gekimini.Avalonia.Modules.Shell.Models;
 public class ShellDockFactory : Factory, IFactory
 {
     private readonly IServiceProvider serviceProvider;
-    private ToolDock bottomToolDock;
 
-    private DocumentDock documentDock;
-
-    private ToolDock leftToolDock;
-    private ToolDock rightToolDock;
-    private ToolDock topToolDock;
+    private IRootDock root;
 
     public ShellDockFactory(IServiceProvider serviceProvider)
     {
@@ -30,7 +26,7 @@ public class ShellDockFactory : Factory, IFactory
     {
         var root = CreateRootDock();
 
-        leftToolDock = new ToolDock
+        var leftToolDock = new ToolDock
         {
             VisibleDockables = CreateList<IDockable>(),
             Alignment = Alignment.Left,
@@ -40,7 +36,7 @@ public class ShellDockFactory : Factory, IFactory
             Dock = DockMode.Left,
             CanFloat = false
         };
-        documentDock = new DocumentDock
+        var documentDock = new DocumentDock
         {
             VisibleDockables = CreateList<IDockable>(),
             IsCollapsable = false,
@@ -48,7 +44,7 @@ public class ShellDockFactory : Factory, IFactory
             CanFloat = false,
             Dock = DockMode.Center
         };
-        rightToolDock = new ToolDock
+        var rightToolDock = new ToolDock
         {
             VisibleDockables = CreateList<IDockable>(),
             Alignment = Alignment.Right,
@@ -58,7 +54,7 @@ public class ShellDockFactory : Factory, IFactory
             CanFloat = false,
             Dock = DockMode.Right
         };
-        bottomToolDock = new ToolDock
+        var bottomToolDock = new ToolDock
         {
             VisibleDockables = CreateList<IDockable>(),
             Alignment = Alignment.Bottom,
@@ -68,7 +64,7 @@ public class ShellDockFactory : Factory, IFactory
             CanFloat = false,
             Dock = DockMode.Bottom
         };
-        topToolDock = new ToolDock
+        var topToolDock = new ToolDock
         {
             VisibleDockables = CreateList<IDockable>(),
             Alignment = Alignment.Top,
@@ -125,7 +121,7 @@ public class ShellDockFactory : Factory, IFactory
         return base.CreateList(items.Where(x => x != null).ToArray());
     }
 
-    public override IDockWindow? CreateWindowFrom(IDockable dockable)
+    public override IDockWindow CreateWindowFrom(IDockable dockable)
     {
         var window = base.CreateWindowFrom(dockable);
 
@@ -137,11 +133,100 @@ public class ShellDockFactory : Factory, IFactory
     public override void InitLayout(IDockable layout)
     {
         base.InitLayout(layout);
+        root = FindRoot(layout);
+    }
+
+    private IDock FindOrCreateToolDock(DockMode dock)
+    {
+        int CalculateRank(IDock dd)
+        {
+            if (dd is IToolDock && dd.Dock == dock)
+                return 3;
+
+            if (dd is IToolDock)
+                return 2;
+
+            if (dd.Dock == dock)
+                return 1;
+
+            return 0;
+        }
+
+        var toolDock =
+            Find(x => x is IDock)
+                .OfType<IDock>()
+                .Select(x =>
+                {
+                    return new
+                    {
+                        Rank = CalculateRank(x),
+                        Dock = x
+                    };
+                })
+                .OrderByDescending(x => x.Rank)
+                .FirstOrDefault()
+                .Dock;
+
+        if (toolDock is null)
+        {
+            //create default
+            toolDock = CreateToolDock();
+            toolDock.Dock = dock;
+
+            //todo log
+            AddDockable(root, toolDock);
+        }
+
+        return toolDock;
+    }
+
+    private IDock FindOrCreateDocumentDock(DockMode dock)
+    {
+        int CalculateRank(IDock dd)
+        {
+            if (dd is IDocumentDock && dd.Dock == dock)
+                return 3;
+
+            if (dd is IDocumentDock)
+                return 2;
+
+            if (dd.Dock == dock)
+                return 1;
+
+            return 0;
+        }
+
+        var documentDock =
+            Find(x => x is IDock)
+                .OfType<IDock>()
+                .Select(x =>
+                {
+                    return new
+                    {
+                        Rank = CalculateRank(x),
+                        Dock = x
+                    };
+                })
+                .OrderByDescending(x => x.Rank)
+                .FirstOrDefault()
+                .Dock;
+
+        if (documentDock is null)
+        {
+            //create default
+            documentDock = CreateDocumentDock();
+            documentDock.Dock = dock;
+
+            //todo log
+            AddDockable(root, documentDock);
+        }
+
+        return documentDock;
     }
 
     public void AddDocument(IDocument dockable)
     {
-        dockable.CanFloat = false;
+        var documentDock = FindOrCreateDocumentDock(dockable.Dock);
 
         AddDockable(documentDock, dockable);
         //documentDock.AddDocument(dockable);
@@ -154,22 +239,12 @@ public class ShellDockFactory : Factory, IFactory
     {
         dockable.CanFloat = false;
 
-        IDock addDock = dockable.Dock switch
-        {
-            DockMode.Center => documentDock,
-            DockMode.Left => leftToolDock,
-            DockMode.Bottom => bottomToolDock,
-            DockMode.Right => rightToolDock,
-            DockMode.Top => topToolDock,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        var toolDock = FindOrCreateToolDock(dockable.Dock);
 
+        AddDockable(toolDock, dockable);
 
-        AddDockable(addDock, dockable);
-        //AddVisibleDockable(addDock, dockable);
-
-        addDock.ActiveDockable = dockable;
-        addDock.FocusedDockable = dockable;
+        toolDock.ActiveDockable = dockable;
+        toolDock.FocusedDockable = dockable;
     }
 
     public void RemoveTool(ITool dockable)

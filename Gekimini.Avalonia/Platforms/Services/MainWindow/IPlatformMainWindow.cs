@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Gekimini.Avalonia.Framework.Services;
 
 namespace Gekimini.Avalonia.Platforms.Services.MainWindow;
 

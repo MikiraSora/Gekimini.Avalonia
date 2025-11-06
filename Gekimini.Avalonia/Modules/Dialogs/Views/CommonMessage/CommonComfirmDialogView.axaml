@@ -1,0 +1,32 @@
+﻿<views:DialogViewBase
+    x:Class="Gekimini.Avalonia.Modules.Dialogs.Views.CommonMessage.AboutView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:Gekimini.Avalonia.Modules.Dialogs.Views"
+    xmlns:commonMessage="clr-namespace:Gekimini.Avalonia.Modules.Dialogs.ViewModels.CommonMessage"
+    Width="400"
+    x:DataType="commonMessage:CommonComfirmDialogViewModel"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <commonMessage:CommonComfirmDialogViewModel />
+    </Design.DataContext>
+    <StackPanel>
+        <TextBlock
+            Margin="10"
+            Text="{Binding Content}"
+            TextWrapping="WrapWithOverflow" />
+        <Grid ColumnDefinitions="*,*">
+            <Button
+                Classes="DialogButton"
+                Command="{Binding YesCommand}"
+                Content="{Binding YesButtonContent}" />
+            <Button
+                Grid.Column="1"
+                Classes="DialogButton"
+                Command="{Binding NoCommand}"
+                Content="{Binding NoButtonContent}" />
+        </Grid>
+    </StackPanel>
+</views:DialogViewBase>
