@@ -16,6 +16,7 @@ using Gekimini.Avalonia.Modules.InternalTest.ViewModels;
 using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
+using Gekimini.Avalonia.Modules.ToolBars;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.ViewModels;
@@ -61,11 +62,15 @@ public partial class ShellViewModel : ViewModelBase, IShell
     [ObservableProperty]
     private IStatusBar statusBar;
 
+    [ObservableProperty]
+    private IToolBars toolBars;
+
     public ShellViewModel(IServiceProvider serviceProvider, IDockSerializer dockSerializer,
         RecyclableMemoryStreamManager memoryStreamManager,
         ISettingManager settingManager,
         IEnumerable<IModule> modules,
         IStatusBar statusBar,
+        IToolBars toolBars,
         IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
     {
@@ -79,6 +84,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
         Factory = this.serviceProvider.Resolve<ShellDockFactory>();
         StatusBar = statusBar;
+        ToolBars = toolBars;
     }
 
     public event EventHandler<IDocumentViewModel> ActiveDocumentChanged;

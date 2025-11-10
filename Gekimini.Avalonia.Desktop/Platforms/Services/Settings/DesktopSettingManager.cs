@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
+using System.Threading.Tasks;
+using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Platforms.Services.Settings;
+using Gekimini.Avalonia.Utils;
+using Injectio.Attributes;
+using Microsoft.Extensions.Logging;
+
+namespace Gekimini.Avalonia.Desktop.Platforms.Services.Settings;
+
+[RegisterSingleton<ISettingManager>]
+public class DesktopSettingManager : ISettingManager
+{
+    private readonly Dictionary<string, object> cacheObj = new();
+    private readonly IDialogManager dialogManager;
+    private readonly object locker = new();
+    private readonly ILogger logger;
+    private readonly IServiceProvider provider;
+    private readonly string savePath;
+
+    private readonly JsonSerializerOptions serializerOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = true
+    };
+
+    private Dictionary<string, string> settingMap;
+
+    public DesktopSettingManager(IServiceProvider provider, ILogger<DesktopSettingManager> logger,
+        IDialogManager dialogManager)
+    {
+        this.provider = provider;
+        this.logger = logger;
+        this.dialogManager = dialogManager;
+        savePath = Path.Combine(Path.GetDirectoryName(typeof(DesktopSettingManager).Assembly.Location) ?? string.Empty,
+            "setting.json");
+    }
+
+    public async Task Save<T>(T obj, JsonTypeInfo<T> typeInfo)
+    {
+#if DEBUG
+        if (DesignModeHelper.IsDesignMode)
+            return;
+#endif
+
+        await Task.Run(() =>
+        {
+            lock (locker)
+            {
+                var key = GetKey<T>();
+
+                settingMap[key] = JsonSerializer.Serialize(obj, serializerOptions);
+                var content = JsonSerializer.Serialize(settingMap);
+
+                File.WriteAllText(savePath, content);
+            }
+        });
+    }
+
+    public Task<T> Load<T>(JsonTypeInfo<T> typeInfo) where T : new()
+    {
+        return Task.Run(() =>
+        {
+            lock (locker)
+            {
+                return LoadInternal<T>();
+            }
+        });
+    }
+
+    private T LoadInternal<T>()
+    {
+        var key = GetKey<T>();
+
+        if (cacheObj.TryGetValue(key, out var obj))
+        {
+            logger.LogDebugEx($"return cached {typeof(T).Name} object, hash = {obj.GetHashCode()}");
+            return (T) obj;
+        }
+
+        if (settingMap is null)
+        {
+            if (File.Exists(savePath))
+            {
+                var content = File.ReadAllText(savePath);
+                if (string.IsNullOrWhiteSpace(content))
+                    settingMap = new Dictionary<string, string>();
+                else
+                    try
+                    {
+                        settingMap = JsonSerializer.Deserialize<Dictionary<string, string>>(content, serializerOptions);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogErrorEx(e, $"Can't load setting.json : {e.Message}");
+                        Task.Run(async () =>
+                        {
+                            await dialogManager.ShowMessageDialog($"无法加载应用配置文件setting.json:{e.Message}",
+                                DialogMessageType.Error);
+                            Environment.Exit(-1);
+                        }).Wait();
+                    }
+            }
+            else
+            {
+                settingMap = new Dictionary<string, string>();
+            }
+        }
+
+        T cw = default;
+        if (settingMap.TryGetValue(key, out var jsonContent))
+        {
+            cw = JsonSerializer.Deserialize<T>(jsonContent);
+            logger.LogDebugEx($"create new {typeof(T).Name} object from setting.json, hash = {cw.GetHashCode()}");
+        }
+        else
+        {
+            cw = provider.Resolve<T>();
+            logger.LogDebugEx(
+                $"create new {typeof(T).Name} object from ActivatorUtilities.CreateInstance(), hash = {cw.GetHashCode()}");
+        }
+
+        cacheObj[key] = cw;
+        return cw;
+    }
+
+    private string GetKey<T>()
+    {
+        return typeof(T).FullName;
+    }
+}

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Modules.StatusBar;
+using Gekimini.Avalonia.Modules.ToolBars;
 
 namespace Gekimini.Avalonia.Modules.Shell;
 
@@ -17,8 +18,8 @@ public interface IShell
 
     /*
     IMenu MainMenu { get; }
-    IToolBars ToolBars { get; }
     */
+    IToolBars ToolBars { get; }
 
     IEnumerable<IDocumentViewModel> Documents { get; }
     IEnumerable<IToolViewModel> Tools { get; }

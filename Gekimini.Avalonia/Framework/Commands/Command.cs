@@ -16,10 +16,10 @@ public partial class Command : ObservableObject
     public CommandDefinitionBase CommandDefinition { get; }
 
     [ObservableProperty]
-    public partial bool Visible { get; set; }
+    public partial bool Visible { get; set; } = true;
 
     [ObservableProperty]
-    public partial bool Enabled { get; set; }
+    public partial bool Enabled { get; set; } = true;
 
     [ObservableProperty]
     public partial bool Checked { get; set; }

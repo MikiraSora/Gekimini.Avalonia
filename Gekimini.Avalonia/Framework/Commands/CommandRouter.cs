@@ -9,6 +9,7 @@ using Gekimini.Avalonia.Modules.Shell;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Framework.Commands;
 
@@ -20,21 +21,23 @@ public class CommandRouter : ICommandRouter
     private readonly Dictionary<Type, HashSet<Type>> _commandHandlerTypeToCommandDefinitionTypesLookup;
 
     private readonly Dictionary<Type, CommandHandlerWrapper> _globalCommandHandlerWrappers;
-    private readonly IShell shell;
     private readonly ViewLocator viewLocator;
+    private readonly IServiceProvider _serviceProvider;
 
-    public CommandRouter(ICommandHandler[] globalCommandHandlers, IShell shell,ViewLocator viewLocator)
+    public CommandRouter(IEnumerable<ICommandHandler> globalCommandHandlers, ViewLocator viewLocator,
+        IServiceProvider serviceProvider)
     {
         this.viewLocator = viewLocator;
-        this.shell = shell;
+        _serviceProvider = serviceProvider;
         _commandHandlerTypeToCommandDefinitionTypesLookup = new Dictionary<Type, HashSet<Type>>();
-        _globalCommandHandlerWrappers = BuildCommandHandlerWrappers(globalCommandHandlers);
+        _globalCommandHandlerWrappers = BuildCommandHandlerWrappers(globalCommandHandlers.ToArray());
     }
 
     public CommandHandlerWrapper GetCommandHandler(CommandDefinitionBase commandDefinition)
     {
         CommandHandlerWrapper commandHandler;
 
+        var shell = _serviceProvider.GetService<IShell>();
         var activeItemViewModel = shell.ActiveDockable;
         if (activeItemViewModel != null)
         {
@@ -94,7 +97,7 @@ public class CommandRouter : ICommandRouter
         if (activeItemView == null)
             return null;
 
-        var startElement =  activeItemView.GetFocusedElement() ?? activeItemView;
+        var startElement = activeItemView.GetFocusedElement() ?? activeItemView;
 
         // First, we look at the currently focused element, and iterate up through
         // the tree, giving each DataContext a chance to handle the command.

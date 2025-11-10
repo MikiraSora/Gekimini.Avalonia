@@ -1,0 +1,17 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.ToolBars.ViewModels"
+                xmlns:controls="clr-namespace:Avalonia.Controls.ToolBar.Controls;assembly=Avalonia.Controls.ToolBar"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:ToolBarsViewModel"
+                x:Class="Gekimini.Avalonia.Modules.ToolBars.Views.ToolBarsView">
+    <Design.DataContext>
+        <viewModels:ToolBarsViewModel />
+    </Design.DataContext>
+
+    <controls:ToolBarTray x:Name="toolBarTray"
+                          Orientation="Horizontal" />
+</views:ViewBase>

@@ -8,15 +8,15 @@ namespace Gekimini.Avalonia.Framework.Commands;
 [RegisterSingleton<ICommandService>]
 public class CommandService : ICommandService
 {
-    private readonly CommandDefinitionBase[] _commandDefinitions;
+    private readonly IEnumerable<CommandDefinitionBase> _commandDefinitions;
     private readonly Dictionary<Type, CommandDefinitionBase> _commandDefinitionsLookup;
     private readonly ICommandRouter _commandRouter;
     private readonly Dictionary<CommandDefinitionBase, Command> _commands;
     private readonly Dictionary<Command, TargetableCommand> _targetableCommands;
 
-    public CommandService(CommandDefinitionBase[] commandDefinitions, ICommandRouter commandRouter)
+    public CommandService(IEnumerable<CommandDefinitionBase> commandDefinitions, ICommandRouter commandRouter)
     {
-        _commandDefinitions = commandDefinitions;
+        _commandDefinitions = commandDefinitions.ToArray();
         _commandRouter = commandRouter;
         _commandDefinitionsLookup = new Dictionary<Type, CommandDefinitionBase>();
         _commands = new Dictionary<CommandDefinitionBase, Command>();

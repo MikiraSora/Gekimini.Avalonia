@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Injectio.Attributes;
@@ -12,8 +13,8 @@ public class CommandKeyGestureService : ICommandKeyGestureService
     private readonly CommandKeyboardShortcut[] _keyboardShortcuts;
 
     public CommandKeyGestureService(
-        CommandKeyboardShortcut[] keyboardShortcuts,
-        ExcludeCommandKeyboardShortcut[] excludeKeyboardShortcuts,
+        IEnumerable<CommandKeyboardShortcut> keyboardShortcuts,
+        IEnumerable<ExcludeCommandKeyboardShortcut> excludeKeyboardShortcuts,
         ICommandService commandService)
     {
         _keyboardShortcuts = keyboardShortcuts

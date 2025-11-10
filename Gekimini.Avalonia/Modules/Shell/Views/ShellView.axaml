@@ -11,6 +11,10 @@
         <viewModels:ShellViewModel />
     </Design.DataContext>
     <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+            <!--<ContentControl cal:View.Model="{Binding MainMenu}" />-->
+            <ContentControl DockPanel.Dock="Top" Content="{Binding ToolBars}" />
+        </StackPanel>
         <Grid DockPanel.Dock="Top" RowDefinitions="Auto,*">
             <WrapPanel Orientation="Horizontal">
                 <Button Command="{Binding AddDocumentCommand}" Content="Add Document" />

@@ -16,7 +16,7 @@ namespace Gekimini.Avalonia.Framework.Commands
 
         public bool CanExecute(object parameter)
         {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            //CanExecuteChanged?.Invoke(this, EventArgs.Empty);
             
             var commandHandler = _commandRouter.GetCommandHandler(_command.CommandDefinition);
             if (commandHandler == null)

@@ -1,0 +1,31 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.ToolBars.ViewModels"
+                xmlns:valueConverters="clr-namespace:Gekimini.Avalonia.UI.ValueConverters"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:CommandToolBarItemViewModel"
+                x:Class="Gekimini.Avalonia.Modules.ToolBars.Views.CommandToolBarItemView">
+    <Design.DataContext>
+        <viewModels:CommandToolBarItemViewModel />
+    </Design.DataContext>
+    <ToggleButton ToolTip.Tip="{Binding ToolTip}"
+                  IsVisible="{Binding Visibility, Mode=OneWay}"
+                  ToolTip.ServiceEnabled="{Binding HasToolTip}"
+                  IsChecked="{Binding IsChecked, Mode=OneWay}"
+                  Command="{Binding Command}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+        <ToggleButton.Content>
+            <Image Width="16" Height="16" Stretch="Fill"
+                   Source="{Binding IconSource,Converter={x:Static valueConverters:UriToBitmapConverter.Instance}}">
+                <Image.Styles>
+                    <Style Selector="Image:disabled">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Style>
+                </Image.Styles>
+            </Image>
+        </ToggleButton.Content>
+    </ToggleButton>
+</views:ViewBase>

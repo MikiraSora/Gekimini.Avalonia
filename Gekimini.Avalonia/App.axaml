@@ -1,8 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 x:Class="Gekimini.Avalonia.App"
-			 xmlns:semi="https://irihi.tech/semi"
-			 xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
 			 xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
 			 xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
 			 RequestedThemeVariant="Default">
@@ -10,9 +8,9 @@
 
 	<Application.Styles>
 		<FluentTheme />
-		<u-semi:SemiTheme Locale="zh-CN"/>
 		<dialogHostAvalonia:DialogHostStyles />
 		<DockFluentTheme />
 		<status:StatusBarTheme/>
+		<StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
 	</Application.Styles>
 </Application>
