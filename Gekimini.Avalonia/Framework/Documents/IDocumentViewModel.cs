@@ -1,5 +1,5 @@
 ﻿using Dock.Model.Controls;
-using Gekimini.Avalonia.Framework.Documents.UndoRedo;
+using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.ViewModels;
 
 namespace Gekimini.Avalonia.Framework;

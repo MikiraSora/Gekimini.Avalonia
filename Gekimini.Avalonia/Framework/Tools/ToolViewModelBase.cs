@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
-using Gekimini.Avalonia.Framework.Documents.UndoRedo;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
 

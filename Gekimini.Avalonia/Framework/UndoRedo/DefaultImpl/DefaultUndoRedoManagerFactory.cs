@@ -1,7 +1,7 @@
 ﻿using System;
 using Injectio.Attributes;
 
-namespace Gekimini.Avalonia.Framework.Documents.UndoRedo.DefaultImpl;
+namespace Gekimini.Avalonia.Framework.UndoRedo.DefaultImpl;
 
 [RegisterSingleton<IUndoRedoManagerFactory>]
 internal class DefaultUndoRedoManagerFactory : IUndoRedoManagerFactory

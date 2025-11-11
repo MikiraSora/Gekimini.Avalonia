@@ -1,5 +1,5 @@
 ﻿using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Documents.UndoRedo;
+using Gekimini.Avalonia.Framework.UndoRedo;
 
 namespace Gekimini.Avalonia.Modules.UndoRedo;
 

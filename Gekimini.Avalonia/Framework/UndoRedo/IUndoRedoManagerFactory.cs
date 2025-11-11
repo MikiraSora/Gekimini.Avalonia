@@ -1,4 +1,4 @@
-﻿namespace Gekimini.Avalonia.Framework.Documents.UndoRedo;
+﻿namespace Gekimini.Avalonia.Framework.UndoRedo;
 
 public interface IUndoRedoManagerFactory
 {

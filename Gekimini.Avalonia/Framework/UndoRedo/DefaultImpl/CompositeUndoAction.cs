@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gekimini.Avalonia.Framework.Documents.UndoRedo.DefaultImpl;
+namespace Gekimini.Avalonia.Framework.UndoRedo.DefaultImpl;
 
 internal class CompositeUndoAction : IUndoableAction
 {

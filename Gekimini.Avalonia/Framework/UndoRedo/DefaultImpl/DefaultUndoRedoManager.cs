@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Gekimini.Avalonia.Framework.Documents.UndoRedo.DefaultImpl;
+namespace Gekimini.Avalonia.Framework.UndoRedo.DefaultImpl;
 
 internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 {

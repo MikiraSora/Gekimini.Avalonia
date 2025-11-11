@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Documents.UndoRedo;
+using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.Utils;
 
 namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels;

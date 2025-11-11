@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Documents.UndoRedo;
+using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.Modules.Shell;
 using Injectio.Attributes;
 

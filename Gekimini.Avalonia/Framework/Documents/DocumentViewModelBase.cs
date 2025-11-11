@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Controls;
 using Dock.Model.Mvvm.Controls;
-using Gekimini.Avalonia.Framework.Documents.UndoRedo;
+using Gekimini.Avalonia.Framework.UndoRedo;
 
 namespace Gekimini.Avalonia.Framework;
 

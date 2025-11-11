@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Gekimini.Avalonia.Framework.Documents.UndoRedo
+namespace Gekimini.Avalonia.Framework.UndoRedo
 {
     public interface IUndoRedoManager : INotifyPropertyChanged
     {
