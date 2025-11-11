@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
@@ -15,7 +16,7 @@ public class ExitCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => "Resources.FileExitCommandText";
+    public override string Text => Resources.FileExitCommandText;
 
-    public override string ToolTip => "Resources.FileExitCommandToolTip";
+    public override string ToolTip => Resources.FileExitCommandToolTip;
 }

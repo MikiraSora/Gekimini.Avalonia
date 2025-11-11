@@ -19,10 +19,12 @@ using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
+using Gekimini.Avalonia.Modules.UndoRedo;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IO;
 
@@ -103,7 +105,12 @@ public partial class ShellViewModel : ViewModelBase, IShell
     public void ShowTool<TTool>()
         where TTool : IToolViewModel
     {
-        ShowTool(serviceProvider.Resolve<TTool>());
+        var toolViewModel = default(IToolViewModel);
+        if (typeof(ITool).IsAbstract || typeof(ITool).IsInterface)
+            toolViewModel = serviceProvider.GetService<TTool>();
+        else
+            toolViewModel = serviceProvider.Resolve<TTool>();
+        ShowTool(toolViewModel);
     }
 
     public void ShowTool(IToolViewModel model)
@@ -190,6 +197,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         if (prevDocumentId != document?.Id)
         {
             logger.LogDebugEx($"active document changed: [{document?.Id}] {document?.Title}");
+            ActiveDocument = document;
             ActiveDocumentChanged?.Invoke(sender, document);
             prevDocumentId = document?.Id;
         }
@@ -198,6 +206,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private void FactoryOnFocusedDockableChanged(object sender, FocusedDockableChangedEventArgs e)
     {
         logger.LogDebugEx($"focus dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
+        ActiveDockable = e.Dockable;
         if (e.Dockable is IDocumentViewModel documentViewModel)
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
@@ -205,6 +214,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private void FactoryOnActiveDockableChanged(object sender, ActiveDockableChangedEventArgs e)
     {
         logger.LogDebugEx($"active dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
+        ActiveDockable = e.Dockable;
         if (e.Dockable is IDocumentViewModel documentViewModel)
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
@@ -272,7 +282,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private async Task AddDocument()
     {
         var document = serviceProvider.Resolve<InternalTestDocumentViewModel>();
-        document.Text = Guid.NewGuid().ToString();
         await OpenDocumentAsync(document);
     }
 
@@ -327,6 +336,12 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
         addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
         addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
+    }
+
+    [RelayCommand]
+    private void ShowHistoryTool()
+    {
+        ShowTool<IHistoryTool>();
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)

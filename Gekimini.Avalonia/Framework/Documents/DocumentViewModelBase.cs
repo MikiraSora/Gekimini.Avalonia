@@ -14,8 +14,6 @@ public abstract class DocumentViewModelBase : Document, IDocumentViewModel
         UndoRedoManager = undoRedoManagerFactory.Create();
     }
 
-    private IUndoRedoManager UndoRedoManager { get; }
-
     public virtual void OnViewAfterLoaded(Control view)
     {
         ViewAfterLoaded?.Invoke(view);
@@ -28,4 +26,6 @@ public abstract class DocumentViewModelBase : Document, IDocumentViewModel
 
     public event Action<Control> ViewAfterLoaded;
     public event Action<Control> ViewBeforeUnload;
+
+    public IUndoRedoManager UndoRedoManager { get; }
 }

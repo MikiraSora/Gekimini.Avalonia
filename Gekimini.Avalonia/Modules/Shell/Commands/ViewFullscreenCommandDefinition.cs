@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia.Input;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
@@ -17,9 +18,9 @@ public class ViewFullScreenCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => "Resources.ViewFullScreenCommandText";
+    public override string Text => Resources.ViewFullScreenCommandText;
 
-    public override string ToolTip => "Resources.ViewFullScreenCommandToolTip";
+    public override string ToolTip => Resources.ViewFullScreenCommandToolTip;
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/FullScreen.png");
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia.Input;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
@@ -16,9 +17,9 @@ public class OpenFileCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => "Resources.FileOpenCommandText";
+    public override string Text => Resources.FileOpenCommandText;
 
-    public override string ToolTip => "Resources.FileOpenCommandToolTip";
+    public override string ToolTip => Resources.FileOpenCommandToolTip;
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/Open.png");
 }

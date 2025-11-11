@@ -1,3 +1,4 @@
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
@@ -15,12 +16,12 @@ namespace Gekimini.Avalonia.Modules.Shell.Commands
 
         public override string Text
         {
-            get { return "Resources.FileSaveAsCommandText"; }
+            get { return Resources.FileSaveAsCommandText; }
         }
 
         public override string ToolTip
         {
-            get { return "Resources.FileSaveAsCommandToolTip"; }
+            get { return Resources.FileSaveAsCommandToolTip; }
         }
     }
 }

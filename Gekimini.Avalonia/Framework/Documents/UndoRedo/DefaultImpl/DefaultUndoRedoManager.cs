@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Gekimini.Avalonia.Framework.Documents.UndoRedo.DefaultImpl;
 
-public class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
+internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 {
     private readonly Stack<List<IUndoableAction>> _combineStack = new();
 

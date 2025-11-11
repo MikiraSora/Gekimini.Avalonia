@@ -1,0 +1,78 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.UndoRedo.ViewModels"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:HistoryViewModel"
+                x:Class="Gekimini.Avalonia.Modules.UndoRedo.Views.HistoryView">
+    <Design.DataContext>
+        <viewModels:HistoryViewModel />
+    </Design.DataContext>
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Slider Grid.Column="0"
+                Orientation="Vertical"
+                Value="{Binding SelectedIndex}"
+                Minimum="1"
+                Maximum="{Binding HistoryItems.Count}"
+                IsDirectionReversed="True"
+                Margin="3,0,3,0" />
+
+        <ScrollViewer Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="historyItemsControl" ItemsSource="{Binding HistoryItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Cursor="Hand" Padding="5,2,5,2"
+                                BorderThickness="0,0,0,1">
+                            <Border.Styles>
+                                <Style Selector="Border.ItemType_Current">
+                                    <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+                                </Style>
+                            </Border.Styles>
+                            <Interaction.Behaviors>
+                                <ExecuteCommandOnPointerReleasedBehavior
+                                    Command="{Binding #historyItemsControl.DataContext.UndoOrRedoToCommand}"
+                                    CommandParameter="{Binding .}" />
+                                <DataTriggerBehavior Binding="{Binding ItemType}" ComparisonCondition="Equal"
+                                                     Value="Current">
+                                    <AddClassAction ClassName="ItemType_Current" />
+                                </DataTriggerBehavior>
+                                <DataTriggerBehavior Binding="{Binding ItemType}" ComparisonCondition="NotEqual"
+                                                     Value="Current">
+                                    <RemoveClassAction ClassName="ItemType_Current" />
+                                </DataTriggerBehavior>
+                            </Interaction.Behaviors>
+
+                            <TextBlock Text="{Binding Name}">
+                                <TextBlock.Styles>
+                                    <Style Selector="TextBlock.ItemType_Redo">
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+                                        <Setter Property="FontStyle" Value="Italic" />
+                                    </Style>
+                                </TextBlock.Styles>
+                                <Interaction.Behaviors>
+                                    <DataTriggerBehavior Binding="{Binding ItemType}" ComparisonCondition="Equal"
+                                                         Value="Redo">
+                                        <AddClassAction ClassName="ItemType_Redo" />
+                                    </DataTriggerBehavior>
+                                    <DataTriggerBehavior Binding="{Binding ItemType}" ComparisonCondition="NotEqual"
+                                                         Value="Redo">
+                                        <RemoveClassAction ClassName="ItemType_Redo" />
+                                    </DataTriggerBehavior>
+                                </Interaction.Behaviors>
+                            </TextBlock>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</views:ViewBase>

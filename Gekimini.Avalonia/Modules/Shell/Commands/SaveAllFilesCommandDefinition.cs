@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia.Input;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
@@ -17,9 +18,9 @@ public class SaveAllFilesCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => "Resources.FileSaveAllCommandText";
+    public override string Text => Resources.FileSaveAllCommandText;
 
-    public override string ToolTip => "Resources.FileSaveAllCommandToolTip";
+    public override string ToolTip => Resources.FileSaveAllCommandToolTip;
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/SaveAll.png");
 }

@@ -2,7 +2,7 @@
 
 namespace Gekimini.Avalonia.Framework.Documents.UndoRedo.DefaultImpl;
 
-public class CompositeUndoAction : IUndoableAction
+internal class CompositeUndoAction : IUndoableAction
 {
     public CompositeUndoAction(string name, IEnumerable<IUndoableAction> combinedActions)
     {
