@@ -10,8 +10,8 @@ public static class ISettingManagerEx
     public static async Task LoadAndSave<T>(this ISettingManager manager, JsonTypeInfo<T> jsonTypeInfo,
         Action<T> action) where T : new()
     {
-        var setting = await manager.Load(jsonTypeInfo);
+        var setting = manager.GetSetting(jsonTypeInfo);
         action.Invoke(setting);
-        await manager.Save(setting, jsonTypeInfo);
+        manager.SaveSetting(setting, jsonTypeInfo);
     }
 }

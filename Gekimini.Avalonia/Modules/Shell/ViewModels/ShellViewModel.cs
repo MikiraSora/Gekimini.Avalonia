@@ -12,7 +12,9 @@ using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.InternalTest.ViewModels;
+using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
@@ -54,6 +56,9 @@ public partial class ShellViewModel : ViewModelBase, IShell
     [ObservableProperty]
     private IRootDock layout;
 
+    [ObservableProperty]
+    private IMenu mainMenu;
+
     private string prevDocumentId;
 
     [ObservableProperty]
@@ -71,6 +76,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         IEnumerable<IModule> modules,
         IStatusBar statusBar,
         IToolBars toolBars,
+        IMenu mainMenu,
         IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
     {
@@ -85,6 +91,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         Factory = this.serviceProvider.Resolve<ShellDockFactory>();
         StatusBar = statusBar;
         ToolBars = toolBars;
+        MainMenu = mainMenu;
     }
 
     public event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
@@ -306,7 +313,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
             return;
 
-        var setting = await settingManager.Load(GekiminiSetting.JsonTypeInfo);
+        var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
         var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
         if (dockable is null)
             //todo log

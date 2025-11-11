@@ -12,7 +12,7 @@ public interface IEditorProvider
 
     bool Handles(string path);
 
-    IDocument Create();
+    IDocumentViewModel Create();
 
     Task New(IDocument document, string name);
     Task Open(IDocument document, string path);

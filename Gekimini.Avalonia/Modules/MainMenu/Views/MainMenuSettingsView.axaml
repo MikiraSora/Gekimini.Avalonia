@@ -1,0 +1,46 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.MainMenu.ViewModels"
+                xmlns:markup="clr-namespace:Gekimini.Avalonia.Framework.Markup"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:MainMenuSettingsViewModel"
+                IsTabStop="False"
+                x:Class="Gekimini.Avalonia.Modules.MainMenu.Views.MainMenuSettingsView">
+    <Design.DataContext>
+        <viewModels:MainMenuSettingsViewModel />
+    </Design.DataContext>
+
+    <StackPanel>
+        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+            <Label Width="100" Content="{markup:Translate MainMenuSettingsColorTheme}" />
+            <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+            <Label Width="100" Content="{markup:Translate MainMenuSettingsLanguage}" />
+            <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Text="{Binding Mode=OneWay}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Label Content="{markup:Translate MainMenuSettingsLanguageRestart}" />
+        </StackPanel>
+        <CheckBox
+            Margin="0,5,0,0"
+            Content="{markup:Translate MainMenuSettingsAutoHideMainMenu}"
+            IsChecked="{Binding AutoHideMainMenu}" />
+    </StackPanel>
+</views:ViewBase>

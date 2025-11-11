@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 
 namespace Gekimini.Avalonia.Utils;

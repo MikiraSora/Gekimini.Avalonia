@@ -41,7 +41,7 @@ public class ViewLocator : IDataTemplate
         if (view == null)
         {
             var msg = $"<resolve type object {viewTypeName} failed; model type:{viewModel.GetType().FullName}>";
-#if DEBUG
+#if !DEBUG
             throw new Exception(msg);
 #else
 				return new TextBlock { Text = msg };

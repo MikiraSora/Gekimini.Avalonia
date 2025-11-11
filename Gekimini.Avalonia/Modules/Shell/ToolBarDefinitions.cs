@@ -6,21 +6,21 @@ namespace Gekimini.Avalonia.Modules.Shell;
 
 public static class ToolBarDefinitions
 {
-    [RegisterStaticObject<ToolBarItemGroupDefinition>]
+    [RegisterStaticObject]
     public static ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new(
         Gekimini.Avalonia.Modules.ToolBars.ToolBarDefinitions.StandardToolBar, 8);
 
-    [RegisterStaticObject<ToolBarItemDefinition>]
+    [RegisterStaticObject]
     public static ToolBarItemDefinition OpenFileToolBarItem =
         new CommandToolBarItemDefinition<OpenFileCommandDefinition>(
             StandardOpenSaveToolBarGroup, 0);
 
-    [RegisterStaticObject<ToolBarItemDefinition>]
+    [RegisterStaticObject]
     public static ToolBarItemDefinition SaveFileToolBarItem =
         new CommandToolBarItemDefinition<SaveFileCommandDefinition>(
             StandardOpenSaveToolBarGroup, 2);
 
-    [RegisterStaticObject<ToolBarItemDefinition>]
+    [RegisterStaticObject]
     public static ToolBarItemDefinition SaveAllFilesToolBarItem =
         new CommandToolBarItemDefinition<SaveAllFilesCommandDefinition>(
             StandardOpenSaveToolBarGroup, 4);

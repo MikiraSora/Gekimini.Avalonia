@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Dock.Model.Mvvm.Controls;
 using Gekimini.Avalonia.Framework.Documents.UndoRedo;
-using Gekimini.Avalonia.ViewModels;
 
 namespace Gekimini.Avalonia.Framework;
 
@@ -16,14 +15,17 @@ public abstract class DocumentViewModelBase : Document, IDocumentViewModel
     }
 
     private IUndoRedoManager UndoRedoManager { get; }
-    
+
     public virtual void OnViewAfterLoaded(Control view)
     {
-        
+        ViewAfterLoaded?.Invoke(view);
     }
 
     public virtual void OnViewBeforeUnload(Control view)
     {
-        
+        ViewBeforeUnload?.Invoke(view);
     }
+
+    public event Action<Control> ViewAfterLoaded;
+    public event Action<Control> ViewBeforeUnload;
 }

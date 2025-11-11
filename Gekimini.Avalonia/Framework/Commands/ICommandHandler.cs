@@ -6,25 +6,22 @@ namespace Gekimini.Avalonia.Framework.Commands
     public interface ICommandHandler<TCommandDefinition> : ICommandHandler
         where TCommandDefinition : CommandDefinition
     {
-        void Update(Command command);
-        Task Run(Command command);
     }
 
     public interface ICommandListHandler<TCommandDefinition> : ICommandHandler
         where TCommandDefinition : CommandListDefinition
     {
-        void Populate(Command command, List<Command> commands);
-        Task Run(Command command);
     }
 
     public interface ICommandHandler
     {
-        
+        void Update(Command command);
+        Task Run(Command command);
     }
 
     public interface ICommandListHandler : ICommandHandler
     {
-        
+        void Populate(Command command, List<Command> commands);
     }
 
     public abstract class CommandHandlerBase<TCommandDefinition> : ICommandHandler<TCommandDefinition>

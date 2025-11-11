@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
 
@@ -15,10 +16,7 @@ public interface IShell
 
     IDockable ActiveDockable { get; }
     IDocumentViewModel ActiveDocument { get; }
-
-    /*
     IMenu MainMenu { get; }
-    */
     IToolBars ToolBars { get; }
 
     IEnumerable<IDocumentViewModel> Documents { get; }

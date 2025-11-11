@@ -41,36 +41,24 @@ public class DesktopSettingManager : ISettingManager
             "setting.json");
     }
 
-    public async Task Save<T>(T obj, JsonTypeInfo<T> typeInfo)
+    public void SaveSetting<T>(T obj, JsonTypeInfo<T> typeInfo)
     {
 #if DEBUG
         if (DesignModeHelper.IsDesignMode)
             return;
 #endif
 
-        await Task.Run(() =>
-        {
-            lock (locker)
-            {
-                var key = GetKey<T>();
+        var key = GetKey<T>();
 
-                settingMap[key] = JsonSerializer.Serialize(obj, serializerOptions);
-                var content = JsonSerializer.Serialize(settingMap);
+        settingMap[key] = JsonSerializer.Serialize(obj, serializerOptions);
+        var content = JsonSerializer.Serialize(settingMap);
 
-                File.WriteAllText(savePath, content);
-            }
-        });
+        File.WriteAllText(savePath, content);
     }
 
-    public Task<T> Load<T>(JsonTypeInfo<T> typeInfo) where T : new()
+    public T GetSetting<T>(JsonTypeInfo<T> typeInfo) where T : new()
     {
-        return Task.Run(() =>
-        {
-            lock (locker)
-            {
-                return LoadInternal<T>();
-            }
-        });
+        return LoadInternal<T>();
     }
 
     private T LoadInternal<T>()

@@ -6,6 +6,6 @@ namespace Gekimini.Avalonia.Platforms.Services.Settings;
 
 public interface ISettingManager
 {
-    Task Save<T>(T obj, JsonTypeInfo<T> jsonTypeInfo);
-    Task<T> Load<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]T>(JsonTypeInfo<T> jsonTypeInfo) where T : new();
+    void SaveSetting<T>(T obj, JsonTypeInfo<T> jsonTypeInfo);
+    T GetSetting<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]T>(JsonTypeInfo<T> jsonTypeInfo) where T : new();
 }

@@ -148,12 +148,10 @@ public class CommandRouter : ICommandRouter
     private static CommandHandlerWrapper CreateCommandHandlerWrapper(
         Type commandDefinitionType, object commandHandler)
     {
-        if (typeof(CommandDefinition).IsAssignableFrom(commandDefinitionType))
-            return CommandHandlerWrapper.FromCommandHandler(
-                CommandHandlerInterfaceType.MakeGenericType(commandDefinitionType), commandHandler);
-        if (typeof(CommandListDefinition).IsAssignableFrom(commandDefinitionType))
-            return CommandHandlerWrapper.FromCommandListHandler(
-                CommandListHandlerInterfaceType.MakeGenericType(commandDefinitionType), commandHandler);
+        if (commandHandler is ICommandListHandler handler)
+            return CommandHandlerWrapper.FromCommandListHandler(handler);
+        if (commandHandler is ICommandHandler handler2)
+            return CommandHandlerWrapper.FromCommandHandler(handler2);
         throw new InvalidOperationException();
     }
 
