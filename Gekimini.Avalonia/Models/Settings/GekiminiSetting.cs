@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization.Metadata;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Utils;
 
@@ -31,4 +32,7 @@ public partial class GekiminiSetting : ObservableObject
 
     [ObservableProperty]
     public partial string ShellLayout { get; set; }
+
+    [ObservableProperty]
+    public partial Dictionary<string, ControlPositionSize> WindowPositionSizeMap { get; set; } = new();
 }

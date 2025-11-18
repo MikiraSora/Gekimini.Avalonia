@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Gekimini.Avalonia;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
 
-namespace Gemini.Modules.Shell.Commands;
+namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
 public class ViewFullScreenCommandHandler : CommandHandlerBase<ViewFullScreenCommandDefinition>

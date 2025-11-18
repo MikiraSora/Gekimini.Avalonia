@@ -81,7 +81,7 @@ public abstract class App : Application
         serviceCollection.AddTypeCollectedActivator(ViewTypeCollectedActivator.Default);
 
         serviceCollection.AddTypeCollectedActivator(ToolViewModelTypeCollectedActivator.Default);
-
+        
         serviceCollection.AddGekiminiAvalonia();
     }
 

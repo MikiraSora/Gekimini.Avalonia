@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Commands;
-using Gekimini.Avalonia.Modules.Shell;
 using Injectio.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Gemini.Modules.Shell.Commands;
+namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
 public class SwitchToDocumentListCommandHandler : ICommandListHandler<SwitchToDocumentCommandListDefinition>

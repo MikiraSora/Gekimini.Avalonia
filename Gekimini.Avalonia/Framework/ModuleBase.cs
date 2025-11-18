@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Dock.Model.Controls;
-using Gekimini.Avalonia.Framework.Documents;
 
 namespace Gekimini.Avalonia.Framework;
 
@@ -26,12 +25,10 @@ public abstract class ModuleBase : IModule
 
     public virtual void PreInitialize()
     {
-            
     }
 
     public virtual void Initialize()
     {
-		    
     }
 
     public virtual Task PostInitializeAsync()

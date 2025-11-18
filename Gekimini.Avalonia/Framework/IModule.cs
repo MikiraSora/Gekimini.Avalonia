@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Dock.Model.Controls;
-using Gekimini.Avalonia.Framework.Documents;
 
 namespace Gekimini.Avalonia.Framework;
 

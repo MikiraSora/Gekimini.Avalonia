@@ -8,7 +8,7 @@ namespace Gekimini.Avalonia.Framework.Commands
     {
     }
 
-    public interface ICommandListHandler<TCommandDefinition> : ICommandHandler
+    public interface ICommandListHandler<TCommandDefinition> : ICommandListHandler
         where TCommandDefinition : CommandListDefinition
     {
     }

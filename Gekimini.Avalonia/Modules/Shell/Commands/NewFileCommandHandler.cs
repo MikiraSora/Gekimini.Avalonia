@@ -5,11 +5,10 @@ using Avalonia.Interactivity;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Commands;
-using Gekimini.Avalonia.Modules.Shell;
 using Injectio.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Gemini.Modules.Shell.Commands;
+namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
 public class NewFileCommandHandler : ICommandListHandler<NewFileCommandListDefinition>

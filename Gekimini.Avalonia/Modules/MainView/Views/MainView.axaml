@@ -5,6 +5,8 @@
                  xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.MainView.ViewModels"
                  xmlns:views="clr-namespace:AvaloniaDialogs.Views;assembly=AvaloniaDialogs"
                  xmlns:views1="clr-namespace:Gekimini.Avalonia.Views"
+                 xmlns:markupExtensions="clr-namespace:FluentIcons.Avalonia.MarkupExtensions;assembly=FluentIcons.Avalonia"
+                 xmlns:valueConverters="clr-namespace:Gekimini.Avalonia.UI.ValueConverters"
                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                  x:DataType="viewModels:MainViewModel"
                  x:Class="Gekimini.Avalonia.Modules.MainView.Views.MainView">
@@ -13,7 +15,67 @@
     </Design.DataContext>
 
     <views:ReactiveDialogHost OverlayBackground="WhiteSmoke">
-        <TransitioningContentControl Content="{Binding Shell}" />
+        <Grid>
+            <TransitioningContentControl Content="{Binding Shell}" />
+            <ItemsControl x:Name="windowItemsControl" ItemsSource="{Binding  WindowViewModelWrappers }">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Styles>
+                    <Style Selector="ItemsControl > ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding LeftX,Mode=TwoWay}" />
+                        <Setter Property="Canvas.Top" Value="{Binding TopY,Mode=TwoWay}" />
+                        <Setter Property="Width"
+                                Value="{Binding Width,Mode=TwoWay,Converter={x:Static valueConverters:ControlSizeConverter.Instance}, ConverterParameter=Width}" />
+                        <Setter Property="Height"
+                                Value="{Binding Height,Mode=TwoWay,Converter={x:Static valueConverters:ControlSizeConverter.Instance}, ConverterParameter=Height}" />
+                        <Setter Property="ZIndex" Value="{Binding ZIndex}" />
+                    </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#333"
+                                BorderBrush="#444"
+                                BorderThickness="3"
+                                CornerRadius="2">
+                            <Interaction.Behaviors>
+                                <DataTriggerBehavior Value="True" Binding="{Binding IsActive}" />
+                                <DataTriggerBehavior Value="False" Binding="{Binding IsActive}" />
+                                <ExecuteCommandOnPointerPressedBehavior
+                                    Command="{Binding #windowItemsControl.DataContext.FocusWindowCommand}"
+                                    CommandParameter="{Binding ViewModel}" />
+                            </Interaction.Behaviors>
+                            <Grid RowDefinitions="Auto,*">
+                                <!-- 标题栏 -->
+                                <Grid Background="#444" ColumnDefinitions="*,Auto"
+                                      PointerPressed="InputElement_Drag">
+                                    <TextBlock Margin="8,0" VerticalAlignment="Center"
+                                               Text="{Binding ViewModel.Title}" />
+                                    <Button Content="{markupExtensions:FluentIcon Icon=Dismiss}" Grid.Column="1"
+                                            Width="24" Height="24" Margin="5"
+                                            Command="{Binding #windowItemsControl.DataContext.CloseWindowCommand}"
+                                            CommandParameter="{Binding ViewModel}" />
+                                </Grid>
+
+                                <ContentPresenter HorizontalContentAlignment="Stretch"
+                                                  VerticalContentAlignment="Stretch" Grid.Row="1"
+                                                  Content="{Binding ViewModel}" />
+
+                                <Border Grid.Row="1"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Width="6" Height="6"
+                                        Background="Transparent"
+                                        Cursor="SizeAll"
+                                        PointerPressed="InputElement_Resize" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
     </views:ReactiveDialogHost>
 
 </views1:ViewBase>

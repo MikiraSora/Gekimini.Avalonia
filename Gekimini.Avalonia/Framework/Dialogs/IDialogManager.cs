@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Gekimini.Avalonia.Modules.Dialogs.ViewModels;
 
 namespace Gekimini.Avalonia.Framework.Dialogs;
 

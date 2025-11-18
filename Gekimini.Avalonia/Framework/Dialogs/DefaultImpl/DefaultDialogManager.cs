@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Gekimini.Avalonia.Modules.Dialogs.ViewModels;
 using Gekimini.Avalonia.Modules.Dialogs.ViewModels.CommonMessage;
 using Gekimini.Avalonia.Modules.Dialogs.Views;
 using Injectio.Attributes;
@@ -14,7 +15,6 @@ namespace Gekimini.Avalonia.Framework.Dialogs.DefaultImpl;
 [RegisterSingleton<IDialogManager>]
 public class DefaultDialogManager : IDialogManager
 {
-    private readonly Stack<Window> dialogWindowStack = new();
     private readonly ILogger<DefaultDialogManager> logger;
     private readonly IServiceProvider serviceProvider;
 

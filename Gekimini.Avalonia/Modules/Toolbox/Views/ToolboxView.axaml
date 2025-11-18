@@ -1,0 +1,66 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.Toolbox.ViewModels"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                xmlns:valueConverters="clr-namespace:Gekimini.Avalonia.UI.ValueConverters"
+                xmlns:behaviors="clr-namespace:Gekimini.Avalonia.Framework.DragDrops.Behaviors"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:ToolboxViewModel"
+                x:Class="Gekimini.Avalonia.Modules.Toolbox.Views.ToolboxView">
+    <Design.DataContext>
+        <viewModels:ToolboxViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBox Name="SearchBox">
+            <Interaction.Behaviors>
+                <EventTrigger EventName="TextChanged">
+                    <InvokeCommandAction Command="{Binding SearchCommand}" CommandParameter="{Binding #SearchBox.Text}" />
+                </EventTrigger>
+            </Interaction.Behaviors>
+        </TextBox>
+        <ItemsControl
+            x:Name="listBox"
+            Grid.Row="1" HorizontalAlignment="Stretch"
+            BorderThickness="0"
+            ItemsSource="{Binding Items}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                              Header="{Binding Name}">
+                        <ListBox ItemsSource="{Binding Models}">
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Interaction.Behaviors">
+                                        <BehaviorCollectionTemplate>
+                                            <BehaviorCollection>
+                                                <behaviors:DragDataContextOutBehavior />
+                                            </BehaviorCollection>
+                                        </BehaviorCollectionTemplate>
+                                    </Setter>
+                                </Style>
+                            </ListBox.Styles>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="Auto,*" Margin="18,0,0,0">
+                                        <Image Width="16" Margin="0,0,5,0"
+                                               Source="{Binding IconSource, Converter={x:Static valueConverters:UriToBitmapConverter.Instance}}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Padding="2"
+                                                   Text="{Binding Name}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Expander>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</views:ViewBase>

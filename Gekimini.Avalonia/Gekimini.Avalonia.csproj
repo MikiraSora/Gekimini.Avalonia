@@ -30,6 +30,7 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="AvaloniaControlsToolBar" Version="11.3.6"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="FluentIcons.Avalonia.Fluent" Version="1.2.313" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10"/>
         <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1"/>
         <PackageReference Include="StatusBar.Avalonia" Version="0.0.2"/>
@@ -80,14 +81,18 @@
             <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
         <EmbeddedResource Update="Assets\Languages\Resources.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <Compile Update="Assets\Languages\Resources.Designer.cs">
-          <DesignTime>True</DesignTime>
-          <AutoGen>True</AutoGen>
-          <DependentUpon>Resources.resx</DependentUpon>
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Framework\Behaviors\" />
     </ItemGroup>
 
 </Project>

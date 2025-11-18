@@ -1,7 +1,7 @@
 ﻿using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
-namespace Gemini.Modules.Shell.Commands;
+namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<CommandDefinitionBase>]
 public class SwitchToDocumentCommandListDefinition : CommandListDefinition

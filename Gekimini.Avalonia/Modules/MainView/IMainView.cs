@@ -1,9 +1,14 @@
-﻿using Gekimini.Avalonia.Modules.Shell;
+﻿using System.Collections.ObjectModel;
+using Gekimini.Avalonia.Modules.Shell;
+using Gekimini.Avalonia.Modules.Window.ViewModels;
 
-namespace Gekimini.Avalonia.Modules.MainView
+namespace Gekimini.Avalonia.Modules.MainView;
+
+public interface IMainView
 {
-    public interface IMainView
-    {
-        IShell Shell { get; }
-    }
+    IShell Shell { get; }
+
+    void AddWindow(WindowViewModelBase window);
+    void RemoveWindow(WindowViewModelBase window);
+    void MakeFrontShow(WindowViewModelBase window);
 }

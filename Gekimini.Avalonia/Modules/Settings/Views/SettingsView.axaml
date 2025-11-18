@@ -1,0 +1,78 @@
+﻿<views:WindowViewBase xmlns="https://github.com/avaloniaui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:views="clr-namespace:Gekimini.Avalonia.Modules.Window.Views"
+                      xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.Settings.ViewModels"
+                      mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                      x:DataType="viewModels:SettingsViewModel"
+                      x:Class="Gekimini.Avalonia.Modules.Settings.Views.SettingsView">
+    <Design.DataContext>
+        <viewModels:SettingsViewModel />
+    </Design.DataContext>
+
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" MinWidth="230" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TreeView x:Name="TreeView" ItemsSource="{Binding Pages}" SelectionMode="AlwaysSelected">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+
+        <Grid Grid.Row="0" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
+
+            <ScrollViewer IsTabStop="False" Grid.Row="0" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl IsTabStop="False" HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding #TreeView.SelectedItem}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              BorderBrush="{x:Null}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl IsTabStop="False" Content="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Rectangle Grid.Row="1" Height="1"
+                       VerticalAlignment="Bottom" />
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0 12 0 0" HorizontalAlignment="Right"
+              IsSharedSizeScope="True">
+            <Grid.Styles>
+                <Style Selector="Button">
+                    <Setter Property="Margin" Value="12 0 0 0" />
+                    <Setter Property="Padding" Value="4" />
+                </Style>
+            </Grid.Styles>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="WindowButtons" />
+                <ColumnDefinition SharedSizeGroup="WindowButtons" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" IsDefault="True" Command="{Binding SaveChangesCommand}">OK</Button>
+            <Button Grid.Column="1" IsCancel="True" Command="{Binding CancelCommand}">Cancel</Button>
+        </Grid>
+    </Grid>
+
+</views:WindowViewBase>

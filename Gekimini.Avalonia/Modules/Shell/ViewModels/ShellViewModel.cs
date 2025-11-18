@@ -19,8 +19,10 @@ using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
+using Gekimini.Avalonia.Modules.Toolbox;
 using Gekimini.Avalonia.Modules.UndoRedo;
 using Gekimini.Avalonia.Platforms.Services.Settings;
+using Gekimini.Avalonia.Platforms.Services.Window;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
@@ -43,6 +45,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly IServiceProvider serviceProvider;
     private readonly ISettingManager settingManager;
+    private readonly IWindowManager windowManager;
 
     private IShellView _shellView;
 
@@ -79,6 +82,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         IStatusBar statusBar,
         IToolBars toolBars,
         IMenu mainMenu,
+        IWindowManager windowManager,
         IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
     {
@@ -87,6 +91,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         this.memoryStreamManager = memoryStreamManager;
         this.settingManager = settingManager;
         _modules = modules;
+        this.windowManager = windowManager;
         this.dialogManager = dialogManager;
         this.logger = logger;
 
@@ -342,6 +347,18 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private void ShowHistoryTool()
     {
         ShowTool<IHistoryTool>();
+    }
+
+    [RelayCommand]
+    private void ShowToolboxTool()
+    {
+        ShowTool<IToolbox>();
+    }
+
+    [RelayCommand]
+    private void ShowNewWindow()
+    {
+        windowManager.ShowDialogAsync(new InternalTestWindowViewModel());
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)

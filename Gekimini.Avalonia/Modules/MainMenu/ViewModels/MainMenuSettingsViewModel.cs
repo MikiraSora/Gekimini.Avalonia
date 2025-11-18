@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
 using Gekimini.Avalonia.Models.Settings;
@@ -60,9 +61,9 @@ public class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
         }
     }
 
-    public string SettingsPageName => "Properties.Resources.SettingsPageGeneral";
+    public string SettingsPageName => Resources.SettingsPageGeneral;
 
-    public string SettingsPagePath => "Properties.Resources.SettingsPathEnvironment";
+    public string SettingsPagePath => Resources.SettingsPathEnvironment;
 
     public void ApplyChanges()
     {

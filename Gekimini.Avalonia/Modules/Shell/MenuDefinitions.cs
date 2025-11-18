@@ -1,10 +1,9 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Modules.Shell.Commands;
 using Gemini.Framework.Menus;
-using Gemini.Modules.Shell.Commands;
 using Injectio.Attributes;
 
-namespace Gemini.Modules.Shell;
+namespace Gekimini.Avalonia.Modules.Shell;
 
 public static class MenuDefinitions
 {

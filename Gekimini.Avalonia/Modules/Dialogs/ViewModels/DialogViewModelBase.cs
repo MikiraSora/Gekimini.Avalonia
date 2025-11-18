@@ -1,7 +1,7 @@
 ﻿using AvaloniaDialogs.Views;
 using Gekimini.Avalonia.ViewModels;
 
-namespace Gekimini.Avalonia.Framework.Dialogs;
+namespace Gekimini.Avalonia.Modules.Dialogs.ViewModels;
 
 public abstract class DialogViewModelBase : ViewModelBase
 {
@@ -14,8 +14,8 @@ public abstract class DialogViewModelBase : ViewModelBase
         dialogView?.Close();
     }
 
-    internal void SetDialogView(BaseDialog dialogView)
+    internal void SetDialogView(BaseDialog bd)
     {
-        this.dialogView = dialogView;
+        dialogView = bd;
     }
 }

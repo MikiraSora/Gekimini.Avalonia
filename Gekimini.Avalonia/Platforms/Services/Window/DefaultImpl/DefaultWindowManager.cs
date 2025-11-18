@@ -1,0 +1,26 @@
+﻿using System.Threading.Tasks;
+using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Modules.MainView;
+using Gekimini.Avalonia.Modules.Window.ViewModels;
+using Injectio.Attributes;
+
+namespace Gekimini.Avalonia.Platforms.Services.Window.DefaultImpl;
+
+[RegisterSingleton<IWindowManager>]
+public partial class DefaultWindowManager : IWindowManager
+{
+    [GetServiceLazy]
+    public partial IMainView MainView { get; }
+
+    public Task ShowDialogAsync(WindowViewModelBase windowViewModel)
+    {
+        MainView.AddWindow(windowViewModel);
+        return Task.CompletedTask;
+    }
+
+    public Task TryCloseAsync(WindowViewModelBase windowViewModelBase, bool dialogResult)
+    {
+        MainView.RemoveWindow(windowViewModelBase);
+        return Task.CompletedTask;
+    }
+}

@@ -4,7 +4,7 @@ using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
 
-namespace Gemini.Modules.Shell.Commands;
+namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<CommandDefinitionBase>]
 public class ViewFullScreenCommandDefinition : CommandDefinition
