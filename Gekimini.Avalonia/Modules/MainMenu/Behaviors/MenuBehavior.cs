@@ -37,7 +37,7 @@ public class MenuBehavior
         return control.GetValue(UpdateCommandUiItemsProperty);
     }
 
-    private static void OnSubmenuOpened(object? sender, RoutedEventArgs e)
+    private static void OnSubmenuOpened(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuItem menuItem)
             return;

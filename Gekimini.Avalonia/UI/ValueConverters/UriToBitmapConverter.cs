@@ -11,7 +11,7 @@ public class UriToBitmapConverter : IValueConverter
 {
     public static UriToBitmapConverter Instance { get; } = new();
 
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is not Uri s)
             return default;
@@ -28,7 +28,7 @@ public class UriToBitmapConverter : IValueConverter
         return null;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }

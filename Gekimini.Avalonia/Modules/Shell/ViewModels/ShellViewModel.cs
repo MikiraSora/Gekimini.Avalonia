@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -129,13 +130,26 @@ public partial class ShellViewModel : ViewModelBase, IShell
     {
         if (model is null)
             return;
+        logger.LogInformationEx($"Hide tool {model.Id}: {model.GetType().Name}");
         Factory.RemoveTool(model);
     }
 
     public Task OpenDocumentAsync(IDocumentViewModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
-        Factory.AddDocument(model);
+
+        if (addedDocuments.Contains(model))
+        {
+            //exist, just active it.
+            logger.LogInformationEx($"Active&Focus existed document {model.Id}: {model.GetType().Name}");
+            Factory.ActiveAndFocus(model);
+        }
+        else
+        {
+            logger.LogInformationEx($"Open new document {model.Id}: {model.GetType().Name}");
+            Factory.AddDocument(model);
+        }
+        
         return Task.CompletedTask;
     }
 
@@ -144,9 +158,9 @@ public partial class ShellViewModel : ViewModelBase, IShell
         if (model is null)
             return Task.CompletedTask;
 
+        logger.LogInformationEx($"Close document {model.Id}: {model.GetType().Name}");
         Factory.RemoveDocument(model);
 
-        //todo return DeactivateItemAsync(document, true, CancellationToken.None);
         return Task.CompletedTask;
     }
 
@@ -157,13 +171,15 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
     private async void InitLayout()
     {
+        logger.LogInformationEx("Begin initialize shell dock layout");
         try
         {
-            await LoadLayout();
+            LoadLayout();
+            logger.LogInformationEx("Initialize shell dock layout successfully.");
         }
         catch (Exception e)
         {
-            logger.LogErrorEx(e, e.Message);
+            logger.LogErrorEx(e, $"Initialize shell dock layout failed: {e.Message}");
 
             var l = Factory.CreateLayout();
             Factory.InitLayout(l);
@@ -296,29 +312,27 @@ public partial class ShellViewModel : ViewModelBase, IShell
     public override void OnViewBeforeUnload(Control view)
     {
         base.OnViewBeforeUnload(view);
-        SaveLayout().NoWait();
+        SaveLayout();
     }
 
-    private async Task SaveLayout()
+    private void SaveLayout()
     {
-        if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
-            return;
-
         var json = dockSerializer.Serialize(Layout);
-
-        await settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
+        settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
+        logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
     }
 
-    private async Task LoadLayout()
+    private void LoadLayout()
     {
-        if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
-            return;
-
         var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
+        logger.LogDebugEx(
+            $"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
         var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
         if (dockable is null)
-            //todo log
+        {
+            logger.LogErrorEx("Deserialize layout file failed, deserialized dockable object is null.");
             return;
+        }
 
         Factory.InitLayout(dockable);
         Layout = dockable;
@@ -327,11 +341,16 @@ public partial class ShellViewModel : ViewModelBase, IShell
         addedDocuments.Clear();
 
         addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
+        logger.LogDebugEx(
+            $"Deserialized tools: {string.Join(", ", addTools.Select(x => x.GetType().Name))}");
         addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
+        logger.LogDebugEx(
+            $"Deserialized documents: {string.Join(", ", addedDocuments.Select(x => x.GetType().Name))}");
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)
     {
+        //todo not support
         _shellView?.UpdateFloatingWindows(ShowFloatingWindowsInTaskbar);
     }
 }

@@ -75,7 +75,6 @@ public abstract partial class DocumentViewModelBase : Document, IDocumentViewMod
     protected void UpdateUndoCommand(Command command)
     {
         command.Enabled = UndoRedoManager.CanUndo;
-        Logger.LogInformationEx($"Called. UndoCommand.Enabled = {command.Enabled}");
     }
 
     [GenerateCommandUpdateDispatcher<RedoCommandDefinition>]

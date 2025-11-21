@@ -43,16 +43,16 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     private void RefreshToolboxItems(IShell shell)
     {
         _items.Clear();
-
-        if (shell.ActiveDocument == null)
-            return;
-
-        _items.AddRange(_toolboxService.GetToolboxItems(shell.ActiveDocument.GetType())
-            .Select(x => new ToolboxItemViewModel(x)));
-
         _groupedItems.Clear();
-        _groupedItems.AddRange(_items.GroupBy(x => x.Category)
-            .Select(x => new ToolboxItemGroupViewModel(x.ToArray(), x.Key)));
+        _filteredItems.Clear();
+
+        if (shell.ActiveDocument is not null)
+        {
+            _items.AddRange(_toolboxService.GetToolboxItems(shell.ActiveDocument.GetType())
+                .Select(x => new ToolboxItemViewModel(x)));
+            _groupedItems.AddRange(_items.GroupBy(x => x.Category)
+                .Select(x => new ToolboxItemGroupViewModel(x.ToArray(), x.Key)));
+        }
 
         OnPropertyChanged(nameof(Items));
     }

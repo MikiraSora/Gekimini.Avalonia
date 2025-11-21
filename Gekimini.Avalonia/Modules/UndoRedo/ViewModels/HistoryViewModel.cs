@@ -85,12 +85,10 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
     {
         HistoryItems.Clear();
         HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
-        
-        if (UndoRedoManager is null)
-        {
+
+        if (UndoRedoManager is not null)
             foreach (var vm in UndoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))
                 HistoryItems.Add(vm);
-        }
 
         RefreshItemTypes();
     }
@@ -133,7 +131,6 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
         {
             HistoryItems[0].ItemType = UndoRedoManager.CanUndo ? HistoryItemType.InitialState : HistoryItemType.Current;
 
-            var idx = 0;
             for (var i = 1; i <= UndoRedoManager.ActionStack.Count; i++)
             {
                 var delta = UndoRedoManager.UndoActionCount - i;

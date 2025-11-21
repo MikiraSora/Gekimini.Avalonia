@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dock.Model;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
@@ -138,33 +137,16 @@ public class ShellDockFactory : Factory, IFactory
 
     private IDock FindOrCreateToolDock(DockMode dock)
     {
-        int CalculateRank(IDock dd)
-        {
-            if (dd is IToolDock && dd.Dock == dock)
-                return 3;
-
-            if (dd is IToolDock)
-                return 2;
-
-            if (dd.Dock == dock)
-                return 1;
-
-            return 0;
-        }
-
         var toolDock =
             Find(x => x is IDock)
                 .OfType<IDock>()
-                .Select(x =>
+                .Select(x => new
                 {
-                    return new
-                    {
-                        Rank = CalculateRank(x),
-                        Dock = x
-                    };
+                    Rank = CalculateRank(x),
+                    Dock = x
                 })
                 .OrderByDescending(x => x.Rank)
-                .FirstOrDefault()
+                .FirstOrDefault()?
                 .Dock;
 
         if (toolDock is null)
@@ -178,37 +160,30 @@ public class ShellDockFactory : Factory, IFactory
         }
 
         return toolDock;
+
+        int CalculateRank(IDock dd)
+        {
+            return dd switch
+            {
+                IToolDock when dd.Dock == dock => 3,
+                IToolDock => 2,
+                _ => dd.Dock == dock ? 1 : 0
+            };
+        }
     }
 
     private IDock FindOrCreateDocumentDock(DockMode dock)
     {
-        int CalculateRank(IDock dd)
-        {
-            if (dd is IDocumentDock && dd.Dock == dock)
-                return 3;
-
-            if (dd is IDocumentDock)
-                return 2;
-
-            if (dd.Dock == dock)
-                return 1;
-
-            return 0;
-        }
-
         var documentDock =
             Find(x => x is IDock)
                 .OfType<IDock>()
-                .Select(x =>
+                .Select(x => new
                 {
-                    return new
-                    {
-                        Rank = CalculateRank(x),
-                        Dock = x
-                    };
+                    Rank = CalculateRank(x),
+                    Dock = x
                 })
                 .OrderByDescending(x => x.Rank)
-                .FirstOrDefault()
+                .FirstOrDefault()?
                 .Dock;
 
         if (documentDock is null)
@@ -222,6 +197,20 @@ public class ShellDockFactory : Factory, IFactory
         }
 
         return documentDock;
+
+        int CalculateRank(IDock dd)
+        {
+            if (dd is IDocumentDock && dd.Dock == dock)
+                return 3;
+
+            if (dd is IDocumentDock)
+                return 2;
+
+            if (dd.Dock == dock)
+                return 1;
+
+            return 0;
+        }
     }
 
     public void AddDocument(IDocument dockable)
@@ -231,8 +220,17 @@ public class ShellDockFactory : Factory, IFactory
         AddDockable(documentDock, dockable);
         //documentDock.AddDocument(dockable);
 
-        documentDock.ActiveDockable = dockable;
-        documentDock.FocusedDockable = dockable;
+        //documentDock.ActiveDockable = dockable;
+        //documentDock.FocusedDockable = dockable;
+
+        ActiveAndFocus(dockable);
+    }
+
+    public void ActiveAndFocus(IDockable dockable)
+    {
+        SetActiveDockable(dockable);
+        if (dockable.Owner is IDock dock)
+            SetFocusedDockable(dock, dockable);
     }
 
     public void AddTool(ITool dockable)
@@ -243,8 +241,9 @@ public class ShellDockFactory : Factory, IFactory
 
         AddDockable(toolDock, dockable);
 
-        toolDock.ActiveDockable = dockable;
-        toolDock.FocusedDockable = dockable;
+        ActiveAndFocus(dockable);
+        //toolDock.ActiveDockable = dockable;
+        //toolDock.FocusedDockable = dockable;
     }
 
     public void RemoveTool(ITool dockable)

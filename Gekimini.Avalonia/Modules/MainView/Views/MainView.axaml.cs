@@ -24,19 +24,22 @@ public partial class MainView : ViewBase
 
     private void InputElement_Resize(object sender, PointerPressedEventArgs e)
     {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            control = (sender as Control).FindAncestorOfType<ContentPresenter>();
-            _resizing = true;
-            _dragStart = e.GetPosition(null);
-            _startSize = control.Bounds.Size;
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            return;
 
-            PointerMoved += ResizeMove;
-            PointerReleased += StopResizing;
-        }
+        control = (sender as Control).FindAncestorOfType<ContentPresenter>();
+        if (control is null)
+            return;
+
+        _resizing = true;
+        _dragStart = e.GetPosition(null);
+        _startSize = control.Bounds.Size;
+
+        PointerMoved += ResizeMove;
+        PointerReleased += StopResizing;
     }
 
-    private void ResizeMove(object? sender, PointerEventArgs e)
+    private void ResizeMove(object sender, PointerEventArgs e)
     {
         if (!_resizing) return;
 
@@ -47,7 +50,7 @@ public partial class MainView : ViewBase
         control.Height = Math.Max(100, _startSize.Height + delta.Y);
     }
 
-    private void StopResizing(object? sender, PointerReleasedEventArgs e)
+    private void StopResizing(object sender, PointerReleasedEventArgs e)
     {
         _resizing = false;
         PointerMoved -= ResizeMove;
@@ -56,19 +59,22 @@ public partial class MainView : ViewBase
 
     private void InputElement_Drag(object sender, PointerPressedEventArgs e)
     {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            control = (sender as Control).FindAncestorOfType<ContentPresenter>();
-            _dragging = true;
-            _dragStart = e.GetPosition(null);
-            _startPosition = new Point(Canvas.GetLeft(control), Canvas.GetTop(control));
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            return;
+        
+        control = (sender as Control).FindAncestorOfType<ContentPresenter>();
+        if (control is null)
+            return;
+        
+        _dragging = true;
+        _dragStart = e.GetPosition(null);
+        _startPosition = new Point(Canvas.GetLeft(control), Canvas.GetTop(control));
 
-            PointerMoved += DragMove;
-            PointerReleased += StopDragging;
-        }
+        PointerMoved += DragMove;
+        PointerReleased += StopDragging;
     }
 
-    private void DragMove(object? sender, PointerEventArgs e)
+    private void DragMove(object sender, PointerEventArgs e)
     {
         if (!_dragging) return;
 
@@ -79,7 +85,7 @@ public partial class MainView : ViewBase
         Canvas.SetTop(control, _startPosition.Y + delta.Y);
     }
 
-    private void StopDragging(object? sender, PointerReleasedEventArgs e)
+    private void StopDragging(object sender, PointerReleasedEventArgs e)
     {
         _dragging = false;
         PointerMoved -= DragMove;

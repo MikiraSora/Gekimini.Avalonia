@@ -13,7 +13,7 @@ public static class ItemsControlUtility
         var itemsCount = itemsControl.Items.Count;
         for (var i = 0; i < itemsCount; i++)
         {
-            var container = itemsControl.ItemContainerGenerator.ContainerFromIndex(i);
+            var container = itemsControl.ContainerFromIndex(i);
             switch (container)
             {
                 case Separator newSeparator:

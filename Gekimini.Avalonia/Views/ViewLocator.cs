@@ -32,9 +32,9 @@ public class ViewLocator : IDataTemplate
             return null;
         }
 
-        logger.LogDebugEx($"viewModel fullName: {viewModel.GetType().FullName}");
+        //logger.LogDebugEx($"viewModel fullName: {viewModel.GetType().FullName}");
         var viewTypeName = GetViewTypeName(viewModel.GetType());
-        logger.LogDebugEx($"viewTypeName: {viewTypeName}");
+        //logger.LogDebugEx($"viewTypeName: {viewTypeName}");
 
         //create new view
         var view = CreateView(viewTypeName);
