@@ -7,9 +7,9 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.InternalTest.ToolboxItems;
 
 [RegisterSingleton<ToolboxItem>]
-public class MultiItem : ToolboxItem<InternalTestDocumentViewModel>
+public class MultiplyItem : ToolboxItem<InternalTestDocumentViewModel>
 {
     public override string Category => "High";
-    public override string Name => "Multi Item";
+    public override string Name => "Multiply Item";
     public override Uri IconSource => default;
 }

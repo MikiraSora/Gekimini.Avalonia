@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox Name="SearchBox">
+        <TextBox Name="SearchBox" Margin="2,5">
             <Interaction.Behaviors>
                 <EventTrigger EventName="TextChanged">
                     <InvokeCommandAction Command="{Binding SearchCommand}" CommandParameter="{Binding #SearchBox.Text}" />
@@ -32,11 +32,16 @@
             ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                    <Expander IsExpanded="True"
+                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                              Padding="0"
                               Header="{Binding Name}">
                         <ListBox ItemsSource="{Binding Models}">
                             <ListBox.Styles>
                                 <Style Selector="ListBoxItem">
+                                    <Setter Property="Height" Value="42" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="0" />
                                     <Setter Property="Interaction.Behaviors">
                                         <BehaviorCollectionTemplate>
                                             <BehaviorCollection>
@@ -52,6 +57,7 @@
                                         <Image Width="16" Margin="0,0,5,0"
                                                Source="{Binding IconSource, Converter={x:Static valueConverters:UriToBitmapConverter.Instance}}" />
                                         <TextBlock Grid.Column="1"
+                                                   VerticalAlignment="Center"
                                                    Padding="2"
                                                    Text="{Binding Name}" />
                                     </Grid>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.Input;
@@ -22,6 +23,7 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     private readonly ObservableCollection<ToolboxItemViewModel> _items = new();
 
     private readonly IToolboxService _toolboxService;
+    private Type prevType;
 
     public ToolboxViewModel(IShell shell, IToolboxService toolboxService)
     {
@@ -42,6 +44,11 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
 
     private void RefreshToolboxItems(IShell shell)
     {
+        var curType = shell.ActiveDocument?.GetType();
+        if (curType == prevType)
+            return;
+        prevType = curType;
+
         _items.Clear();
         _groupedItems.Clear();
         _filteredItems.Clear();
@@ -61,14 +68,13 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     private void Search(string searchTerm)
     {
         var filters = new List<ToolboxItemViewModel>();
-        if (!string.IsNullOrWhiteSpace(searchTerm) && searchTerm.Length >= 2)
-            foreach (var item in _items.Where(x =>
-                         x.Name.ToUpper().Contains(searchTerm.ToUpper()) ||
-                         x.Name.ToUpper().Equals(searchTerm.ToUpper())))
-                filters.Add(item);
+        if (searchTerm is {Length: >= 2})
+            filters.AddRange(_items.Where(x =>
+                x.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
 
         _filteredItems.Clear();
-        _filteredItems.AddRange(_items.GroupBy(x => x.Category)
+        _filteredItems.AddRange(filters.GroupBy(x => x.Category)
             .Select(x => new ToolboxItemGroupViewModel(x.ToArray(), x.Key + " (Filtered)")));
 
         OnPropertyChanged(nameof(Items));

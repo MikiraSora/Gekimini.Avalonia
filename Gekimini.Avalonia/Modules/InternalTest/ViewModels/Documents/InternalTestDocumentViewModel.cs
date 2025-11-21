@@ -16,9 +16,11 @@ using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Framework.DragDrops;
 using Gekimini.Avalonia.Framework.RecentFiles;
 using Gekimini.Avalonia.Modules.InternalTest.Models;
+using Gekimini.Avalonia.Modules.InternalTest.ToolboxItems;
 using Gekimini.Avalonia.Modules.InternalTest.ViewModels.Tools;
 using Gekimini.Avalonia.Modules.InternalTest.ViewModels.Windows;
 using Gekimini.Avalonia.Modules.Shell;
+using Gekimini.Avalonia.Modules.Toolbox.ViewModels;
 using Gekimini.Avalonia.Platforms.Services.Window;
 using Gekimini.Avalonia.Utils;
 using Gekimini.Avalonia.Utils.MethodExtensions;
@@ -159,7 +161,11 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         }
 
         await using var fs = await storageFile.OpenWriteAsync();
-        await JsonSerializer.SerializeAsync(fs, new InternalTestValueStoreData {StoredValue = Value},
+        await JsonSerializer.SerializeAsync(fs, new InternalTestValueStoreData
+            {
+                StoredValue = Value,
+                DocumentName = storageFile.Name
+            },
             InternalTestValueStoreData.JsonTypeInfo);
 
         await DialogManager.ShowMessageDialog("Saved document file successfully!");
@@ -200,6 +206,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         Value = recentData.StoredValue;
         IsNew = false;
         IsDirty = false;
+        FileName = recentData.DocumentName;
 
         //if storageFile can get a bookmark that's mean we could post a recent to reuse storageFile(and its permissions) in feature.
         if (storageFile is not null && storageFile.CanBookmark)
@@ -277,9 +284,35 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     {
         if (DragDropManager.TryGetDragData(e, out var data))
         {
-            Logger.LogDebugEx($"toolboxitem: {data}");
+            if (data is ToolboxItemViewModel toolboxItemViewModel)
+            {
+                Logger.LogDebugEx($"toolboxItemViewModel.Model: {toolboxItemViewModel.Model}");
+
+                switch (toolboxItemViewModel.Model)
+                {
+                    case AddItem:
+                        Increment();
+                        break;
+                    case SubItem:
+                        Decrement();
+                        break;
+                    case MultiplyItem:
+                        Multiply();
+                        break;
+                }
+            }
+
+            //finish dragdrop
             DragDropManager.EndDragDropEvent(e);
         }
+    }
+
+    private void Multiply()
+    {
+        var beforeValue = Value;
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create("Multiply Value",
+            () => Value *= Value,
+            () => Value = beforeValue));
     }
 
     [RelayCommand]

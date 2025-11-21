@@ -7,6 +7,7 @@ public class InternalTestValueStoreData
 {
     public static JsonTypeInfo<InternalTestValueStoreData> JsonTypeInfo =>
         JsonSourceGenerateContext.Default.InternalTestValueStoreData;
-    
-    public int StoredValue { get; set; } 
+
+    public int StoredValue { get; set; }
+    public string DocumentName { get; set; }
 }
