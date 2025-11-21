@@ -66,7 +66,7 @@ public class ToolBarBuilder : IToolBarBuilder
 
             foreach (var toolBarItem in toolBarItems)
                 result.Add(new CommandToolBarItemViewModel(toolBarItem,
-                    _commandService.GetCommand(toolBarItem.CommandDefinition), result));
+                    _commandService.GetCommand(toolBarItem.CommandDefinition)));
         }
     }
 }

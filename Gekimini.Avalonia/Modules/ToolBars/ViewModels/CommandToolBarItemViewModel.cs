@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Input;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.ToolBars;
-using Gekimini.Avalonia.Modules.ToolBars.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.ToolBars.ViewModels;
@@ -12,20 +12,15 @@ namespace Gekimini.Avalonia.Modules.ToolBars.ViewModels;
 public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiItem
 {
     private readonly Command _command;
-    private readonly IToolBar _parent;
     private readonly ToolBarItemDefinition _toolBarItem;
-    private KeyGesture _keyGesture;
 
-    public CommandToolBarItemViewModel(ToolBarItemDefinition toolBarItem, Command command, IToolBar parent)
+    public CommandToolBarItemViewModel(ToolBarItemDefinition toolBarItem, Command command)
     {
         _toolBarItem = toolBarItem;
         _command = command;
-        _parent = parent;
-
-        command.PropertyChanged += OnCommandPropertyChanged;
     }
 
-    public KeyGesture KeyGesture => _keyGesture ??= (App.Current as App)?.ServiceProvider
+    public KeyGesture KeyGesture => field ??= (App.Current as App)?.ServiceProvider
         .GetService<ICommandKeyGestureService>().GetPrimaryKeyGesture(_command.CommandDefinition);
 
     public string Text => TrimMnemonics(_command.Text);
@@ -59,7 +54,20 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
 
     void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
-        // TODO
+        // TODO?
+        commandHandler.Update(_command);
+    }
+
+    public override void OnViewAfterLoaded(Control view)
+    {
+        base.OnViewAfterLoaded(view);
+        _command.PropertyChanged += OnCommandPropertyChanged;
+    }
+
+    public override void OnViewBeforeUnload(Control view)
+    {
+        base.OnViewBeforeUnload(view);
+        _command.PropertyChanged -= OnCommandPropertyChanged;
     }
 
     private void OnCommandPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -83,6 +91,8 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
                 OnPropertyChanged(nameof(Visibility));
                 break;
         }
+
+        base.OnPropertyChanged(e);
     }
 
     /// <summary>

@@ -11,13 +11,26 @@
     <Design.DataContext>
         <viewModels:CommandToolBarItemViewModel />
     </Design.DataContext>
-    <ToggleButton Background="Transparent" ToolTip.Tip="{Binding ToolTip}"
-                  IsVisible="{Binding Visibility, Mode=OneWay}"
-                  ToolTip.ServiceEnabled="{Binding HasToolTip}"
-                  IsChecked="{Binding IsChecked, Mode=OneWay}"
-                  Command="{Binding Command}"
-                  CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
-        <ToggleButton.Content>
+    <Button
+        x:Name="button"
+        ToolTip.Tip="{Binding ToolTip}"
+        ToolTip.ServiceEnabled="{Binding HasToolTip}"
+        IsVisible="{Binding Visibility}"
+        Command="{Binding Command}"
+        CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+        <Interaction.Behaviors>
+            <DataTriggerBehavior Binding="{Binding IsChecked}" Value="True">
+                <ChangeAvaloniaPropertyAction TargetObject="button"
+                                              TargetProperty="{x:Static TemplatedControl.BackgroundProperty}"
+                                              Value="{DynamicResource ToggleButtonBackgroundChecked}" />
+            </DataTriggerBehavior>
+            <DataTriggerBehavior Binding="{Binding IsChecked}" Value="False">
+                <ChangeAvaloniaPropertyAction TargetObject="button"
+                                              TargetProperty="{x:Static TemplatedControl.BackgroundProperty}"
+                                              Value="Transparent" />
+            </DataTriggerBehavior>
+        </Interaction.Behaviors>
+        <Button.Content>
             <Image Width="16" Height="16" Stretch="Fill"
                    Source="{Binding IconSource,Converter={x:Static valueConverters:UriToBitmapConverter.Instance}}">
                 <Image.Styles>
@@ -26,6 +39,6 @@
                     </Style>
                 </Image.Styles>
             </Image>
-        </ToggleButton.Content>
-    </ToggleButton>
+        </Button.Content>
+    </Button>
 </views:ViewBase>
