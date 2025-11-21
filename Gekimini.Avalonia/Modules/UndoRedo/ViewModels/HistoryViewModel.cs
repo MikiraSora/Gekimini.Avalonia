@@ -84,9 +84,10 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
     private void ResetItems()
     {
         HistoryItems.Clear();
+        HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
+        
         if (UndoRedoManager is null)
         {
-            HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
             foreach (var vm in UndoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))
                 HistoryItems.Add(vm);
         }
