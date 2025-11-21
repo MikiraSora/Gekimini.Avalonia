@@ -17,7 +17,6 @@ namespace Gekimini.Avalonia.Modules.UndoRedo.ViewModels;
 public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
 {
     private int _selectedIndex;
-    private IUndoRedoManager _undoRedoManager;
 
     public HistoryViewModel(IShell shell)
     {
@@ -52,24 +51,24 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
 
     public IUndoRedoManager UndoRedoManager
     {
-        get => _undoRedoManager;
+        get => field;
         set
         {
-            if (_undoRedoManager == value)
+            if (field == value)
                 return;
 
-            if (_undoRedoManager != null)
+            if (field != null)
             {
-                _undoRedoManager.ActionStack.CollectionChanged -= OnUndoRedoManagerActionStackChanged;
-                _undoRedoManager.PropertyChanged -= OnUndoRedoManagerPropertyChanged;
+                field.ActionStack.CollectionChanged -= OnUndoRedoManagerActionStackChanged;
+                field.PropertyChanged -= OnUndoRedoManagerPropertyChanged;
             }
 
-            _undoRedoManager = value;
+            field = value;
 
-            if (_undoRedoManager != null)
+            if (field != null)
             {
-                _undoRedoManager.ActionStack.CollectionChanged += OnUndoRedoManagerActionStackChanged;
-                _undoRedoManager.PropertyChanged += OnUndoRedoManagerPropertyChanged;
+                field.ActionStack.CollectionChanged += OnUndoRedoManagerActionStackChanged;
+                field.PropertyChanged += OnUndoRedoManagerPropertyChanged;
             }
 
             ResetItems();
@@ -86,10 +85,12 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
     {
         HistoryItems.Clear();
         if (UndoRedoManager is null)
-            return;
-        HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
-        foreach (var vm in UndoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))
-            HistoryItems.Add(vm);
+        {
+            HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
+            foreach (var vm in UndoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))
+                HistoryItems.Add(vm);
+        }
+
         RefreshItemTypes();
     }
 
@@ -150,7 +151,7 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
         OnPropertyChanged(nameof(SelectedIndex));
     }
 
-    public void UndoOrRedoTo(HistoryItemViewModel item, bool setSelectedIndex)
+    private void UndoOrRedoTo(HistoryItemViewModel item, bool setSelectedIndex)
     {
         switch (item.ItemType)
         {
