@@ -1,29 +1,24 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia.Interactivity;
-using Gekimini.Avalonia.Assets.Languages;
+using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
-public class NewFileCommandHandler : ICommandListHandler<NewFileCommandListDefinition>
+public partial class NewFileCommandHandler : ICommandListHandler<NewFileCommandListDefinition>
 {
-    private readonly IServiceProvider _serviceProvider;
-    private int _newFileCounter = 1;
+    [GetServiceLazy]
+    private partial IShell Shell { get; }
 
-    public NewFileCommandHandler(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    [GetServiceLazy]
+    private partial IEnumerable<IEditorProvider> EditorProviders { get; }
 
     public void Populate(Command command, List<Command> commands)
     {
-        foreach (var editorProvider in _serviceProvider.GetServices<IEditorProvider>())
+        foreach (var editorProvider in EditorProviders)
         {
             if (!editorProvider.CanCreateNew)
                 continue;
@@ -44,28 +39,16 @@ public class NewFileCommandHandler : ICommandListHandler<NewFileCommandListDefin
 
     public void Update(Command command)
     {
-        
     }
 
     public async Task Run(Command command)
     {
         var tag = (NewFileTag) command.Tag;
         var editor = tag.EditorProvider.Create();
-
-        var viewAware = editor;
-        viewAware.ViewAfterLoaded += frameworkElement =>
-        {
-            EventHandler<RoutedEventArgs> loadedHandler = null;
-            loadedHandler = async (sender2, e2) =>
-            {
-                frameworkElement.Loaded -= loadedHandler;
-                await tag.EditorProvider.New(editor,
-                    string.Format(Resources.FileNewUntitled, _newFileCounter++ + tag.FileType.FileExtension));
-            };
-            frameworkElement.Loaded += loadedHandler;
-        };
-
-        await _serviceProvider.GetService<IShell>().OpenDocumentAsync(editor);
+        
+        var shouldShow = await tag.EditorProvider.TryNew(editor);
+        if (shouldShow)
+            await Shell.OpenDocumentAsync(editor);
     }
 
     public class NewFileTag

@@ -6,6 +6,8 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Framework.Themes;
 using Gekimini.Avalonia.Models.GlobalEvents;
 using Gekimini.Avalonia.Modules.MainView;
 using Gekimini.Avalonia.Utils.MethodExtensions;
@@ -40,6 +42,9 @@ public abstract class App : Application
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
 
+        ServiceProvider.GetService<IThemeManager>().Initalize();
+        ServiceProvider.GetService<ILanguageManager>().Initalize();
+
         var viewLocator = ServiceProvider.GetService<ViewLocator>();
         DataTemplates.Add(viewLocator);
 
@@ -64,7 +69,7 @@ public abstract class App : Application
 
     protected virtual void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
     {
-        CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default.Send(new ApplicationQuitEvent());
+        WeakReferenceMessenger.Default.Send(new ApplicationQuitEvent());
     }
 
     protected virtual void RegisterServices(IServiceCollection serviceCollection)
@@ -81,7 +86,7 @@ public abstract class App : Application
         serviceCollection.AddTypeCollectedActivator(ViewTypeCollectedActivator.Default);
 
         serviceCollection.AddTypeCollectedActivator(ToolViewModelTypeCollectedActivator.Default);
-        
+
         serviceCollection.AddGekiminiAvalonia();
     }
 

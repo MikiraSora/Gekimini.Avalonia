@@ -23,7 +23,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TreeView x:Name="TreeView" ItemsSource="{Binding Pages}" SelectionMode="AlwaysSelected">
+        <TreeView x:Name="treeView" ItemsSource="{Binding Pages}"
+                  SelectionMode="AlwaysSelected">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Name}" />
@@ -40,7 +41,7 @@
             <ScrollViewer IsTabStop="False" Grid.Row="0" VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl IsTabStop="False" HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding #TreeView.SelectedItem}"
+                              ItemsSource="{Binding #treeView.SelectedItem.Editors}"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               BorderBrush="{x:Null}">

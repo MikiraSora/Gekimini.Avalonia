@@ -12,4 +12,5 @@ public interface ILanguageManager
     public string GetCurrentLanguage();
     INotifyPropertyChanged GetTranslationSource(Func<string, CultureInfo, string> callback);
     INotifyPropertyChanged GetTranslationSource(string resKey);
+    void Initalize();
 }

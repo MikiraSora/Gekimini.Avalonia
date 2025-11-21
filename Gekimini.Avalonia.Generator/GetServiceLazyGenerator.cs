@@ -37,15 +37,29 @@ public class GetServiceLazyGenerator : IIncrementalGenerator
             var ns = classSymbol.ContainingNamespace.ToDisplayString();
             var propName = propSymbol.Name;
             var propType = propSymbol.Type.ToDisplayString();
+            var propAccess = propSymbol.DeclaredAccessibility switch
+            {
+                Accessibility.Public => "public",
+                Accessibility.Internal => "internal",
+                Accessibility.Protected => "protected",
+                _ => "private"
+            };
+            var classAccess = classSymbol.DeclaredAccessibility switch
+            {
+                Accessibility.Public => "public",
+                Accessibility.Internal => "internal",
+                Accessibility.Protected => "protected",
+                _ => "private"
+            };
 
             spc.AddSource($"{className}_{propName}_GetServiceLazy.g.cs", $@"
             using Microsoft.Extensions.DependencyInjection;
 
             namespace {ns}
             {{
-                public partial class {className}
+                {classAccess} partial class {className}
                 {{
-                    public partial {propType} {propName} 
+                    {propAccess} partial {propType} {propName} 
                         => field ??= (App.Current as App)?.ServiceProvider.GetService<{propType}>();
                 }}
             }}

@@ -1,16 +1,22 @@
 <Application xmlns="https://github.com/avaloniaui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 x:Class="Gekimini.Avalonia.App"
-			 xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
-			 xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
-			 RequestedThemeVariant="Default">
-	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Gekimini.Avalonia.App"
+             xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
+             xmlns:controls="clr-namespace:Avalonia.Controls.ToolBar.Controls;assembly=Avalonia.Controls.ToolBar"
+             RequestedThemeVariant="Default">
 
-	<Application.Styles>
-		<FluentTheme />
-		<dialogHostAvalonia:DialogHostStyles />
-		<DockFluentTheme />
-		<status:StatusBarTheme/>
-		<StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
-	</Application.Styles>
+    <Application.Styles>
+        <dialogHostAvalonia:DialogHostStyles />
+        <DockFluentTheme />
+        <status:StatusBarTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
+    </Application.Styles>
+
+    <Application.Resources>
+        <!--容器背景色(比如window控件背景色)-->
+        <SolidColorBrush x:Key="ContainerBackgroundBrush" Color="{DynamicResource SystemRegionColor}" />
+        <!--容器标题字体色-->
+        <SolidColorBrush x:Key="ContainerTitleForegroundBrush" Color="{DynamicResource SystemAltHighColor}" />
+    </Application.Resources>
 </Application>

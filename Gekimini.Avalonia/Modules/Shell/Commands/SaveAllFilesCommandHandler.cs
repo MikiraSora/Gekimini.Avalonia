@@ -25,7 +25,7 @@ public class SaveAllFilesCommandHandler : CommandHandlerBase<SaveAllFilesCommand
         var tasks = new List<Task<Tuple<IPersistedDocumentViewModel, bool>>>();
 
         foreach (var document in shell.Documents.OfType<IPersistedDocumentViewModel>().Where(x => !x.IsNew))
-            await document.Save(document.FilePath);
+            await document.Save();
 
         // TODO: display "Item(s) saved" in statusbar
     }

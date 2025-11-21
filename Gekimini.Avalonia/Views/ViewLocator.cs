@@ -44,7 +44,7 @@ public class ViewLocator : IDataTemplate
 #if !DEBUG
             throw new Exception(msg);
 #else
-				return new TextBlock { Text = msg };
+            return new TextBlock {Text = msg};
 #endif
         }
 
@@ -115,7 +115,8 @@ public class ViewLocator : IDataTemplate
     {
         var topLevel = serviceProvider.GetService<App>().TopLevel;
 
-        if (topLevel?.GetVisualDescendants().FirstOrDefault(x => x.DataContext == activeItemViewModel) is IView result)
+        if (topLevel?.GetVisualDescendants().Where(x => x.DataContext == activeItemViewModel).OfType<IView>()
+                .FirstOrDefault() is { } result)
             return result;
         return default;
     }

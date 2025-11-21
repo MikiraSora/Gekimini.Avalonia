@@ -5,38 +5,44 @@ using System.Globalization;
 using System.Resources;
 using System.Threading;
 using Gekimini.Avalonia.Assets.Languages;
+using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Injectio.Attributes;
+using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Framework.Languages.DefaultImpl;
 
 [RegisterSingleton<ILanguageManager>]
-internal class DefaultLanguageManager : ILanguageManager
+public partial class DefaultLanguageManager : ILanguageManager
 {
     private readonly Dictionary<int, TranslationSource> cachedSources = new();
-    private readonly ISettingManager settingManager;
-    private readonly GekiminiSetting settings;
     private List<string> cachedAvaliableLanguages;
 
-    public DefaultLanguageManager(ISettingManager settingManager)
-    {
-        this.settingManager = settingManager;
-        settings = settingManager?.GetSetting(GekiminiSetting.JsonTypeInfo);
-    }
+    private string currentLanguage;
+
+    [GetServiceLazy]
+    public partial ISettingManager SettingManager { get; }
+
+    [GetServiceLazy]
+    public partial ILogger<DefaultLanguageManager> Logger { get; }
 
     public IEnumerable<string> GetAvaliableLanguageNames()
     {
-        if (cachedAvaliableLanguages is null)
-            cachedAvaliableLanguages = new List<string>();
+        if (cachedAvaliableLanguages is not null)
+            return cachedAvaliableLanguages;
+        cachedAvaliableLanguages = new List<string>();
         var rm = new ResourceManager(typeof(Resources));
 
         var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
         foreach (var culture in cultures)
         {
             var rs = rm.GetResourceSet(culture, true, false);
-            if (rs != null)
-                cachedAvaliableLanguages.Add(culture.Name);
+            if (rs == null)
+                continue;
+
+            cachedAvaliableLanguages.Add(string.IsNullOrWhiteSpace(culture.Name) ? "Default" : culture.Name);
+            Logger.LogInformationEx($"available language found: {culture.Name}");
         }
 
         return cachedAvaliableLanguages;
@@ -44,7 +50,7 @@ internal class DefaultLanguageManager : ILanguageManager
 
     public string GetCurrentLanguage()
     {
-        return settings.LanguageCode;
+        return currentLanguage;
     }
 
     public INotifyPropertyChanged GetTranslationSource(Func<string, CultureInfo, string> callback)
@@ -65,23 +71,31 @@ internal class DefaultLanguageManager : ILanguageManager
         return source;
     }
 
+    public void Initalize()
+    {
+        SetLanguage(SettingManager.GetSetting(GekiminiSetting.JsonTypeInfo).LanguageCode);
+    }
+
     public void SetLanguage(string languageName)
     {
-        var culture = string.IsNullOrWhiteSpace(languageName)
+        var isDefaultRequest = string.IsNullOrWhiteSpace(languageName) ||
+                               languageName.Equals("Default", StringComparison.OrdinalIgnoreCase);
+        var culture = isDefaultRequest
             ? CultureInfo.InvariantCulture
             : CultureInfo.GetCultureInfo(languageName);
-        var uiCulture = string.IsNullOrWhiteSpace(languageName)
+        var uiCulture = isDefaultRequest
             ? CultureInfo.InvariantCulture
             : CultureInfo.GetCultureInfo(languageName);
 
         Thread.CurrentThread.CurrentUICulture = culture;
         Thread.CurrentThread.CurrentCulture = uiCulture;
 
-        settings.LanguageCode = languageName;
-        settingManager.SaveSetting(settings, GekiminiSetting.JsonTypeInfo);
-
         foreach (var source in cachedSources.Values)
             source.Refresh();
+
+        currentLanguage = isDefaultRequest ? "Default" : languageName;
+
+        Logger.LogInformationEx($"set current language {languageName}, cultureInfo:{culture.Name}");
     }
 
     private string GetTranslatedText(string resKey, CultureInfo culture)

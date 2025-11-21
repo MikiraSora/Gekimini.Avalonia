@@ -7,11 +7,18 @@
                 xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                 x:DataType="viewModels:StatusBarViewModel"
-                Background="Chartreuse"
                 x:Class="Gekimini.Avalonia.Modules.StatusBar.Views.StatusBarView">
     <Design.DataContext>
         <viewModels:StatusBarViewModel />
     </Design.DataContext>
 
-    <status:StatusBarContainer x:Name="statusBarContainer" />
+
+    <status:StatusBarContainer x:Name="statusBarContainer">
+        <status:StatusBarContainer.Styles>
+            <Style
+                Selector="status|StatusBarContainer>Border">
+                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+            </Style>
+        </status:StatusBarContainer.Styles>
+    </status:StatusBarContainer>
 </views:ViewBase>

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Gekimini.Avalonia.Views;
 
-namespace Gekimini.Avalonia.Modules.InternalTest.Views;
+namespace Gekimini.Avalonia.Modules.InternalTest.Views.Tools;
 
 public partial class InternalTestToolView : ViewBase
 {

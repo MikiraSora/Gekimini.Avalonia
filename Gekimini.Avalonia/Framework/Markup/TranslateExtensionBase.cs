@@ -20,7 +20,7 @@ public class TranslateExtensionBase
         var language = default(ILanguageManager);
 #if DEBUG
         if (DesignModeHelper.IsDesignMode)
-            language = new DefaultLanguageManager(default);
+            language = new DefaultLanguageManager();
 #endif
         language = language ?? (App.Current as App).ServiceProvider.GetService<ILanguageManager>();
         source = language.GetTranslationSource(callback);

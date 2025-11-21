@@ -27,10 +27,8 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
         if (shell == null)
             return;
 
-        shell.ActiveDocumentChanged += (sender, e) =>
-        {
-            UndoRedoManager = shell.ActiveDocument != null ? shell.ActiveDocument.UndoRedoManager : null;
-        };
+        shell.ActiveDocumentChanged += (sender, e) => { UndoRedoManager = shell.ActiveDocument?.UndoRedoManager; };
+
         if (shell.ActiveDocument != null)
             UndoRedoManager = shell.ActiveDocument.UndoRedoManager;
     }
@@ -72,9 +70,9 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
             {
                 _undoRedoManager.ActionStack.CollectionChanged += OnUndoRedoManagerActionStackChanged;
                 _undoRedoManager.PropertyChanged += OnUndoRedoManagerPropertyChanged;
-
-                ResetItems();
             }
+
+            ResetItems();
         }
     }
 
@@ -87,8 +85,10 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
     private void ResetItems()
     {
         HistoryItems.Clear();
+        if (UndoRedoManager is null)
+            return;
         HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
-        foreach (var vm in _undoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))
+        foreach (var vm in UndoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))
             HistoryItems.Add(vm);
         RefreshItemTypes();
     }
@@ -126,21 +126,24 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
 
     private void RefreshItemTypes()
     {
-        HistoryItems[0].ItemType = _undoRedoManager.CanUndo ? HistoryItemType.InitialState : HistoryItemType.Current;
         _selectedIndex = 0;
-        
-        var idx = 0;
-        for (var i = 1; i <= _undoRedoManager.ActionStack.Count; i++)
+        if (UndoRedoManager is not null)
         {
-            var delta = _undoRedoManager.UndoActionCount - i;
-            if (delta == 0)
+            HistoryItems[0].ItemType = UndoRedoManager.CanUndo ? HistoryItemType.InitialState : HistoryItemType.Current;
+
+            var idx = 0;
+            for (var i = 1; i <= UndoRedoManager.ActionStack.Count; i++)
             {
-                HistoryItems[i].ItemType = HistoryItemType.Current;
-                _selectedIndex = i;
-            }
-            else
-            {
-                HistoryItems[i].ItemType = delta > 0 ? HistoryItemType.Undo : HistoryItemType.Redo;
+                var delta = UndoRedoManager.UndoActionCount - i;
+                if (delta == 0)
+                {
+                    HistoryItems[i].ItemType = HistoryItemType.Current;
+                    _selectedIndex = i;
+                }
+                else
+                {
+                    HistoryItems[i].ItemType = delta > 0 ? HistoryItemType.Undo : HistoryItemType.Redo;
+                }
             }
         }
 
@@ -152,15 +155,15 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
         switch (item.ItemType)
         {
             case HistoryItemType.InitialState:
-                _undoRedoManager.UndoAll();
+                UndoRedoManager.UndoAll();
                 break;
             case HistoryItemType.Undo:
-                _undoRedoManager.UndoTo(item.Action);
+                UndoRedoManager.UndoTo(item.Action);
                 break;
             case HistoryItemType.Current:
                 break;
             case HistoryItemType.Redo:
-                _undoRedoManager.RedoTo(item.Action);
+                UndoRedoManager.RedoTo(item.Action);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

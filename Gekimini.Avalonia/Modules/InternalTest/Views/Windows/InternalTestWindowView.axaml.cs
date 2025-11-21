@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Gekimini.Avalonia.Modules.InternalTest.Views;
+namespace Gekimini.Avalonia.Modules.InternalTest.Views.Windows;
 
 public partial class InternalTestWindowView : UserControl
 {

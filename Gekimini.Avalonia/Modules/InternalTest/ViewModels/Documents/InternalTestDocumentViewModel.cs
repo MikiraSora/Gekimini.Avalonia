@@ -1,0 +1,298 @@
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Dock.Model.Core;
+using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Framework.Documents;
+using Gekimini.Avalonia.Framework.DragDrops;
+using Gekimini.Avalonia.Framework.RecentFiles;
+using Gekimini.Avalonia.Modules.InternalTest.Models;
+using Gekimini.Avalonia.Modules.InternalTest.ViewModels.Tools;
+using Gekimini.Avalonia.Modules.InternalTest.ViewModels.Windows;
+using Gekimini.Avalonia.Modules.Shell;
+using Gekimini.Avalonia.Platforms.Services.Window;
+using Gekimini.Avalonia.Utils;
+using Gekimini.Avalonia.Utils.MethodExtensions;
+using Microsoft.Extensions.Logging;
+
+namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels.Documents;
+
+public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPersistedDocumentViewModel
+{
+    private IStorageFile storageFile;
+
+    [GetServiceLazy]
+    private partial ILogger<InternalTestDocumentViewModel> Logger { get; }
+
+    [GetServiceLazy]
+    private partial IDragDropManager DragDropManager { get; }
+
+    [GetServiceLazy]
+    private partial IWindowManager WindowManager { get; }
+
+    [GetServiceLazy]
+    private partial IServiceProvider ServiceProvider { get; }
+
+    [GetServiceLazy]
+    private partial IEditorRecentFilesManager EditorRecentFilesManager { get; }
+
+    [GetServiceLazy]
+    private partial IShell Shell { get; }
+
+    [ObservableProperty]
+    public partial int Value { get; set; }
+
+    [ObservableProperty]
+    public partial string FileName { get; set; }
+
+    [ObservableProperty]
+    public partial string FilePath { get; set; }
+
+    [GetServiceLazy]
+    private partial IDialogManager DialogManager { get; }
+
+    [ObservableProperty]
+    public partial bool IsDirty { get; set; }
+
+    public override void OnViewAfterLoaded(Control view)
+    {
+        base.OnViewAfterLoaded(view);
+
+        DragDrop.SetAllowDrop(view, true);
+        DragDrop.AddDropHandler(view, OnDragDrop);
+    }
+
+    public override void OnViewBeforeUnload(Control view)
+    {
+        base.OnViewBeforeUnload(view);
+
+        DragDrop.RemoveDropHandler(view, OnDragDrop);
+        DragDrop.SetAllowDrop(view, false);
+    }
+
+    [ObservableProperty]
+    public partial bool IsNew { get; set; }
+
+    public Task<bool> New()
+    {
+        FileName = "new file";
+        IsNew = true;
+        IsDirty = true;
+
+        Value = 0;
+
+        return Task.FromResult(true);
+    }
+
+    public async Task<bool> Load()
+    {
+        storageFile = (await (App.Current as App).TopLevel.StorageProvider.OpenFilePickerAsync(
+            new FilePickerOpenOptions
+            {
+                Title = "Select a internal document file to load.",
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("Internal Document File")
+                    {
+                        Patterns = ["*.internal"]
+                    }
+                },
+                AllowMultiple = false
+            })).FirstOrDefault();
+
+        if (storageFile is null)
+            return false;
+
+        await using var fs = await storageFile.OpenReadAsync();
+        var recentData = await JsonSerializer.DeserializeAsync(fs, InternalTestValueStoreData.JsonTypeInfo);
+
+        return await DoLoad(recentData);
+    }
+
+    public async Task<bool> Load(RecentRecordInfo info)
+    {
+        //load from recent 
+        var bookmark = EditorRecentFilesManager.ReadDataAsString(info);
+        storageFile = await (App.Current as App).TopLevel.StorageProvider.OpenFileBookmarkAsync(bookmark);
+
+        if (storageFile is null)
+        {
+            await DialogManager.ShowMessageDialog(
+                "Can't load document file because recent data has been expired/invalid.", DialogMessageType.Error);
+            return false;
+        }
+
+        await using var fs = await storageFile.OpenReadAsync();
+        var recentData = await JsonSerializer.DeserializeAsync(fs, InternalTestValueStoreData.JsonTypeInfo);
+
+        return await DoLoad(recentData);
+    }
+
+    public async Task Save()
+    {
+        storageFile ??= await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
+            new FilePickerSaveOptions
+            {
+                DefaultExtension = ".internal",
+                FileTypeChoices = new[]
+                {
+                    new FilePickerFileType("Internal Document File")
+                    {
+                        Patterns = ["*.internal"]
+                    }
+                }
+            });
+
+        if (storageFile is null)
+        {
+            await DialogManager.ShowMessageDialog("Can't save document file.", DialogMessageType.Error);
+            return;
+        }
+
+        await using var fs = await storageFile.OpenWriteAsync();
+        await JsonSerializer.SerializeAsync(fs, new InternalTestValueStoreData {StoredValue = Value},
+            InternalTestValueStoreData.JsonTypeInfo);
+
+        await DialogManager.ShowMessageDialog("Saved document file successfully!");
+
+        FileName = storageFile.Name;
+        IsNew = false;
+        IsDirty = false;
+    }
+
+    public async Task SaveAs()
+    {
+        var newStorageFile = await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
+            new FilePickerSaveOptions
+            {
+                DefaultExtension = ".internal",
+                FileTypeChoices = new[]
+                {
+                    new FilePickerFileType("Internal Document File")
+                    {
+                        Patterns = ["*.internal"]
+                    }
+                }
+            });
+
+        if (newStorageFile is null)
+        {
+            Logger.LogInformationEx("newStorageFile is empty, skipped.");
+            return;
+        }
+
+        //overwrite current storage file.
+        storageFile = newStorageFile;
+        await Save();
+    }
+
+    private async Task<bool> DoLoad(InternalTestValueStoreData recentData)
+    {
+        Value = recentData.StoredValue;
+        IsNew = false;
+        IsDirty = false;
+
+        //if storageFile can get a bookmark that's mean we could post a recent to reuse storageFile(and its permissions) in feature.
+        if (storageFile is not null && storageFile.CanBookmark)
+        {
+            var bookmark = await storageFile.SaveBookmarkAsync();
+            //save recent
+            var recentInfo = EditorRecentFilesManager.PostRecent(
+                InternalDocumentEditorProvider.InternalDocumentEditorFileType, $"StoreValue:{Value}", bookmark);
+
+            EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
+        }
+
+        return true;
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(FileName):
+            case nameof(IsNew):
+            case nameof(IsDirty):
+                UpdateTitle();
+                break;
+            case nameof(Value):
+                IsDirty = true;
+                break;
+        }
+
+        base.OnPropertyChanged(e);
+    }
+
+    private void UpdateTitle()
+    {
+        var title = FileName;
+        if (IsNew)
+            title = "[New] " + title;
+        if (IsDirty)
+            title = "* " + title;
+
+        Title = title;
+    }
+
+    [RelayCommand]
+    private void Increment()
+    {
+        var beforeValue = Value;
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create("Increment Value",
+            () => Value++,
+            () => Value = beforeValue));
+    }
+
+    [RelayCommand]
+    private void Decrement()
+    {
+        var beforeValue = Value;
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create("Decrement Value",
+            () => Value--,
+            () => Value = beforeValue));
+    }
+
+    [RelayCommand]
+    private void Undo()
+    {
+        UndoRedoManager.Undo(1);
+    }
+
+    [RelayCommand]
+    private void Redo()
+    {
+        UndoRedoManager.Redo(1);
+    }
+
+    private void OnDragDrop(object sender, DragEventArgs e)
+    {
+        if (DragDropManager.TryGetDragData(e, out var data))
+        {
+            Logger.LogDebugEx($"toolboxitem: {data}");
+            DragDropManager.EndDragDropEvent(e);
+        }
+    }
+
+    [RelayCommand]
+    private void ShowNewWindow()
+    {
+        WindowManager.ShowDialogAsync(new InternalTestWindowViewModel());
+    }
+
+    [RelayCommand]
+    private void AddTool(string dockEnum)
+    {
+        var tool = ServiceProvider.Resolve<InternalTestToolViewModel>();
+        tool.Dock = Enum.Parse<DockMode>(dockEnum);
+        Shell.ShowTool(tool);
+    }
+}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
@@ -11,15 +12,12 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.MainMenu.ViewModels;
 
 [RegisterTransient<ISettingsEditor>]
-public class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
+public partial class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
 {
-    private readonly List<string> _availableLanguages = new();
     private readonly ILanguageManager _languageManager;
     private readonly ISettingManager _settingManager;
     private readonly IThemeManager _themeManager;
     private readonly GekiminiSetting settings;
-    private bool _autoHideMainMenu;
-    private string _selectedLanguage;
 
     public MainMenuSettingsViewModel(IThemeManager themeManager, ILanguageManager languageManager,
         ISettingManager settingManager)
@@ -30,36 +28,29 @@ public class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
 
         settings = _settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
         AutoHideMainMenu = settings.AutoHideMainMenu;
+        
+        SelectedColorTheme = _themeManager.CurrentColorTheme;
+        SelectedControlTheme = _themeManager.CurrentControlTheme;
 
         SelectedLanguage = _languageManager.GetCurrentLanguage();
-        _availableLanguages.AddRange(_languageManager.GetAvaliableLanguageNames());
     }
 
-    public IEnumerable<string> Languages => _availableLanguages;
+    public IEnumerable<string> Languages => _languageManager.GetAvaliableLanguageNames();
 
-    public string SelectedLanguage
-    {
-        get => _selectedLanguage;
-        set
-        {
-            if (value.Equals(_selectedLanguage))
-                return;
-            _selectedLanguage = value;
-            OnPropertyChanged();
-        }
-    }
+    [ObservableProperty]
+    public partial string SelectedLanguage { get; set; }
 
-    public bool AutoHideMainMenu
-    {
-        get => _autoHideMainMenu;
-        set
-        {
-            if (value.Equals(_autoHideMainMenu))
-                return;
-            _autoHideMainMenu = value;
-            OnPropertyChanged();
-        }
-    }
+    [ObservableProperty]
+    public partial bool AutoHideMainMenu { get; set; }
+
+    public IEnumerable<IControlTheme> ControlThemes => _themeManager.AvaliableControlThemes;
+    public IEnumerable<IColorTheme> ColorThemes => _themeManager.AvaliableColorThemes;
+
+    [ObservableProperty]
+    public partial IColorTheme SelectedColorTheme { get; set; }
+
+    [ObservableProperty]
+    public partial IControlTheme SelectedControlTheme { get; set; }
 
     public string SettingsPageName => Resources.SettingsPageGeneral;
 
@@ -67,10 +58,16 @@ public class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
 
     public void ApplyChanges()
     {
-        settings.ThemeName = _themeManager.CurrentColorTheme.Name;
-        settings.AutoHideMainMenu = AutoHideMainMenu;
-        _settingManager.SaveSetting(settings, GekiminiSetting.JsonTypeInfo);
+        _themeManager.CurrentColorTheme = SelectedColorTheme;
+        _themeManager.CurrentControlTheme = SelectedControlTheme;
 
         _languageManager.SetLanguage(SelectedLanguage);
+
+        settings.ColorThemeName = _themeManager.CurrentColorTheme.Name;
+        settings.ControlThemeName = _themeManager.CurrentControlTheme.Name;
+        settings.AutoHideMainMenu = AutoHideMainMenu;
+        settings.LanguageCode = _languageManager.GetCurrentLanguage();
+
+        _settingManager.SaveSetting(settings, GekiminiSetting.JsonTypeInfo);
     }
 }

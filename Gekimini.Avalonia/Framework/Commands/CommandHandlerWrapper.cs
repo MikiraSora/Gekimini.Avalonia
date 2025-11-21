@@ -49,9 +49,8 @@ public sealed class CommandHandlerWrapper
     {
         if (arg1 is ICommandHandler handler)
             return handler.Run(arg2);
-        return default;
+        return Task.CompletedTask;
     }
-
 
     public static CommandHandlerWrapper FromCommandListHandler(
         ICommandListHandler commandListHandler)

@@ -8,13 +8,13 @@ public static class ToolBarDefinitions
 {
     [RegisterStaticObject]
     public static ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new(
-        Gekimini.Avalonia.Modules.ToolBars.ToolBarDefinitions.StandardToolBar, 8);
-
+        ToolBars.ToolBarDefinitions.StandardToolBar, 8);
+/*
     [RegisterStaticObject]
     public static ToolBarItemDefinition OpenFileToolBarItem =
-        new CommandToolBarItemDefinition<OpenFileCommandDefinition>(
+        new CommandToolBarItemDefinition<OpenFileCommandListDefinition>(
             StandardOpenSaveToolBarGroup, 0);
-
+*/
     [RegisterStaticObject]
     public static ToolBarItemDefinition SaveFileToolBarItem =
         new CommandToolBarItemDefinition<SaveFileCommandDefinition>(

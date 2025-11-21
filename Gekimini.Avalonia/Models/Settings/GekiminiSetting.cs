@@ -13,7 +13,10 @@ public partial class GekiminiSetting : ObservableObject
     public partial bool AutoHideMainMenu { get; set; } = false;
 
     [ObservableProperty]
-    public partial string ThemeName { get; set; } = "LightTheme";
+    public partial string ColorThemeName { get; set; } = "Light";
+    
+    [ObservableProperty]
+    public partial string ControlThemeName { get; set; } = "Fluent";
 
     [ObservableProperty]
     public partial string LanguageCode { get; set; } = string.Empty;

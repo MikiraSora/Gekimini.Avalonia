@@ -15,8 +15,8 @@
 
     <StackPanel>
         <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
-            <Label Width="100" Content="{markup:Translate MainMenuSettingsColorTheme}" />
-            <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}">
+            <Label VerticalAlignment="Center" Content="ControlTheme" />
+            <ComboBox ItemsSource="{Binding ControlThemes}" SelectedItem="{Binding SelectedControlTheme}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
@@ -25,7 +25,18 @@
             </ComboBox>
         </StackPanel>
         <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
-            <Label Width="100" Content="{markup:Translate MainMenuSettingsLanguage}" />
+            <Label VerticalAlignment="Center" Content="{markup:Translate [MainMenuSettingsColorTheme]}" />
+            <ComboBox ItemsSource="{Binding ColorThemes}" SelectedItem="{Binding SelectedColorTheme}"
+                      SelectedValueBinding="">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
+            <Label VerticalAlignment="Center" Content="{markup:Translate [MainMenuSettingsLanguage]}" />
             <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -36,11 +47,11 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Label Content="{markup:Translate MainMenuSettingsLanguageRestart}" />
+            <Label Content="{markup:Translate [MainMenuSettingsLanguageRestart]}" />
         </StackPanel>
         <CheckBox
             Margin="0,5,0,0"
-            Content="{markup:Translate MainMenuSettingsAutoHideMainMenu}"
+            Content="{markup:Translate [MainMenuSettingsAutoHideMainMenu]}"
             IsChecked="{Binding AutoHideMainMenu}" />
     </StackPanel>
 </views:ViewBase>

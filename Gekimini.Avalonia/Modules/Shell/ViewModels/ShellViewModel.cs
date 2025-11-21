@@ -6,21 +6,17 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Models.Settings;
-using Gekimini.Avalonia.Modules.InternalTest.ViewModels;
 using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
-using Gekimini.Avalonia.Modules.Toolbox;
-using Gekimini.Avalonia.Modules.UndoRedo;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Platforms.Services.Window;
 using Gekimini.Avalonia.Utils.MethodExtensions;
@@ -203,24 +199,38 @@ public partial class ShellViewModel : ViewModelBase, IShell
         {
             logger.LogDebugEx($"active document changed: [{document?.Id}] {document?.Title}");
             ActiveDocument = document;
-            ActiveDocumentChanged?.Invoke(sender, document);
             prevDocumentId = document?.Id;
         }
     }
 
+    partial void OnActiveDocumentChanged(IDocumentViewModel value)
+    {
+        ActiveDocumentChanged?.Invoke(this, ActiveDocument);
+    }
+
     private void FactoryOnFocusedDockableChanged(object sender, FocusedDockableChangedEventArgs e)
     {
+        /*
+         * todo: improve which Document or Tool were focused/unfocused.
+         */
+
         logger.LogDebugEx($"focus dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         ActiveDockable = e.Dockable;
-        if (e.Dockable is IDocumentViewModel documentViewModel)
+        var documentViewModel = e.Dockable as IDocumentViewModel;
+        if (documentViewModel != null)
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
 
     private void FactoryOnActiveDockableChanged(object sender, ActiveDockableChangedEventArgs e)
     {
+        /*
+         * todo: improve which Document or Tool were actived/deactived.
+         */
+
         logger.LogDebugEx($"active dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         ActiveDockable = e.Dockable;
-        if (e.Dockable is IDocumentViewModel documentViewModel)
+        var documentViewModel = e.Dockable as IDocumentViewModel;
+        if (documentViewModel != null)
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
 
@@ -231,11 +241,17 @@ public partial class ShellViewModel : ViewModelBase, IShell
         {
             case IDocumentViewModel document:
                 addedDocuments.Remove(document);
+                if (ActiveDocument == document)
+                    ActiveDocument = default;
+
                 break;
             case IToolViewModel tool:
                 addTools.Remove(tool);
                 break;
         }
+
+        if (ActiveDockable == e.Dockable)
+            ActiveDockable = default;
     }
 
     private void FactoryOnDockableAdded(object sender, DockableAddedEventArgs e)
@@ -283,34 +299,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
         SaveLayout().NoWait();
     }
 
-    [RelayCommand]
-    private async Task AddDocument()
-    {
-        var document = serviceProvider.Resolve<InternalTestDocumentViewModel>();
-        await OpenDocumentAsync(document);
-    }
-
-    [RelayCommand]
-    private void AddTool(string dockEnum)
-    {
-        var tool = serviceProvider.Resolve<InternalTestToolViewModel>();
-        tool.Dock = Enum.Parse<DockMode>(dockEnum);
-        ShowTool(tool);
-    }
-
-    [RelayCommand]
-    private void RemoveLastCreatedTool()
-    {
-        HideTool(Tools.LastOrDefault());
-    }
-
-    [RelayCommand]
-    private void RemoveLastCreatedDocument()
-    {
-        CloseDocumentAsync(Documents.LastOrDefault());
-    }
-
-    [RelayCommand]
     private async Task SaveLayout()
     {
         if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
@@ -321,7 +309,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
         await settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
     }
 
-    [RelayCommand]
     private async Task LoadLayout()
     {
         if ((App.Current as App)?.TopLevel?.StorageProvider is not { } storageProvider)
@@ -341,24 +328,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
         addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
         addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
-    }
-
-    [RelayCommand]
-    private void ShowHistoryTool()
-    {
-        ShowTool<IHistoryTool>();
-    }
-
-    [RelayCommand]
-    private void ShowToolboxTool()
-    {
-        ShowTool<IToolbox>();
-    }
-
-    [RelayCommand]
-    private void ShowNewWindow()
-    {
-        windowManager.ShowDialogAsync(new InternalTestWindowViewModel());
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)

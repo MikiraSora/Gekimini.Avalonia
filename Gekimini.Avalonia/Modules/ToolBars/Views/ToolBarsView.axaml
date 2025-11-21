@@ -13,5 +13,14 @@
     </Design.DataContext>
 
     <controls:ToolBarTray x:Name="toolBarTray"
-                          Orientation="Horizontal" />
+                          Orientation="Horizontal">
+        <controls:ToolBarTray.Styles>
+            <Style Selector="controls|ToolBar">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            <Style Selector="controls|ToolBar ToggleButton">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+        </controls:ToolBarTray.Styles>
+    </controls:ToolBarTray>
 </views:ViewBase>

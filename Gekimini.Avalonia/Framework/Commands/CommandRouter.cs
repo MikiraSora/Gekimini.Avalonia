@@ -21,8 +21,8 @@ public class CommandRouter : ICommandRouter
     private readonly Dictionary<Type, HashSet<Type>> _commandHandlerTypeToCommandDefinitionTypesLookup;
 
     private readonly Dictionary<Type, CommandHandlerWrapper> _globalCommandHandlerWrappers;
-    private readonly ViewLocator viewLocator;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ViewLocator viewLocator;
 
     public CommandRouter(IEnumerable<ICommandHandler> globalCommandHandlers, ViewLocator viewLocator,
         IServiceProvider serviceProvider)
@@ -46,14 +46,16 @@ public class CommandRouter : ICommandRouter
                 return commandHandler;
         }
 
+        /*
         var activeDocumentViewModel = shell.ActiveDocument;
-        if (activeDocumentViewModel != null && !Equals(activeDocumentViewModel, activeItemViewModel))
+        if (activeDocumentViewModel != null && activeDocumentViewModel != activeItemViewModel)
         {
             commandHandler = GetCommandHandlerForLayoutItem(commandDefinition, activeDocumentViewModel);
             if (commandHandler != null)
                 return commandHandler;
         }
-
+        */
+        
         // If none of the objects in the DataContext hierarchy handle the command,
         // fallback to the global handler.
         if (!_globalCommandHandlerWrappers.TryGetValue(commandDefinition.GetType(), out commandHandler))

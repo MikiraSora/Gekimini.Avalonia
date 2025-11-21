@@ -2,7 +2,7 @@
 using Gekimini.Avalonia.Framework;
 using Injectio.Attributes;
 
-namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels;
+namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels.Tools;
 
 public class InternalTestToolViewModel : ToolViewModelBase
 {

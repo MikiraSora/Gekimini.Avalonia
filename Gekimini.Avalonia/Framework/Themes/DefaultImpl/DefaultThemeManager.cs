@@ -1,61 +1,86 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Models.Settings;
+using Gekimini.Avalonia.Platforms.Services.Settings;
 using Injectio.Attributes;
+using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Framework.Themes.DefaultImpl;
 
 [RegisterSingleton<IThemeManager>]
 public partial class DefaultThemeManager : ObservableObject, IThemeManager
 {
-    private readonly ResourceDictionary applicationResources = new();
+    private readonly ISettingManager settingManager;
     private bool initialized;
 
-    private List<ColorTheme> ColorThemes { get; } = new();
-    private List<ControlTheme> ControlThemes { get; } = new();
+    public DefaultThemeManager(IEnumerable<IColorTheme> colorThemes, IEnumerable<IControlTheme> controlThemes,
+        ISettingManager settingManager)
+    {
+        this.settingManager = settingManager;
+        ColorThemes = colorThemes.ToList();
+        ControlThemes = controlThemes.ToList();
+    }
+
+    private List<IColorTheme> ColorThemes { get; }
+    private List<IControlTheme> ControlThemes { get; }
+
+    [GetServiceLazy]
+    public partial ILogger<DefaultThemeManager> Logger { get; }
 
     [ObservableProperty]
-    public partial ColorTheme CurrentColorTheme { get; set; }
+    public partial IColorTheme CurrentColorTheme { get; set; }
 
     [ObservableProperty]
-    public partial ControlTheme CurrentControlTheme { get; set; }
+    public partial IControlTheme CurrentControlTheme { get; set; }
 
-    public void InitalizeThemes()
+    public IEnumerable<IColorTheme> AvaliableColorThemes => ColorThemes;
+    public IEnumerable<IControlTheme> AvaliableControlThemes => ControlThemes;
+
+    public void Initalize()
     {
         if (initialized)
             return;
 
         initialized = true;
 
-        CurrentColorTheme = AvaliableColorThemes.FirstOrDefault();
-        CurrentControlTheme = AvaliableControlThemes.FirstOrDefault();
+        var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
+        var pickControlTheme = AvaliableControlThemes.FirstOrDefault(x =>
+            x.Name.Equals(setting.ControlThemeName, StringComparison.OrdinalIgnoreCase));
+        var pickColorTheme = AvaliableColorThemes.FirstOrDefault(x =>
+            x.Name.Equals(setting.ColorThemeName, StringComparison.OrdinalIgnoreCase));
 
-        App.Current.Resources.MergedDictionaries.Add(applicationResources);
+        CurrentControlTheme = pickControlTheme ?? AvaliableControlThemes.FirstOrDefault();
+        CurrentColorTheme = pickColorTheme ?? AvaliableColorThemes.LastOrDefault();
     }
 
-    public IEnumerable<ColorTheme> AvaliableColorThemes => ColorThemes;
-    public IEnumerable<ControlTheme> AvaliableControlThemes => ControlThemes;
-
-    partial void OnCurrentColorThemeChanged(ColorTheme oldValue, ColorTheme newValue)
+    partial void OnCurrentColorThemeChanged(IColorTheme oldValue, IColorTheme newValue)
     {
         if (newValue == null) return;
-        ApplyColorTheme(newValue);
+        ApplyColorTheme(oldValue, newValue);
     }
 
-    partial void OnCurrentControlThemeChanged(ControlTheme oldValue, ControlTheme newValue)
+    partial void OnCurrentControlThemeChanged(IControlTheme oldValue, IControlTheme newValue)
     {
         if (newValue == null) return;
-        ApplyControlTheme(newValue);
+        ApplyControlTheme(oldValue, newValue);
     }
 
-    private void ApplyColorTheme(ColorTheme theme)
+    private void ApplyColorTheme(IColorTheme oldValue, IColorTheme colorTheme)
     {
-        //todo
+        oldValue?.RevertColorTheme();
+        colorTheme?.ApplyColorTheme();
+
+        Logger.LogInformationEx($"Applying color theme: {colorTheme?.Name ?? "<null>"}");
     }
 
-    private void ApplyControlTheme(ControlTheme theme)
+    private void ApplyControlTheme(IControlTheme oldValue, IControlTheme controlTheme)
     {
-        //todo
+        oldValue?.RevertControlTheme();
+        controlTheme?.ApplyControlTheme();
+
+        Logger.LogInformationEx($"Applying control theme: {controlTheme?.Name ?? "<null>"}");
     }
 }

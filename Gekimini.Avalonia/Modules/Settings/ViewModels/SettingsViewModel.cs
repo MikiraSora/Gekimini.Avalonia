@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
@@ -13,7 +14,6 @@ namespace Gekimini.Avalonia.Modules.Settings.ViewModels;
 public partial class SettingsViewModel : WindowViewModelBase
 {
     private readonly IEnumerable<ISettingsEditor> _settingsEditors;
-    private SettingsPageViewModel _selectedPage;
 
     public SettingsViewModel(IEnumerable<ISettingsEditor> settingsEditors)
     {
@@ -48,15 +48,8 @@ public partial class SettingsViewModel : WindowViewModelBase
 
     public List<SettingsPageViewModel> Pages { get; internal set; }
 
-    public SettingsPageViewModel SelectedPage
-    {
-        get => _selectedPage;
-        set
-        {
-            _selectedPage = value;
-            OnPropertyChanged();
-        }
-    }
+    [ObservableProperty]
+    public partial SettingsPageViewModel SelectedPage { get; set; }
 
     private static SettingsPageViewModel GetFirstLeafPageRecursive(List<SettingsPageViewModel> pages)
     {

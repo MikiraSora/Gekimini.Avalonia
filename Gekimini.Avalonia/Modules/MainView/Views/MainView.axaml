@@ -9,6 +9,7 @@
                  xmlns:valueConverters="clr-namespace:Gekimini.Avalonia.UI.ValueConverters"
                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                  x:DataType="viewModels:MainViewModel"
+                 Background="{DynamicResource ContainerBackgroundBrush}"
                  x:Class="Gekimini.Avalonia.Modules.MainView.Views.MainView">
     <Design.DataContext>
         <viewModels:MainViewModel />
@@ -36,8 +37,8 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#333"
-                                BorderBrush="#444"
+                        <Border Background="{DynamicResource ContainerBackgroundBrush}"
+                                BorderBrush="{DynamicResource SystemAccentColor}"
                                 BorderThickness="3"
                                 CornerRadius="2">
                             <Interaction.Behaviors>
@@ -49,12 +50,14 @@
                             </Interaction.Behaviors>
                             <Grid RowDefinitions="Auto,*">
                                 <!-- 标题栏 -->
-                                <Grid Background="#444" ColumnDefinitions="*,Auto"
+                                <Grid Background="{DynamicResource SystemAccentColor}" ColumnDefinitions="*,Auto"
                                       PointerPressed="InputElement_Drag">
                                     <TextBlock Margin="8,0" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource ContainerTitleForegroundBrush}"
                                                Text="{Binding ViewModel.Title}" />
                                     <Button Content="{markupExtensions:FluentIcon Icon=Dismiss}" Grid.Column="1"
                                             Width="24" Height="24" Margin="5"
+                                            Foreground="{DynamicResource ContainerTitleForegroundBrush}"
                                             Command="{Binding #windowItemsControl.DataContext.CloseWindowCommand}"
                                             CommandParameter="{Binding ViewModel}" />
                                 </Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using Gekimini.Avalonia.Modules.InternalTest.ViewModels;
+using Gekimini.Avalonia.Modules.InternalTest.ViewModels.Documents;
 using Gekimini.Avalonia.Modules.Toolbox.Models;
 using Injectio.Attributes;
 

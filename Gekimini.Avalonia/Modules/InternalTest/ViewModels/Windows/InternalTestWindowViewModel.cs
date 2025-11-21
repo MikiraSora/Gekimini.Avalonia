@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
 
-namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels;
+namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels.Windows;
 
 public partial class InternalTestWindowViewModel : WindowViewModelBase
 {

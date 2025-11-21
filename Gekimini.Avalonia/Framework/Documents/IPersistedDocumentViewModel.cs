@@ -1,14 +1,16 @@
 ﻿using System.Threading.Tasks;
+using Gekimini.Avalonia.Framework.RecentFiles;
 
 namespace Gekimini.Avalonia.Framework;
 
 public interface IPersistedDocumentViewModel : IDocumentViewModel
 {
     bool IsNew { get; }
-    string FileName { get; }
-    string FilePath { get; }
+    bool IsDirty { get; }
 
-    Task New(string fileName);
-    Task Load(string filePath);
-    Task Save(string filePath);
+    Task<bool> New();
+    Task<bool> Load();
+    Task<bool> Load(RecentRecordInfo info);
+    Task Save();
+    Task SaveAs();
 }

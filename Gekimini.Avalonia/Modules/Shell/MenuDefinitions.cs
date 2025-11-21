@@ -18,10 +18,18 @@ public static class MenuDefinitions
     [RegisterStaticObject]
     public static MenuItemDefinition FileNewMenuItemList = new CommandMenuItemDefinition<NewFileCommandListDefinition>(
         FileNewCascadeGroup, 0);
+    
+    [RegisterStaticObject]
+    public static MenuItemDefinition FileOpenMenuItem = new TextMenuItemDefinition(
+        Gekimini.Avalonia.Modules.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0, Resources.FileOpenCommandText);
+    
+    [RegisterStaticObject]
+    public static MenuItemGroupDefinition FileOpenCascadeGroup = new(
+        FileOpenMenuItem, 0);
 
     [RegisterStaticObject]
-    public static MenuItemDefinition FileOpenMenuItem = new CommandMenuItemDefinition<OpenFileCommandDefinition>(
-        Gekimini.Avalonia.Modules.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 1);
+    public static MenuItemDefinition FileOpenMenuItemList = new CommandMenuItemDefinition<OpenFileCommandListDefinition>(
+        FileOpenCascadeGroup, 1);
 
     [RegisterStaticObject]
     public static MenuItemDefinition FileCloseMenuItem = new CommandMenuItemDefinition<CloseFileCommandDefinition>(

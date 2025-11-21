@@ -5,11 +5,11 @@ namespace Gekimini.Avalonia.Framework.Themes;
 
 public interface IThemeManager : INotifyPropertyChanged
 {
-    IEnumerable<ColorTheme> AvaliableColorThemes { get; }
-    ColorTheme CurrentColorTheme { get; set; }
+    IEnumerable<IColorTheme> AvaliableColorThemes { get; }
+    IColorTheme CurrentColorTheme { get; set; }
 
-    IEnumerable<ControlTheme> AvaliableControlThemes { get; }
-    ControlTheme CurrentControlTheme { get; set; }
+    IEnumerable<IControlTheme> AvaliableControlThemes { get; }
+    IControlTheme CurrentControlTheme { get; set; }
 
-    void InitalizeThemes();
+    void Initalize();
 }

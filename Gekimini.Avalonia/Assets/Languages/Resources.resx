@@ -192,4 +192,10 @@
     <data name="ViewFullScreenCommandToolTip" xml:space="preserve">
     <value>Full Screen</value>
   </data>
+  <data name="NoDocumentSupportOpenRecentInfo" xml:space="preserve">
+    <value>There's no document to open recent info</value>
+  </data>
+  <data name="CommandRecentFiles" xml:space="preserve">
+    <value>Recent Files..</value>
+  </data>
 </root>

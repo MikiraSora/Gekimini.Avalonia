@@ -1,21 +1,9 @@
-﻿using System;
-using Avalonia.Markup.Xaml;
-using Avalonia.Styling;
+﻿namespace Gekimini.Avalonia.Framework.Themes;
 
-namespace Gekimini.Avalonia.Framework.Themes;
-
-public class ControlTheme
+public interface IControlTheme
 {
-    public required Styles Styles { get; init; }
+    string Name { get; }
 
-    public required string Name { get; init; }
-
-    public static ControlTheme LoadFromXaml(Uri uri, string name)
-    {
-        var styles = (Styles) AvaloniaXamlLoader.Load(uri)!;
-        return new ControlTheme
-        {
-            Styles = styles, Name = name
-        };
-    }
+    void ApplyControlTheme();
+    void RevertControlTheme();
 }
