@@ -46,7 +46,6 @@ public class CommandRouter : ICommandRouter
                 return commandHandler;
         }
 
-        /*
         var activeDocumentViewModel = shell.ActiveDocument;
         if (activeDocumentViewModel != null && activeDocumentViewModel != activeItemViewModel)
         {
@@ -54,7 +53,6 @@ public class CommandRouter : ICommandRouter
             if (commandHandler != null)
                 return commandHandler;
         }
-        */
         
         // If none of the objects in the DataContext hierarchy handle the command,
         // fallback to the global handler.

@@ -66,11 +66,8 @@ public static class CommandManager
         if (isBroadcastEvent)
             return;
 
-        if (!Dispatcher.UIThread.CheckAccess())
-            Dispatcher.UIThread.InvokeAsync(() => RaiseRequerySuggestedImpl(sender, args),
-                DispatcherPriority.Background);
-        else
-            RaiseRequerySuggestedImpl(sender, args);
+        Dispatcher.UIThread.InvokeAsync(() => RaiseRequerySuggestedImpl(sender, args),
+            DispatcherPriority.Background);
     }
 
     private static void RaiseRequerySuggestedImpl(InputElement sender, EventArgs args)
