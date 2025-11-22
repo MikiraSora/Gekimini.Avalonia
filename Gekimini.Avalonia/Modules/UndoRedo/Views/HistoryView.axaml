@@ -54,8 +54,8 @@
                             <TextBlock Text="{Binding Name}">
                                 <TextBlock.Styles>
                                     <Style Selector="TextBlock.ItemType_Redo">
-                                        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
                                         <Setter Property="FontStyle" Value="Italic" />
+                                        <Setter Property="Opacity" Value="0.5" />
                                     </Style>
                                 </TextBlock.Styles>
                                 <Interaction.Behaviors>

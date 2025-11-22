@@ -10,16 +10,16 @@
     <Design.DataContext>
         <viewModels:ShellViewModel />
     </Design.DataContext>
-    <DockPanel>
+    <Grid RowDefinitions="Auto,*,Auto">
         <StackPanel DockPanel.Dock="Top">
             <ContentControl Content="{Binding MainMenu}" />
             <ContentControl Content="{Binding ToolBars}" />
         </StackPanel>
-        <Grid DockPanel.Dock="Top">
+        <Grid Grid.Row="1">
             <DockControl Factory="{Binding Factory}" Background="MediumPurple"
                          Layout="{Binding Layout }"
                          Loaded="Control_OnLoaded" />
         </Grid>
-        <ContentControl Height="25" DockPanel.Dock="Bottom" Content="{Binding StatusBar}" />
-    </DockPanel>
+        <ContentControl Grid.Row="2" Height="25" DockPanel.Dock="Bottom" Content="{Binding StatusBar}" />
+    </Grid>
 </views:ViewBase>

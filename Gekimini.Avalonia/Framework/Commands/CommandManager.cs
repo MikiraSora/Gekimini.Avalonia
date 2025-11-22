@@ -65,22 +65,26 @@ public static class CommandManager
     {
         if (isBroadcastEvent)
             return;
-        Dispatcher.UIThread.InvokeAsync(RaiseRequerySuggestedImpl, DispatcherPriority.Background);
-        return;
 
-        void RaiseRequerySuggestedImpl()
-        {
-            foreach (var registeredHandler in registeredHandlers)
-                if (registeredHandler.TryGetTarget(out var handler))
-                    handler.Invoke(sender, args);
-                else
-                    removeItems.Add(registeredHandler);
+        if (!Dispatcher.UIThread.CheckAccess())
+            Dispatcher.UIThread.InvokeAsync(() => RaiseRequerySuggestedImpl(sender, args),
+                DispatcherPriority.Background);
+        else
+            RaiseRequerySuggestedImpl(sender, args);
+    }
 
-            foreach (var removeItem in removeItems)
-                registeredHandlers.Remove(removeItem);
-            removeItems.Clear();
+    private static void RaiseRequerySuggestedImpl(InputElement sender, EventArgs args)
+    {
+        foreach (var registeredHandler in registeredHandlers)
+            if (registeredHandler.TryGetTarget(out var handler))
+                handler.Invoke(sender, args);
+            else
+                removeItems.Add(registeredHandler);
 
-            isBroadcastEvent = false;
-        }
+        foreach (var removeItem in removeItems)
+            registeredHandlers.Remove(removeItem);
+        removeItems.Clear();
+
+        isBroadcastEvent = false;
     }
 }

@@ -38,6 +38,7 @@
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
         <PackageReference Include="AvaloniaControlsToolBar" Version="11.3.6" />
+        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.1.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="FluentIcons.Avalonia.Fluent" Version="1.2.313" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
@@ -50,7 +51,6 @@
         <PackageReference Include="DialogHost.Avalonia" Version="0.9.3" />
 
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
     </ItemGroup>
 
     <ItemGroup>

@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox Name="SearchBox" Margin="2,5">
+        <TextBox Name="SearchBox" Margin="2,5" CornerRadius="0">
             <Interaction.Behaviors>
                 <EventTrigger EventName="TextChanged">
                     <InvokeCommandAction Command="{Binding SearchCommand}" CommandParameter="{Binding #SearchBox.Text}" />
@@ -32,10 +32,17 @@
             ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Expander IsExpanded="True"
-                              HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                    <Expander CornerRadius="0"
+                              IsExpanded="True"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
                               Padding="0"
                               Header="{Binding Name}">
+                        <Expander.Styles>
+                            <Style Selector="ToggleButton#ExpanderHeader.Border">
+                                <Setter Property="Background" Value="Transparent" />
+                            </Style>
+                        </Expander.Styles>
                         <ListBox ItemsSource="{Binding Models}">
                             <ListBox.Styles>
                                 <Style Selector="ListBoxItem">
@@ -50,6 +57,7 @@
                                         </BehaviorCollectionTemplate>
                                     </Setter>
                                 </Style>
+                                <Style Selector="ListBoxItem:selected > ContentPresenter" />
                             </ListBox.Styles>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
