@@ -11,6 +11,6 @@ public interface IPersistedDocumentViewModel : IDocumentViewModel
     Task<bool> New();
     Task<bool> Load();
     Task<bool> Load(RecentRecordInfo info);
-    Task Save();
-    Task SaveAs();
+    Task<bool> Save();
+    Task<bool> SaveAs();
 }

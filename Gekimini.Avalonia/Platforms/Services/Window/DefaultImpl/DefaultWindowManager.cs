@@ -12,13 +12,13 @@ public partial class DefaultWindowManager : IWindowManager
     [GetServiceLazy]
     public partial IMainView MainView { get; }
 
-    public Task ShowDialogAsync(WindowViewModelBase windowViewModel)
+    public Task ShowWindowAsync(WindowViewModelBase windowViewModel)
     {
         MainView.AddWindow(windowViewModel);
         return Task.CompletedTask;
     }
 
-    public Task TryCloseAsync(WindowViewModelBase windowViewModelBase, bool dialogResult)
+    public Task TryCloseWindowAsync(WindowViewModelBase windowViewModelBase, bool dialogResult)
     {
         MainView.RemoveWindow(windowViewModelBase);
         return Task.CompletedTask;

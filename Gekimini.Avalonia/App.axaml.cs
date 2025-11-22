@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -6,9 +7,10 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Events;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
-using Gekimini.Avalonia.Models.GlobalEvents;
+using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Modules.MainView;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
@@ -105,4 +107,48 @@ public abstract class App : Application
 
         serviceProvider = serviceCollection.BuildServiceProvider();
     }
+
+    /// <summary>
+    ///     Application try to exit
+    /// </summary>
+    /// <returns></returns>
+    public virtual async Task<bool> TryExit()
+    {
+        //raise event to ask registered handlers if we could exit safety,
+        foreach (var askTask in serviceProvider
+                     .GetService<IWeakReferenceEventManager>()
+                     .SendMessageAndGetResponses(new ApplicationAskQuitEvent()))
+        {
+            var result = await askTask;
+
+            //for example Shell not allow Application quit because user canceled SaveAllDialog when there are some documents not saved.
+            if (!result)
+                return false;
+        }
+
+        await PrepareExit();
+
+        DoExit();
+        return true;
+    }
+
+    /// <summary>
+    ///     Do something to prepare application exit.
+    /// </summary>
+    /// <returns></returns>
+    protected virtual Task PrepareExit()
+    {
+        //notify handlers to do something for preparing application exit. such as save log, shell layout and application settings.
+        serviceProvider
+            .GetService<IWeakReferenceEventManager>()
+            .SendMessage(new ApplicationQuitEvent());
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Actual exit without any confirming/requesting/waiting.
+    /// </summary>
+    /// <param name="exitCode"></param>
+    protected abstract void DoExit(int exitCode = 0);
 }

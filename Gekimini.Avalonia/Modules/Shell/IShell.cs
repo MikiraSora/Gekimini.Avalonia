@@ -30,6 +30,4 @@ public interface IShell
 
     Task OpenDocumentAsync(IDocumentViewModel model);
     Task CloseDocumentAsync(IDocumentViewModel document);
-
-    void Close();
 }

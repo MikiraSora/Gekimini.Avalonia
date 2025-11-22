@@ -12,7 +12,10 @@ using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Framework.Events;
+using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
+using Gekimini.Avalonia.Modules.Documents.ViewModels;
 using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
@@ -38,6 +41,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private readonly List<IToolViewModel> addTools = new();
     private readonly IDialogManager dialogManager;
     private readonly IDockSerializer dockSerializer;
+    private readonly IWeakReferenceEventManager eventManager;
     private readonly ILogger<ShellViewModel> logger;
     private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly IServiceProvider serviceProvider;
@@ -79,6 +83,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         IStatusBar statusBar,
         IToolBars toolBars,
         IMenu mainMenu,
+        IWeakReferenceEventManager eventManager,
         IWindowManager windowManager,
         IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
@@ -88,6 +93,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
         this.memoryStreamManager = memoryStreamManager;
         this.settingManager = settingManager;
         _modules = modules;
+        this.eventManager = eventManager;
         this.windowManager = windowManager;
         this.dialogManager = dialogManager;
         this.logger = logger;
@@ -149,7 +155,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
             logger.LogInformationEx($"Open new document {model.Id}: {model.GetType().Name}");
             Factory.AddDocument(model);
         }
-        
+
         return Task.CompletedTask;
     }
 
@@ -162,11 +168,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
         Factory.RemoveDocument(model);
 
         return Task.CompletedTask;
-    }
-
-    public void Close()
-    {
-        //todo
     }
 
     private async void InitLayout()
@@ -232,8 +233,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
         logger.LogDebugEx($"focus dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         ActiveDockable = e.Dockable;
-        var documentViewModel = e.Dockable as IDocumentViewModel;
-        if (documentViewModel != null)
+        if (e.Dockable is IDocumentViewModel documentViewModel)
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
 
@@ -245,8 +245,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
         logger.LogDebugEx($"active dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         ActiveDockable = e.Dockable;
-        var documentViewModel = e.Dockable as IDocumentViewModel;
-        if (documentViewModel != null)
+        if (e.Dockable is IDocumentViewModel documentViewModel)
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
 
@@ -288,6 +287,8 @@ public partial class ShellViewModel : ViewModelBase, IShell
     {
         base.OnViewAfterLoaded(view);
 
+        eventManager.RegisterEvent<ApplicationAskQuitEvent, Task<bool>>(OnApplicationAskQuit);
+
         foreach (var module in _modules)
         foreach (var globalResourceDictionary in module.GlobalResourceDictionaries)
             Application.Current.Resources.MergedDictionaries.Add(globalResourceDictionary);
@@ -307,6 +308,40 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
         if (Layout == null)
             InitLayout();
+    }
+
+    private async Task<bool> OnApplicationAskQuit(ApplicationAskQuitEvent message)
+    {
+        foreach (var document in Documents.OfType<IPersistedDocumentViewModel>().Where(x => x.IsDirty))
+        {
+            var dialog = new SaveDirtyDocumentDialogViewModel
+            {
+                DocumentName = document.Title
+            };
+            await dialogManager.ShowDialog(dialog);
+
+            switch (dialog.Result)
+            {
+                case SaveDirtyDocumentDialogViewModel.DialogResult.Yes:
+                    var isSaveSuccess = await document.Save();
+                    if (!isSaveSuccess)
+                    {
+                        await dialogManager.ShowMessageDialog(
+                            $"Document {document.Title} saving is failed/canceled, application exit has been canceled.");
+                        return false;
+                    }
+                    break;
+                case SaveDirtyDocumentDialogViewModel.DialogResult.No:
+                    //user cancel save this document, just continue.
+                    break;
+                case SaveDirtyDocumentDialogViewModel.DialogResult.Cancel:
+                default:
+                    //user cancel application exit process.
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     public override void OnViewBeforeUnload(Control view)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Hashing;
 using System.Linq;
+using System.Text;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Platforms.Services.Settings;
@@ -14,6 +16,8 @@ public partial class DefaultEditorRecentFilesManager : IEditorRecentFilesManager
     private readonly RecentRecordDataStoreSetting dataSetting;
     private readonly List<RecentRecordInfo> recentRecordInfos = new();
     private RecentRecordInfoStoreSetting setting;
+
+    private readonly XxHash64 xxHash64 = new(0);
 
     public DefaultEditorRecentFilesManager()
     {
@@ -32,7 +36,7 @@ public partial class DefaultEditorRecentFilesManager : IEditorRecentFilesManager
         var info = new RecentRecordInfo(editorFileType.Name, name, locationDescription, DateTime.Now);
 
         foreach (var deleteInfo in recentRecordInfos
-                     .Where(x => x.Name == info.Name && x.LocationDescription == info.LocationDescription).ToArray())
+                     .Where(x => x.LocationDescription == info.LocationDescription).ToArray())
         {
             recentRecordInfos.Remove(deleteInfo);
             ClearData(deleteInfo);
@@ -72,7 +76,8 @@ public partial class DefaultEditorRecentFilesManager : IEditorRecentFilesManager
 
     private string GetRecordInfoDataKey(RecentRecordInfo info)
     {
-        return HashCode.Combine(info.Name, info.LocationDescription).ToString();
+        xxHash64.Append(Encoding.UTF8.GetBytes(info.LocationDescription));
+        return Convert.ToHexString(xxHash64.GetHashAndReset());
     }
 
     private void SaveRecordOpenedList()

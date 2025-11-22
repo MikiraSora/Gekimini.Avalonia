@@ -28,6 +28,6 @@ public partial class WindowViewModelBase : ViewModelBase
     protected Task TryCloseAsync(bool dialogResult)
     {
         return (Application.Current as App)?.ServiceProvider?.GetService<IWindowManager>()
-            .TryCloseAsync(this, dialogResult);
+            .TryCloseWindowAsync(this, dialogResult);
     }
 }

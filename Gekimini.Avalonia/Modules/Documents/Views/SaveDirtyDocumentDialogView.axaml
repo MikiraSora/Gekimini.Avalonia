@@ -1,0 +1,20 @@
+﻿<views:DialogViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.Documents.ViewModels"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Modules.Dialogs.Views"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:SaveDirtyDocumentDialogViewModel"
+                x:Class="Gekimini.Avalonia.Modules.Documents.Views.SaveDirtyDocumentDialogView">
+    <Design.DataContext>
+        <viewModels:SaveDirtyDocumentDialogViewModel />
+    </Design.DataContext>
+    <Grid Margin="5" RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*">
+        <TextBlock Margin="0,10" Grid.ColumnSpan="3" Text="{Binding DocumentName}" />
+
+        <Button Command="{Binding CloseCommand}" Margin="2" Content="Yes" Grid.Row="1" Grid.Column="0" />
+        <Button Command="{Binding CloseCommand}" Margin="2" Content="No" Grid.Row="1" Grid.Column="1" />
+        <Button Command="{Binding CloseCommand}" Margin="2" Content="Cancel" Grid.Row="1" Grid.Column="2" />
+    </Grid>
+</views:DialogViewBase>

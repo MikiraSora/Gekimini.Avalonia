@@ -1,25 +1,16 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Avalonia;
 using Gekimini.Avalonia.Framework.Commands;
 using Injectio.Attributes;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
 public class ExitCommandHandler : CommandHandlerBase<ExitCommandDefinition>
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public ExitCommandHandler(IServiceProvider serviceProvider)
+    public override async Task Run(Command command)
     {
-        _serviceProvider = serviceProvider;
-    }
-
-    public override Task Run(Command command)
-    {
-        var shell = _serviceProvider.GetService<IShell>();
-        shell.Close();
-        return Task.CompletedTask;
+        if (Application.Current is App app)
+            await app.TryExit();
     }
 }

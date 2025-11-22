@@ -5,6 +5,6 @@ namespace Gekimini.Avalonia.Platforms.Services.Window;
 
 public interface IWindowManager
 {
-    Task ShowDialogAsync(WindowViewModelBase windowViewModel);
-    Task TryCloseAsync(WindowViewModelBase windowViewModelBase, bool dialogResult);
+    Task ShowWindowAsync(WindowViewModelBase windowViewModel);
+    Task TryCloseWindowAsync(WindowViewModelBase windowViewModelBase, bool dialogResult);
 }

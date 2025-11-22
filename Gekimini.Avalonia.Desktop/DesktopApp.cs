@@ -25,4 +25,9 @@ public class DesktopApp : App
             o.AddConsole();
         });
     }
+
+    protected override void DoExit(int exitCode = 0)
+    {
+        System.Environment.Exit(exitCode);
+    }
 }

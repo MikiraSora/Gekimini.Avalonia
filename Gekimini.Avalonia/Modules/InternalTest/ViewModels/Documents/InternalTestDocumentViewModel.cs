@@ -139,43 +139,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         return await DoLoad(recentData);
     }
 
-    public async Task Save()
-    {
-        storageFile ??= await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
-            new FilePickerSaveOptions
-            {
-                DefaultExtension = ".internal",
-                FileTypeChoices = new[]
-                {
-                    new FilePickerFileType("Internal Document File")
-                    {
-                        Patterns = ["*.internal"]
-                    }
-                }
-            });
-
-        if (storageFile is null)
-        {
-            await DialogManager.ShowMessageDialog("Can't save document file.", DialogMessageType.Error);
-            return;
-        }
-
-        await using var fs = await storageFile.OpenWriteAsync();
-        await JsonSerializer.SerializeAsync(fs, new InternalTestValueStoreData
-            {
-                StoredValue = Value,
-                DocumentName = storageFile.Name
-            },
-            InternalTestValueStoreData.JsonTypeInfo);
-
-        await DialogManager.ShowMessageDialog("Saved document file successfully!");
-
-        FileName = storageFile.Name;
-        IsNew = false;
-        IsDirty = false;
-    }
-
-    public async Task SaveAs()
+    public async Task<bool> SaveAs()
     {
         var newStorageFile = await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
             new FilePickerSaveOptions
@@ -193,12 +157,61 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         if (newStorageFile is null)
         {
             Logger.LogInformationEx("newStorageFile is empty, skipped.");
-            return;
+            return false;
         }
 
         //overwrite current storage file.
         storageFile = newStorageFile;
-        await Save();
+        return await Save();
+    }
+
+    public async Task<bool> Save()
+    {
+        storageFile ??= await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
+            new FilePickerSaveOptions
+            {
+                DefaultExtension = ".internal",
+                FileTypeChoices = new[]
+                {
+                    new FilePickerFileType("Internal Document File")
+                    {
+                        Patterns = ["*.internal"]
+                    }
+                }
+            });
+
+        if (storageFile is null)
+        {
+            await DialogManager.ShowMessageDialog("Can't save document file.", DialogMessageType.Error);
+            return false;
+        }
+
+        await using var fs = await storageFile.OpenWriteAsync();
+        await JsonSerializer.SerializeAsync(fs, new InternalTestValueStoreData
+            {
+                StoredValue = Value,
+                DocumentName = storageFile.Name
+            },
+            InternalTestValueStoreData.JsonTypeInfo);
+
+        //await DialogManager.ShowMessageDialog("Saved document file successfully!");
+
+        //if storageFile can get a bookmark that's mean we could post a recent to reuse storageFile(and its permissions) in feature.
+        if (storageFile.CanBookmark)
+        {
+            var bookmark = await storageFile.SaveBookmarkAsync();
+            //save recent
+            var recentInfo = EditorRecentFilesManager.PostRecent(
+                InternalDocumentEditorProvider.InternalDocumentEditorFileType, FileName, bookmark);
+
+            EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
+        }
+
+        FileName = storageFile.Name;
+        IsNew = false;
+        IsDirty = false;
+
+        return true;
     }
 
     private async Task<bool> DoLoad(InternalTestValueStoreData recentData)
@@ -214,7 +227,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
             var bookmark = await storageFile.SaveBookmarkAsync();
             //save recent
             var recentInfo = EditorRecentFilesManager.PostRecent(
-                InternalDocumentEditorProvider.InternalDocumentEditorFileType, $"StoreValue:{Value}", bookmark);
+                InternalDocumentEditorProvider.InternalDocumentEditorFileType, FileName, bookmark);
 
             EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
         }
@@ -318,7 +331,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     [RelayCommand]
     private void ShowNewWindow()
     {
-        WindowManager.ShowDialogAsync(new InternalTestWindowViewModel());
+        WindowManager.ShowWindowAsync(new InternalTestWindowViewModel());
     }
 
     [RelayCommand]
