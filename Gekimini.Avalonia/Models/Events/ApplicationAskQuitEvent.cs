@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
-using Gekimini.Avalonia.Framework.Events;
+﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace Gekimini.Avalonia.Models.Events;
 
-public class ApplicationAskQuitEvent : IResponsibleMessage<Task<bool>>
+public class ApplicationAskQuitEvent : AsyncCollectionRequestMessage<bool>
 {
 }

@@ -1,7 +1,7 @@
-﻿using Gekimini.Avalonia.Framework.Events;
+﻿using Gekimini.Avalonia.Framework;
 
 namespace Gekimini.Avalonia.Models.Events;
 
-public class ApplicationQuitEvent : IMessage
+public class ApplicationQuitEvent
 {
 }

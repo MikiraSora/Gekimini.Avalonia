@@ -1,17 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Gekimini.Avalonia.Modules.Dialogs.ViewModels;
+using Gekimini.Avalonia.Modules.Documents.Models;
 
 namespace Gekimini.Avalonia.Modules.Documents.ViewModels;
 
 public partial class SaveDirtyDocumentDialogViewModel : DialogViewModelBase
 {
-    public enum DialogResult
-    {
-        Yes,
-        No,
-        Cancel
-    }
-
     public override string DialogIdentifier => nameof(SaveDirtyDocumentDialogViewModel);
     public override string Title => "提醒";
 

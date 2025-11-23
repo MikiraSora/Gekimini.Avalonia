@@ -7,14 +7,15 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
-using Gekimini.Avalonia.Framework.Events;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
+using Gekimini.Avalonia.Modules.Documents.Models;
 using Gekimini.Avalonia.Modules.Documents.ViewModels;
 using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.Shell.Models;
@@ -33,7 +34,9 @@ using Microsoft.IO;
 namespace Gekimini.Avalonia.Modules.Shell.ViewModels;
 
 [RegisterSingleton<IShell>]
-public partial class ShellViewModel : ViewModelBase, IShell
+public partial class ShellViewModel : ViewModelBase, IShell,
+    IRecipient<ApplicationAskQuitEvent>,
+    IRecipient<ApplicationQuitEvent>
 {
     private readonly IEnumerable<IModule> _modules;
 
@@ -41,7 +44,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
     private readonly List<IToolViewModel> addTools = new();
     private readonly IDialogManager dialogManager;
     private readonly IDockSerializer dockSerializer;
-    private readonly IWeakReferenceEventManager eventManager;
     private readonly ILogger<ShellViewModel> logger;
     private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly IServiceProvider serviceProvider;
@@ -83,7 +85,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
         IStatusBar statusBar,
         IToolBars toolBars,
         IMenu mainMenu,
-        IWeakReferenceEventManager eventManager,
         IWindowManager windowManager,
         IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
@@ -93,7 +94,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
         this.memoryStreamManager = memoryStreamManager;
         this.settingManager = settingManager;
         _modules = modules;
-        this.eventManager = eventManager;
         this.windowManager = windowManager;
         this.dialogManager = dialogManager;
         this.logger = logger;
@@ -102,6 +102,16 @@ public partial class ShellViewModel : ViewModelBase, IShell
         StatusBar = statusBar;
         ToolBars = toolBars;
         MainMenu = mainMenu;
+    }
+
+    public void Receive(ApplicationAskQuitEvent message)
+    {
+        message.Reply(OnApplicationAskQuit(message));
+    }
+
+    public void Receive(ApplicationQuitEvent message)
+    {
+        SaveLayout();
     }
 
     public event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
@@ -287,8 +297,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
     {
         base.OnViewAfterLoaded(view);
 
-        eventManager.RegisterEvent<ApplicationAskQuitEvent, Task<bool>>(OnApplicationAskQuit);
-
         foreach (var module in _modules)
         foreach (var globalResourceDictionary in module.GlobalResourceDictionaries)
             Application.Current.Resources.MergedDictionaries.Add(globalResourceDictionary);
@@ -322,7 +330,7 @@ public partial class ShellViewModel : ViewModelBase, IShell
 
             switch (dialog.Result)
             {
-                case SaveDirtyDocumentDialogViewModel.DialogResult.Yes:
+                case DialogResult.Yes:
                     var isSaveSuccess = await document.Save();
                     if (!isSaveSuccess)
                     {
@@ -330,11 +338,12 @@ public partial class ShellViewModel : ViewModelBase, IShell
                             $"Document {document.Title} saving is failed/canceled, application exit has been canceled.");
                         return false;
                     }
+
                     break;
-                case SaveDirtyDocumentDialogViewModel.DialogResult.No:
+                case DialogResult.No:
                     //user cancel save this document, just continue.
                     break;
-                case SaveDirtyDocumentDialogViewModel.DialogResult.Cancel:
+                case DialogResult.Cancel:
                 default:
                     //user cancel application exit process.
                     return false;
@@ -342,12 +351,6 @@ public partial class ShellViewModel : ViewModelBase, IShell
         }
 
         return true;
-    }
-
-    public override void OnViewBeforeUnload(Control view)
-    {
-        base.OnViewBeforeUnload(view);
-        SaveLayout();
     }
 
     private void SaveLayout()

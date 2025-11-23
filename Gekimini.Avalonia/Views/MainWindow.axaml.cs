@@ -8,4 +8,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
+
+    protected override async void OnClosing(WindowClosingEventArgs e)
+    {
+        base.OnClosing(e);
+        e.Cancel = true;
+
+        await (App.Current as App)?.TryExit();
+    }
 }

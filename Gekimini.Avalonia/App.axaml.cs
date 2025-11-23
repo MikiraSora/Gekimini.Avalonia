@@ -7,7 +7,6 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Events;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
 using Gekimini.Avalonia.Models.Events;
@@ -22,6 +21,7 @@ namespace Gekimini.Avalonia;
 
 public abstract class App : Application
 {
+    private ILogger<App> logger;
     private Control mainView;
     private IServiceProvider serviceProvider;
 
@@ -44,6 +44,8 @@ public abstract class App : Application
     {
         InitailizeServices();
 
+        logger = ServiceProvider.GetService<ILogger<App>>();
+
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
@@ -58,24 +60,14 @@ public abstract class App : Application
         mainView = ServiceProvider.GetService<ViewLocator>().Build(mainViewModel);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
             desktop.MainWindow = new MainWindow
             {
                 Content = mainView
             };
-            desktop.Exit += OnExit;
-        }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
             singleViewPlatform.MainView = mainView;
-        }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    protected virtual void OnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
-    {
-        WeakReferenceMessenger.Default.Send(new ApplicationQuitEvent());
     }
 
     protected virtual void RegisterServices(IServiceCollection serviceCollection)
@@ -109,24 +101,39 @@ public abstract class App : Application
     }
 
     /// <summary>
+    ///     check if Application can exit safety
+    /// </summary>
+    /// <returns></returns>
+    public virtual async Task<bool> CanExit()
+    {
+        //raise event to ask registered handlers if we could exit safety,
+        await using var itor = WeakReferenceMessenger.Default.Send<ApplicationAskQuitEvent>().GetAsyncEnumerator();
+        while (await itor.MoveNextAsync())
+        {
+            var canExit = itor.Current;
+            //for example Shell not allow Application quit because user canceled SaveAllDialog when there are some documents not saved.
+            if (!canExit)
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
     ///     Application try to exit
     /// </summary>
     /// <returns></returns>
     public virtual async Task<bool> TryExit()
     {
-        //raise event to ask registered handlers if we could exit safety,
-        foreach (var askTask in serviceProvider
-                     .GetService<IWeakReferenceEventManager>()
-                     .SendMessageAndGetResponses(new ApplicationAskQuitEvent()))
-        {
-            var result = await askTask;
+        logger.LogInformationEx("Begin.");
 
-            //for example Shell not allow Application quit because user canceled SaveAllDialog when there are some documents not saved.
-            if (!result)
-                return false;
-        }
+        var canExit = await CanExit();
+        logger.LogInformationEx($"CanExit() canExit: {canExit}");
+        if (!canExit)
+            return false;
 
         await PrepareExit();
+        logger.LogInformationEx("PrepareExit() pass");
 
         DoExit();
         return true;
@@ -139,9 +146,7 @@ public abstract class App : Application
     protected virtual Task PrepareExit()
     {
         //notify handlers to do something for preparing application exit. such as save log, shell layout and application settings.
-        serviceProvider
-            .GetService<IWeakReferenceEventManager>()
-            .SendMessage(new ApplicationQuitEvent());
+        WeakReferenceMessenger.Default.Send<ApplicationQuitEvent>();
 
         return Task.CompletedTask;
     }
