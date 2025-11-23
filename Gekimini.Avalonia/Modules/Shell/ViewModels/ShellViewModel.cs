@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -120,20 +119,16 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
     public IEnumerable<IToolViewModel> Tools => addTools;
 
-    public void ShowTool<TTool>()
-        where TTool : IToolViewModel
-    {
-        var toolViewModel = default(IToolViewModel);
-        if (typeof(ITool).IsAbstract || typeof(ITool).IsInterface)
-            toolViewModel = serviceProvider.GetService<TTool>();
-        else
-            toolViewModel = serviceProvider.Resolve<TTool>();
-        ShowTool(toolViewModel);
-    }
-
     public void ShowTool(IToolViewModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
+
+        if (Tools.Contains(model))
+        {
+            logger.LogWarningEx($"can't show tool multi times, tool {model.Id}: {model.GetType().Name}");
+            return;
+        }
+
         Factory.AddTool(model);
     }
 
@@ -178,6 +173,24 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         Factory.RemoveDocument(model);
 
         return Task.CompletedTask;
+    }
+
+    public void ShowTool<TTool>(bool allowDuplicate = false)
+        where TTool : IToolViewModel
+    {
+        if (Tools.OfType<TTool>().Any())
+            if (!allowDuplicate)
+            {
+                logger.LogWarningEx($"can't show more same tool, tool {typeof(TTool).Name}");
+                return;
+            }
+
+        IToolViewModel toolViewModel;
+        if (typeof(ITool).IsAbstract || typeof(ITool).IsInterface)
+            toolViewModel = serviceProvider.GetService<TTool>();
+        else
+            toolViewModel = serviceProvider.Resolve<TTool>();
+        ShowTool(toolViewModel);
     }
 
     private async void InitLayout()
@@ -357,14 +370,13 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     {
         var json = dockSerializer.Serialize(Layout);
         settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
-        logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
+        //logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
     }
 
     private void LoadLayout()
     {
         var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
-        logger.LogDebugEx(
-            $"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
+        //logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
         var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
         if (dockable is null)
         {

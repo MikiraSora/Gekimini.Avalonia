@@ -23,7 +23,7 @@ public interface IShell
     IEnumerable<IToolViewModel> Tools { get; }
     event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
 
-    void ShowTool<TTool>() where TTool : IToolViewModel;
+    void ShowTool<TTool>(bool allowDuplicate = false) where TTool : IToolViewModel;
     void ShowTool(IToolViewModel model);
     void HideTool<TTool>() where TTool : IToolViewModel;
     void HideTool(IToolViewModel model);
