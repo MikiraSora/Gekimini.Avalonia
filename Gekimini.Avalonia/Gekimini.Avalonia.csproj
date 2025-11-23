@@ -9,6 +9,7 @@
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <!--For Injectio-->
@@ -79,10 +80,23 @@
             <DependentUpon>InternalTestWindowView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Framework\Themes\DefaultImpl\Fluent\Palletes\Light.axaml.cs">
+          <DependentUpon>Light2.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Framework\Themes\DefaultImpl\Fluent\Palletes\LavenderLight.axaml.cs">
+          <DependentUpon>Lavenderight.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Framework\Themes\DefaultImpl\Fluent\Palletes\LavenderDark.axaml.cs">
+          <DependentUpon>LavenderDark2.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <Folder Include="Framework\Behaviors\" />
+        <Folder Include="Framework\Themes\DefaultImpl\Fluent\Styles\" />
         <Folder Include="Modules\InternalTest\ViewModels\Dialogs\" />
         <Folder Include="Modules\InternalTest\Views\Dialogs\" />
     </ItemGroup>

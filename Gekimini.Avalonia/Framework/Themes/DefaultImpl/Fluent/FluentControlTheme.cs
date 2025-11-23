@@ -12,11 +12,7 @@ public class FluentControlTheme : IControlTheme
 
     public FluentControlTheme()
     {
-        fluentTheme =
-            AvaloniaXamlLoader.Load(
-                    new Uri("avares://Gekimini.Avalonia/Framework/Themes/DefaultImpl/Fluent/Styles/FluentTheme.axaml"))
-                as
-                FluentTheme;
+        fluentTheme =new FluentTheme();
     }
 
     public string Name => "Fluent";

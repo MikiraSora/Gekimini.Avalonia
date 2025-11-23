@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Dock.Model.Mvvm.Controls;
@@ -25,9 +26,17 @@ public abstract partial class DocumentViewModelBase : Document, IDocumentViewMod
 
     [GetServiceLazy]
     private partial IUndoRedoManagerFactory UndoRedoManagerFactory { get; }
-    
+
     [GetServiceLazy]
     private partial ILogger<DocumentViewModelBase> Logger { get; }
+
+    public virtual IEnumerable<Type> SupportCommandDefinitionTypes =>
+    [
+        typeof(UndoCommandDefinition),
+        typeof(RedoCommandDefinition),
+        typeof(SaveFileCommandDefinition),
+        typeof(SaveFileAsCommandDefinition)
+    ];
 
     public virtual void OnViewAfterLoaded(Control view)
     {
@@ -41,6 +50,7 @@ public abstract partial class DocumentViewModelBase : Document, IDocumentViewMod
 
     public event Action<Control> ViewAfterLoaded;
     public event Action<Control> ViewBeforeUnload;
+
     public IUndoRedoManager UndoRedoManager => field ??= UndoRedoManagerFactory.Create();
 
     [GenerateCommandUpdateDispatcher<SaveFileAsCommandDefinition>]

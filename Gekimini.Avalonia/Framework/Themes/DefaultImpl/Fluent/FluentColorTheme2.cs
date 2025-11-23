@@ -7,7 +7,7 @@ using Avalonia.Themes.Fluent;
 
 namespace Gekimini.Avalonia.Framework.Themes.DefaultImpl.Fluent;
 
-public class FluentColorTheme : IColorTheme
+public class FluentColorTheme2<T> : IColorTheme where T : ColorPaletteResources, new()
 {
     private readonly ThemeVariant overrideVariant;
     private FluentTheme cachedNewFluent;
@@ -15,16 +15,10 @@ public class FluentColorTheme : IColorTheme
     private FluentTheme prevFluent;
     private ThemeVariant prevVariant;
 
-    public FluentColorTheme(string name, ThemeVariant overrideVariant, Uri palleteUri)
+    public FluentColorTheme2(string name, ThemeVariant overrideVariant)
     {
         this.overrideVariant = overrideVariant;
         Name = name;
-
-        /*
-        resource = AvaloniaXamlLoader.Load(palleteUri) as ColorPaletteResources;
-        if (resource is null)
-            throw new Exception("无法加载 Fluent ColorPaletteResources: " + palleteUri);
-        */
     }
 
     public string Name { get; }
@@ -62,32 +56,13 @@ public class FluentColorTheme : IColorTheme
         prevVariant = default;
     }
 
-    private string GetKeyName(string key)
-    {
-        if (string.IsNullOrEmpty(key))
-            return "_themeManager_";
-
-        return "_themeManager_" + char.ToLowerInvariant(key[0]) + key.Substring(1);
-    }
-
     private FluentTheme GetOrCreateFluent(Application app)
     {
         if (cachedNewFluent is not null)
             return cachedNewFluent;
 
         cachedNewFluent = new FluentTheme();
-
-        var key = GetKeyName(Name);
-
-        try
-        {
-            var resource = app.FindResource(key) as ColorPaletteResources;
-            cachedNewFluent.Palettes[overrideVariant] = resource;
-        }
-        catch (Exception e)
-        {
-            //todo
-        }
+        cachedNewFluent.Palettes[overrideVariant] = new T();
 
         return cachedNewFluent;
     }

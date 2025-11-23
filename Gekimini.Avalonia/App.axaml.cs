@@ -11,6 +11,7 @@ using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Modules.MainView;
+using Gekimini.Avalonia.Utils;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,9 +47,7 @@ public abstract class App : Application
 
         logger = ServiceProvider.GetService<ILogger<App>>();
 
-        // Line below is needed to remove Avalonia data validation.
-        // Without this line you will get duplicate validations from both Avalonia and CT
-        BindingPlugins.DataValidators.RemoveAt(0);
+        BindingPlugins.DataValidators.Clear();
 
         ServiceProvider.GetService<IThemeManager>().Initalize();
         ServiceProvider.GetService<ILanguageManager>().Initalize();

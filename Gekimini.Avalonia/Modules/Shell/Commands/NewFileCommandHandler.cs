@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Gekimini.Avalonia.Attributes;
@@ -8,7 +9,7 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
-public partial class NewFileCommandHandler : ICommandListHandler<NewFileCommandListDefinition>
+public partial class NewFileCommandHandler : CommandListHandlerBase<NewFileCommandListDefinition>
 {
     [GetServiceLazy]
     private partial IShell Shell { get; }
@@ -16,7 +17,7 @@ public partial class NewFileCommandHandler : ICommandListHandler<NewFileCommandL
     [GetServiceLazy]
     private partial IEnumerable<IEditorProvider> EditorProviders { get; }
 
-    public void Populate(Command command, List<Command> commands)
+    public override void Populate(Command command, List<Command> commands)
     {
         foreach (var editorProvider in EditorProviders)
         {
@@ -37,15 +38,15 @@ public partial class NewFileCommandHandler : ICommandListHandler<NewFileCommandL
         }
     }
 
-    public void Update(Command command)
+    public override void Update(Command command)
     {
     }
 
-    public async Task Run(Command command)
+    public override async Task Run(Command command)
     {
         var tag = (NewFileTag) command.Tag;
         var editor = tag.EditorProvider.Create();
-        
+
         var shouldShow = await tag.EditorProvider.TryNew(editor);
         if (shouldShow)
             await Shell.OpenDocumentAsync(editor);

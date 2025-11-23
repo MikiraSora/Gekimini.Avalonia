@@ -25,7 +25,7 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.Styles>
-                    <Style Selector="ItemsControl > ContentPresenter">
+                    <Style Selector="ItemsControl > ContentPresenter" x:DataType="viewModels:WindowViewModelWrapper">
                         <Setter Property="Canvas.Left" Value="{Binding LeftX,Mode=TwoWay}" />
                         <Setter Property="Canvas.Top" Value="{Binding TopY,Mode=TwoWay}" />
                         <Setter Property="Width"

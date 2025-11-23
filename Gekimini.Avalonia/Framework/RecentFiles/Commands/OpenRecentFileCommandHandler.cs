@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace Gekimini.Avalonia.Framework.RecentFiles.Commands;
 
 [RegisterSingleton<ICommandHandler>]
-public partial class OpenRecentFileCommandHandler : ICommandListHandler<OpenRecentFileCommandListDefinition>
+public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenRecentFileCommandListDefinition>
 {
     [GetServiceLazy]
     private partial IEditorRecentFilesManager RecentOpenedManager { get; }
@@ -30,7 +30,7 @@ public partial class OpenRecentFileCommandHandler : ICommandListHandler<OpenRece
     [GetServiceLazy]
     private partial IDialogManager DialogManager { get; }
 
-    public void Populate(Command command, List<Command> commands)
+    public override void Populate(Command command, List<Command> commands)
     {
         var recentOpened = RecentOpenedManager.RecentRecordInfos;
 
@@ -46,12 +46,7 @@ public partial class OpenRecentFileCommandHandler : ICommandListHandler<OpenRece
         }
     }
 
-    public void Update(Command command)
-    {
-        
-    }
-
-    public async Task Run(Command command)
+    public override async Task Run(Command command)
     {
         var info = command.Tag as RecentRecordInfo;
         Logger.LogDebugEx($"OpenRecentFileCommandHandler.Run() try open recent: {info}");
@@ -77,7 +72,7 @@ public partial class OpenRecentFileCommandHandler : ICommandListHandler<OpenRece
         }
 
         var doc = documentProvider.Create();
-        
+
         var shouldShow = await documentProvider.TryOpen(doc, info);
         if (shouldShow)
             await Shell.OpenDocumentAsync(doc);

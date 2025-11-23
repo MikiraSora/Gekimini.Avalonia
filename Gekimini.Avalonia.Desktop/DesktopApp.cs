@@ -35,9 +35,6 @@ public class DesktopApp : App
         base.OnFrameworkInitializationCompleted();
 
         logger = ServiceProvider.GetService<ILogger<DesktopApp>>();
-
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            return;
     }
     
     protected override void DoExit(int exitCode = 0)

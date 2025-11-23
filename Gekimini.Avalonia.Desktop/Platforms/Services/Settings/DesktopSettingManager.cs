@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -23,12 +23,6 @@ public class DesktopSettingManager : ISettingManager
     private readonly IServiceProvider provider;
     private readonly string savePath;
 
-    private readonly JsonSerializerOptions serializerOptions = new()
-    {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true
-    };
-
     private Dictionary<string, string> settingMap;
 
     public DesktopSettingManager(IServiceProvider provider, ILogger<DesktopSettingManager> logger,
@@ -37,7 +31,7 @@ public class DesktopSettingManager : ISettingManager
         this.provider = provider;
         this.logger = logger;
         this.dialogManager = dialogManager;
-        savePath = Path.Combine(Path.GetDirectoryName(typeof(DesktopSettingManager).Assembly.Location) ?? string.Empty,
+        savePath = Path.Combine(AppContext.BaseDirectory,
             "setting.json");
     }
 
@@ -50,18 +44,19 @@ public class DesktopSettingManager : ISettingManager
 
         var key = GetKey<T>();
 
-        settingMap[key] = JsonSerializer.Serialize(obj, serializerOptions);
-        var content = JsonSerializer.Serialize(settingMap);
+        settingMap[key] = JsonSerializer.Serialize(obj, typeInfo);
+        var content = JsonSerializer.Serialize(settingMap, JsonSourceGenerateContext.Default.DictionaryStringString);
 
         File.WriteAllText(savePath, content);
     }
 
-    public T GetSetting<T>(JsonTypeInfo<T> typeInfo) where T : new()
+    public T GetSetting<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]T>(JsonTypeInfo<T> typeInfo) where T : new()
     {
-        return LoadInternal<T>();
+        return LoadInternal(typeInfo);
     }
 
-    private T LoadInternal<T>()
+    private T LoadInternal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(
+        JsonTypeInfo<T> typeInfo)
     {
         var key = GetKey<T>();
 
@@ -81,7 +76,8 @@ public class DesktopSettingManager : ISettingManager
                 else
                     try
                     {
-                        settingMap = JsonSerializer.Deserialize<Dictionary<string, string>>(content, serializerOptions);
+                        settingMap = JsonSerializer.Deserialize(content,
+                            JsonSourceGenerateContext.Default.DictionaryStringString);
                     }
                     catch (Exception e)
                     {
@@ -103,7 +99,7 @@ public class DesktopSettingManager : ISettingManager
         T cw = default;
         if (settingMap.TryGetValue(key, out var jsonContent))
         {
-            cw = JsonSerializer.Deserialize<T>(jsonContent);
+            cw = JsonSerializer.Deserialize(jsonContent, typeInfo);
             logger.LogDebugEx($"create new {typeof(T).Name} object from setting.json, hash = {cw.GetHashCode()}");
         }
         else

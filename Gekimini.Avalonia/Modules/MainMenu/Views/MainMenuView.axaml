@@ -15,7 +15,7 @@
     </Design.DataContext>
 
     <views:ViewBase.Styles>
-        <Style Selector=":is(MenuItem)">
+        <Style Selector=":is(MenuItem)" x:DataType="menuItems:StandardMenuItemViewModel">
             <Setter Property="IsVisible" Value="{Binding IsVisible}" />
             <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=OneWay}" />
             <Setter Property="Command" Value="{Binding Command}" />

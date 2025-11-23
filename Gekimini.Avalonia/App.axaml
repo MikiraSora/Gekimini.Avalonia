@@ -3,7 +3,6 @@
              x:Class="Gekimini.Avalonia.App"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
-             xmlns:controls="clr-namespace:Avalonia.Controls.ToolBar.Controls;assembly=Avalonia.Controls.ToolBar"
              RequestedThemeVariant="Default">
 
     <Application.Styles>

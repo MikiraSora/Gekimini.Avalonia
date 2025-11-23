@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
-public class SwitchToDocumentListCommandHandler : ICommandListHandler<SwitchToDocumentCommandListDefinition>
+public class SwitchToDocumentListCommandHandler : CommandListHandlerBase<SwitchToDocumentCommandListDefinition>
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -19,7 +19,7 @@ public class SwitchToDocumentListCommandHandler : ICommandListHandler<SwitchToDo
         _serviceProvider = serviceProvider;
     }
 
-    public void Populate(Command command, List<Command> commands)
+    public override void Populate(Command command, List<Command> commands)
     {
         var _shell = _serviceProvider.GetService<IShell>();
 
@@ -35,12 +35,7 @@ public class SwitchToDocumentListCommandHandler : ICommandListHandler<SwitchToDo
         }
     }
 
-    public void Update(Command command)
-    {
-        
-    }
-
-    public Task Run(Command command)
+    public override Task Run(Command command)
     {
         var _shell = _serviceProvider.GetService<IShell>();
 

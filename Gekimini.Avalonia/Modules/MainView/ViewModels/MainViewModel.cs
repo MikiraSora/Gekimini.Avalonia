@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework.Commands;
@@ -122,72 +121,5 @@ public partial class MainViewModel : ViewModelBase, IMainView
         var rootVisual = TopLevel.GetTopLevel(view);
         KeyGestureService.BindKeyGestures(rootVisual);
         base.OnViewAfterLoaded(view);
-    }
-
-    public partial class WindowViewModelWrapper : ObservableObject
-    {
-        private ControlSize height;
-        private double? leftX;
-        private double? topY;
-        private ControlSize width;
-
-        public WindowViewModelWrapper(WindowViewModelBase viewModel, double? leftX, double? topY, ControlSize width,
-            ControlSize height)
-        {
-            ViewModel = viewModel;
-
-            this.leftX = leftX;
-            this.topY = topY;
-            this.width = width;
-            this.height = height;
-        }
-
-        public WindowViewModelBase ViewModel { get; init; }
-
-        [ObservableProperty]
-        public partial int ZIndex { get; set; }
-
-        [ObservableProperty]
-        public partial bool IsActive { get; set; }
-
-        public double LeftX
-        {
-            get => leftX ?? ViewModel.DefaultLeftX;
-            set
-            {
-                leftX = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double TopY
-        {
-            get => topY ?? ViewModel.DefaultTopY;
-            set
-            {
-                topY = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ControlSize Width
-        {
-            get => width ?? ViewModel.DefaultWidth;
-            set
-            {
-                width = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ControlSize Height
-        {
-            get => height ?? ViewModel.DefaultHeight;
-            set
-            {
-                height = value;
-                OnPropertyChanged();
-            }
-        }
     }
 }

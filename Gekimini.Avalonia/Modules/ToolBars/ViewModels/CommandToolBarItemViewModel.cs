@@ -55,7 +55,6 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
     void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
         // TODO?
-        commandHandler.Update(_command);
     }
 
     public override void OnViewAfterLoaded(Control view)

@@ -16,21 +16,19 @@ namespace Gekimini.Avalonia.Framework.Commands;
 [RegisterSingleton<ICommandRouter>]
 public class CommandRouter : ICommandRouter
 {
-    private static readonly Type CommandHandlerInterfaceType = typeof(ICommandHandler<>);
-    private static readonly Type CommandListHandlerInterfaceType = typeof(ICommandListHandler<>);
-    private readonly Dictionary<Type, HashSet<Type>> _commandHandlerTypeToCommandDefinitionTypesLookup;
-
-    private readonly Dictionary<Type, CommandHandlerWrapper> _globalCommandHandlerWrappers;
     private readonly IServiceProvider _serviceProvider;
+
+    private readonly Dictionary<Type, CommandHandlerWrapper> cachedCommandDefinitionToGloablHandlerMap = new();
+    private readonly Dictionary<Type, HashSet<Type>> cachedHandlerSupportDefinitionTypesMap = new();
+    private readonly ICommandHandler[] globalCommandHandlers;
     private readonly ViewLocator viewLocator;
 
     public CommandRouter(IEnumerable<ICommandHandler> globalCommandHandlers, ViewLocator viewLocator,
         IServiceProvider serviceProvider)
     {
+        this.globalCommandHandlers = globalCommandHandlers.ToArray();
         this.viewLocator = viewLocator;
         _serviceProvider = serviceProvider;
-        _commandHandlerTypeToCommandDefinitionTypesLookup = new Dictionary<Type, HashSet<Type>>();
-        _globalCommandHandlerWrappers = BuildCommandHandlerWrappers(globalCommandHandlers.ToArray());
     }
 
     public CommandHandlerWrapper GetCommandHandler(CommandDefinitionBase commandDefinition)
@@ -53,41 +51,42 @@ public class CommandRouter : ICommandRouter
             if (commandHandler != null)
                 return commandHandler;
         }
-        
+
         // If none of the objects in the DataContext hierarchy handle the command,
         // fallback to the global handler.
-        if (!_globalCommandHandlerWrappers.TryGetValue(commandDefinition.GetType(), out commandHandler))
+        if (!TryGetGlobalCommandHandler(commandDefinition.GetType(), out commandHandler))
             return null;
 
         return commandHandler;
     }
 
-    private Dictionary<Type, CommandHandlerWrapper> BuildCommandHandlerWrappers(ICommandHandler[] commandHandlers)
+    private bool TryGetGlobalCommandHandler(Type commandDefinitionType, out CommandHandlerWrapper commandHandler)
     {
-        var commandHandlersList = SortCommandHandlers(commandHandlers);
+        if (cachedCommandDefinitionToGloablHandlerMap.TryGetValue(commandDefinitionType, out commandHandler))
+            return true;
 
-        // Command handlers are either ICommandHandler<T> or ICommandListHandler<T>.
-        // We need to extract T, and use it as the key in our dictionary.
+        var handler = globalCommandHandlers.FirstOrDefault(x => x.SupportCommandDefinitionTypes.Contains(commandDefinitionType));
+        if (handler is null)
+            return false;
+        var wrapper = CreateCommandHandlerWrapper(commandDefinitionType, handler);
+        cachedCommandDefinitionToGloablHandlerMap[commandDefinitionType] = wrapper;
 
-        var result = new Dictionary<Type, CommandHandlerWrapper>();
-
-        foreach (var commandHandler in commandHandlersList)
-        {
-            var commandHandlerType = commandHandler.GetType();
-            EnsureCommandHandlerTypeToCommandDefinitionTypesPopulated(commandHandlerType);
-            var commandDefinitionTypes = _commandHandlerTypeToCommandDefinitionTypesLookup[commandHandlerType];
-            foreach (var commandDefinitionType in commandDefinitionTypes)
-                result[commandDefinitionType] = CreateCommandHandlerWrapper(commandDefinitionType, commandHandler);
-        }
-
-        return result;
+        commandHandler = wrapper;
+        return true;
     }
 
-    private static List<ICommandHandler> SortCommandHandlers(ICommandHandler[] commandHandlers)
+    private bool IsCommandHandlerForCommandDefinitionType(object obj, Type commandDefinitionType)
     {
-        return commandHandlers
-            //.OrderBy(h => bootstrapper.PriorityAssemblies.Contains(h.GetType().Assembly) ? 1 : 0)
-            .ToList();
+        var handlerType = obj.GetType();
+        if (cachedHandlerSupportDefinitionTypesMap.TryGetValue(handlerType, out var supports))
+            return supports.Contains(commandDefinitionType);
+
+        if (obj is not ICommandHandler commandHandler)
+            return false;
+
+        var s = commandHandler.SupportCommandDefinitionTypes.ToHashSet();
+        cachedHandlerSupportDefinitionTypesMap[handlerType] = s;
+        return s.Contains(commandDefinitionType);
     }
 
     private CommandHandlerWrapper GetCommandHandlerForLayoutItem(CommandDefinitionBase commandDefinition,
@@ -114,29 +113,26 @@ public class CommandRouter : ICommandRouter
         object previousDataContext = null;
         do
         {
-            if (visualObject != null)
+            var dataContext = visualObject.DataContext;
+            if (dataContext != null && !ReferenceEquals(dataContext, previousDataContext))
             {
-                var dataContext = visualObject.DataContext;
-                if (dataContext != null && !ReferenceEquals(dataContext, previousDataContext))
+                if (dataContext is ICommandRerouter)
                 {
-                    if (dataContext is ICommandRerouter)
+                    var commandRerouter = (ICommandRerouter) dataContext;
+                    var commandTarget = commandRerouter.GetHandler(commandDefinition);
+                    if (commandTarget != null)
                     {
-                        var commandRerouter = (ICommandRerouter) dataContext;
-                        var commandTarget = commandRerouter.GetHandler(commandDefinition);
-                        if (commandTarget != null)
-                        {
-                            if (IsCommandHandlerForCommandDefinitionType(commandTarget, commandDefinition.GetType()))
-                                return CreateCommandHandlerWrapper(commandDefinition.GetType(), commandTarget);
-                            throw new InvalidOperationException(
-                                "This object does not handle the specified command definition.");
-                        }
+                        if (IsCommandHandlerForCommandDefinitionType(commandTarget, commandDefinition.GetType()))
+                            return CreateCommandHandlerWrapper(commandDefinition.GetType(), commandTarget);
+                        throw new InvalidOperationException(
+                            "This object does not handle the specified command definition.");
                     }
-
-                    if (IsCommandHandlerForCommandDefinitionType(dataContext, commandDefinition.GetType()))
-                        return CreateCommandHandlerWrapper(commandDefinition.GetType(), dataContext);
-
-                    previousDataContext = dataContext;
                 }
+
+                if (IsCommandHandlerForCommandDefinitionType(dataContext, commandDefinition.GetType()))
+                    return CreateCommandHandlerWrapper(commandDefinition.GetType(), dataContext);
+
+                previousDataContext = dataContext;
             }
 
             visualObject = visualObject.GetVisualParent();
@@ -153,48 +149,5 @@ public class CommandRouter : ICommandRouter
         if (commandHandler is ICommandHandler handler2)
             return CommandHandlerWrapper.FromCommandHandler(handler2);
         throw new InvalidOperationException();
-    }
-
-    private bool IsCommandHandlerForCommandDefinitionType(
-        object commandHandler, Type commandDefinitionType)
-    {
-        var commandHandlerType = commandHandler.GetType();
-        EnsureCommandHandlerTypeToCommandDefinitionTypesPopulated(commandHandlerType);
-        var commandDefinitionTypes = _commandHandlerTypeToCommandDefinitionTypesLookup[commandHandlerType];
-        return commandDefinitionTypes.Contains(commandDefinitionType);
-    }
-
-    private void EnsureCommandHandlerTypeToCommandDefinitionTypesPopulated(Type commandHandlerType)
-    {
-        if (!_commandHandlerTypeToCommandDefinitionTypesLookup.ContainsKey(commandHandlerType))
-        {
-            var commandDefinitionTypes = _commandHandlerTypeToCommandDefinitionTypesLookup[commandHandlerType] =
-                new HashSet<Type>();
-
-            foreach (var handledCommandDefinitionType in GetAllHandledCommandedDefinitionTypes(commandHandlerType,
-                         CommandHandlerInterfaceType))
-                commandDefinitionTypes.Add(handledCommandDefinitionType);
-
-            foreach (var handledCommandDefinitionType in GetAllHandledCommandedDefinitionTypes(commandHandlerType,
-                         CommandListHandlerInterfaceType))
-                commandDefinitionTypes.Add(handledCommandDefinitionType);
-        }
-    }
-
-    private static IEnumerable<Type> GetAllHandledCommandedDefinitionTypes(
-        Type type, Type genericInterfaceType)
-    {
-        var result = new List<Type>();
-
-        while (type != null)
-        {
-            result.AddRange(type.GetInterfaces()
-                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericInterfaceType)
-                .Select(x => x.GetGenericArguments().First()));
-
-            type = type.BaseType;
-        }
-
-        return result;
     }
 }

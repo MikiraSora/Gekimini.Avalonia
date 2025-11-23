@@ -24,6 +24,7 @@
         </Grid.RowDefinitions>
 
         <TreeView x:Name="treeView" ItemsSource="{Binding Pages}"
+                  SelectedItem="{Binding SelectedPage}"
                   SelectionMode="AlwaysSelected">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}">
@@ -41,7 +42,7 @@
             <ScrollViewer IsTabStop="False" Grid.Row="0" VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl IsTabStop="False" HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding #treeView.SelectedItem.Editors}"
+                              ItemsSource="{Binding SelectedPage.Editors}"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               BorderBrush="{x:Null}">
