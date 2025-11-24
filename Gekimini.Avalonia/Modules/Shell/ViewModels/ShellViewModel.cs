@@ -14,8 +14,6 @@ using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
-using Gekimini.Avalonia.Modules.Documents.Models;
-using Gekimini.Avalonia.Modules.Documents.ViewModels;
 using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
@@ -337,35 +335,9 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
     private async Task<bool> OnApplicationAskQuit(ApplicationAskQuitEvent message)
     {
-        foreach (var document in Documents.OfType<IPersistedDocumentViewModel>().Where(x => x.IsDirty))
-        {
-            var dialog = new SaveDirtyDocumentDialogViewModel
-            {
-                DocumentName = document.Title
-            };
-            await dialogManager.ShowDialog(dialog);
-
-            switch (dialog.Result)
-            {
-                case DialogResult.Yes:
-                    var isSaveSuccess = await document.Save();
-                    if (!isSaveSuccess)
-                    {
-                        await dialogManager.ShowMessageDialog(
-                            $"Document {document.Title} saving is failed/canceled, application exit has been canceled.");
-                        return false;
-                    }
-
-                    break;
-                case DialogResult.No:
-                    //user cancel save this document, just continue.
-                    break;
-                case DialogResult.Cancel:
-                default:
-                    //user cancel application exit process.
-                    return false;
-            }
-        }
+        foreach (var document in Documents)
+            if (!await Factory.CanCloseDocument(document))
+                return false;
 
         return true;
     }

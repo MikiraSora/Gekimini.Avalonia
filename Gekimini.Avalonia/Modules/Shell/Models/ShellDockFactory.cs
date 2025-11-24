@@ -1,16 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
+using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Modules.Documents.Models;
+using Gekimini.Avalonia.Modules.Documents.ViewModels;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell.Models;
 
 [RegisterSingleton<IFactory>]
-public sealed class ShellDockFactory : Factory, IFactory
+public sealed partial class ShellDockFactory : Factory, IFactory
 {
     private IRootDock root;
 
@@ -19,6 +24,9 @@ public sealed class ShellDockFactory : Factory, IFactory
         HideToolsOnClose = true;
         HideDocumentsOnClose = true;
     }
+
+    [GetServiceLazy]
+    private partial IDialogManager DialogManager { get; }
 
     public override IRootDock CreateLayout()
     {
@@ -132,6 +140,16 @@ public sealed class ShellDockFactory : Factory, IFactory
     {
         base.InitLayout(layout);
         root = FindRoot(layout);
+    }
+
+    public override async void CloseDockable(IDockable dockable)
+    {
+        if (dockable is IDocument document)
+            if (!await CanCloseDocument(document))
+                //todo log it
+                return;
+
+        base.CloseDockable(dockable);
     }
 
     private IDock FindOrCreateToolDock(DockMode dock)
@@ -249,5 +267,43 @@ public sealed class ShellDockFactory : Factory, IFactory
     public void RemoveDocument(IDocument dockable)
     {
         RemoveDockable(dockable, false);
+    }
+
+    public async Task<bool> CanCloseDocument(IDocument document)
+    {
+        if (document is not IPersistedDocumentViewModel persistedDocumentViewModel)
+            return true;
+
+        if (!persistedDocumentViewModel.IsDirty)
+            return true;
+
+        var dialog = new SaveDirtyDocumentDialogViewModel
+        {
+            DocumentName = document.Title
+        };
+        await DialogManager.ShowDialog(dialog);
+
+        switch (dialog.Result)
+        {
+            case DialogResult.Yes:
+                var isSaveSuccess = await persistedDocumentViewModel.Save();
+                if (!isSaveSuccess)
+                {
+                    await DialogManager.ShowMessageDialog(
+                        $"Document {document.Title} saving is failed/canceled, application exit has been canceled.");
+                    return false;
+                }
+
+                break;
+            case DialogResult.No:
+                //user cancel save this document, just continue.
+                break;
+            case DialogResult.Cancel:
+            default:
+                //user cancel application exit process.
+                return false;
+        }
+
+        return true;
     }
 }
