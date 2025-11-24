@@ -10,15 +10,14 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.Shell.Models;
 
 [RegisterSingleton<IFactory>]
-public class ShellDockFactory : Factory, IFactory
+public sealed class ShellDockFactory : Factory, IFactory
 {
-    private readonly IServiceProvider serviceProvider;
-
     private IRootDock root;
 
-    public ShellDockFactory(IServiceProvider serviceProvider)
+    public ShellDockFactory()
     {
-        this.serviceProvider = serviceProvider;
+        HideToolsOnClose = true;
+        HideDocumentsOnClose = true;
     }
 
     public override IRootDock CreateLayout()
@@ -218,10 +217,6 @@ public class ShellDockFactory : Factory, IFactory
         var documentDock = FindOrCreateDocumentDock(dockable.Dock);
 
         AddDockable(documentDock, dockable);
-        //documentDock.AddDocument(dockable);
-
-        //documentDock.ActiveDockable = dockable;
-        //documentDock.FocusedDockable = dockable;
 
         ActiveAndFocus(dockable);
     }

@@ -10,6 +10,17 @@
         <DockFluentTheme />
         <status:StatusBarTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
+
+        <!---->
+
+        <Style Selector="Button.DialogButton">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
     </Application.Styles>
 
     <Application.Resources>

@@ -1,8 +1,8 @@
 ﻿namespace Gekimini.Avalonia.Modules.Dialogs.Views.CommonMessage;
 
-public partial class AboutView : DialogViewBase
+public partial class CommonComfirmDialogView : DialogViewBase
 {
-    public AboutView()
+    public CommonComfirmDialogView()
     {
         InitializeComponent();
     }

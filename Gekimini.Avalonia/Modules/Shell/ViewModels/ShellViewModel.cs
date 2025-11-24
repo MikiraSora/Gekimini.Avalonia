@@ -22,13 +22,11 @@ using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
 using Gekimini.Avalonia.Platforms.Services.Settings;
-using Gekimini.Avalonia.Platforms.Services.Window;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.ViewModels;
 using Injectio.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IO;
 
 namespace Gekimini.Avalonia.Modules.Shell.ViewModels;
 
@@ -44,10 +42,8 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     private readonly IDialogManager dialogManager;
     private readonly IDockSerializer dockSerializer;
     private readonly ILogger<ShellViewModel> logger;
-    private readonly RecyclableMemoryStreamManager memoryStreamManager;
     private readonly IServiceProvider serviceProvider;
     private readonly ISettingManager settingManager;
-    private readonly IWindowManager windowManager;
 
     private IShellView _shellView;
 
@@ -78,22 +74,18 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     private IToolBars toolBars;
 
     public ShellViewModel(IServiceProvider serviceProvider, IDockSerializer dockSerializer,
-        RecyclableMemoryStreamManager memoryStreamManager,
         ISettingManager settingManager,
         IEnumerable<IModule> modules,
         IStatusBar statusBar,
         IToolBars toolBars,
         IMenu mainMenu,
-        IWindowManager windowManager,
         IDialogManager dialogManager,
         ILogger<ShellViewModel> logger)
     {
         this.serviceProvider = serviceProvider;
         this.dockSerializer = dockSerializer;
-        this.memoryStreamManager = memoryStreamManager;
         this.settingManager = settingManager;
         _modules = modules;
-        this.windowManager = windowManager;
         this.dialogManager = dialogManager;
         this.logger = logger;
 
@@ -173,6 +165,18 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         Factory.RemoveDocument(model);
 
         return Task.CompletedTask;
+    }
+
+    public async Task ResetLayout()
+    {
+        foreach (var tool in Tools.ToArray())
+            HideTool(tool);
+        foreach (var document in Documents.ToArray())
+            await CloseDocumentAsync(document);
+
+        var newLayout = Factory.CreateLayout();
+        Factory.InitLayout(newLayout);
+        Layout = newLayout;
     }
 
     public void ShowTool<TTool>(bool allowDuplicate = false)
