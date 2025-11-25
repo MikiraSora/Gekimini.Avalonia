@@ -1,0 +1,73 @@
+name: Build and Deploy Browser to GitHub Pages
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+        
+    - name: Setup wasm-tool
+      run: dotnet workload install wasm-tools
+      
+    - name: Setup android
+      run: dotnet workload install android
+
+    - name: Restore dependencies
+      run: dotnet restore Gekimini.Avalonia.sln
+
+    - name: Build Browser project
+      run: |
+        dotnet publish Gekimini.Avalonia.Browser/Gekimini.Avalonia.Browser.csproj -c Release -o ./publish
+        
+    - name: Build Windows (x64)
+      run: |
+        dotnet publish Gekimini.Avalonia.Desktop/Gekimini.Avalonia.Desktop.csproj -p:PublishProfile=FolderProfile -o ./windows/x64
+        
+    - name: Compress Build Windows
+      run: Compress-Archive -Path "./windows/x64/*" -DestinationPath "./publish/wwwroot/downloads/win_x64.zip"
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./publish/wwwroot
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+
+      uses: actions/deploy-pages@v4
