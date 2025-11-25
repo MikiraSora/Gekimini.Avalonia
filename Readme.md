@@ -1,7 +1,7 @@
 ## Gekimini.Avalonia
 ---------------
 ### Introduction
-A UI framework like VisualStudio for Avalonia Browser/Desktop/Android, ported/modified from [Gemini](https://github.com/tgjones/gemini)
+A UI framework like VisualStudio for Avalonia Browser/Desktop/Android with NativeAOT, ported/modified from [Gemini](https://github.com/tgjones/gemini)
 
 **Attention!!!** I am still learning Avalonia development, and this project is currently solely for [my personal project](https://github.com/NyagekiFumenProject/OngekiFumenEditor) development and maintenance. Therefore, future updates to this project may contain significant breaking changes.
 
@@ -15,4 +15,5 @@ A UI framework like VisualStudio for Avalonia Browser/Desktop/Android, ported/mo
 * IOC/DI: [Microsoft.Extensions.DependencyInjection](https://learn.microsoft.com/zh-cn/dotnet/api/microsoft.extensions.dependencyinjection) + [forked Injectio](https://github.com/MikiraSora/Injectio) + SourceGenerator
 
 ### Screenshoots
+
 
