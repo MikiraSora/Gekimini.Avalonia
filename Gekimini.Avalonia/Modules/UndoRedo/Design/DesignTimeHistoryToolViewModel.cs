@@ -2,9 +2,9 @@ using Gekimini.Avalonia.Modules.UndoRedo.ViewModels;
 
 namespace Gekimini.Avalonia.Modules.UndoRedo.Design
 {
-    public class DesignTimeHistoryViewModel : HistoryViewModel
+    public class DesignTimeHistoryToolViewModel : HistoryToolViewModel
     {
-        public DesignTimeHistoryViewModel()
+        public DesignTimeHistoryToolViewModel()
             : base(null)
         {
             HistoryItems.Add(new HistoryItemViewModel("Initial") { ItemType = HistoryItemType.InitialState });

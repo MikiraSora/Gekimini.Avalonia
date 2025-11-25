@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Gekimini.Avalonia;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gemini.Framework.Menus;
@@ -9,23 +10,19 @@ namespace Gemini.Framework.Menus;
 public class CommandMenuItemDefinition<TCommandDefinition> : MenuItemDefinition
     where TCommandDefinition : CommandDefinitionBase
 {
-    private CommandDefinitionBase _commandDefinition;
-
-    private KeyGesture _keyGesture;
-
     public CommandMenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
         : base(group, sortOrder)
     {
     }
 
-    public override CommandDefinitionBase CommandDefinition => _commandDefinition ??= (App.Current as App)
+    public override CommandDefinitionBase CommandDefinition => field ??= (App.Current as App)
         ?.ServiceProvider
         .GetService<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition));
 
-    public override string Text => CommandDefinition.Text;
+    public override LocalizedString Text => CommandDefinition.Text;
 
     public override Uri IconSource => CommandDefinition.IconSource;
 
-    public override KeyGesture KeyGesture => _keyGesture ??= (App.Current as App)?.ServiceProvider
+    public override KeyGesture KeyGesture => field ??= (App.Current as App)?.ServiceProvider
         .GetService<ICommandKeyGestureService>().GetPrimaryKeyGesture(CommandDefinition);
 }

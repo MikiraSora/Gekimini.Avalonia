@@ -1,5 +1,7 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Modules.Shell.Commands;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gemini.Framework.Menus;
 using Injectio.Attributes;
 
@@ -9,7 +11,8 @@ public static class MenuDefinitions
 {
     [RegisterStaticObject]
     public static MenuItemDefinition FileNewMenuItem = new TextMenuItemDefinition(
-        MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0, Resources.FileNewCommandText);
+        MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0,
+        LocalizedString.CreateFromResourceKey(nameof(Resources.FileNewCommandText)));
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition FileNewCascadeGroup = new(
@@ -21,7 +24,8 @@ public static class MenuDefinitions
 
     [RegisterStaticObject]
     public static MenuItemDefinition FileOpenMenuItem = new TextMenuItemDefinition(
-        MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0, Resources.FileOpenCommandText);
+        MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0,
+        LocalizedString.CreateFromResourceKey(nameof(Resources.FileOpenCommandText)));
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition FileOpenCascadeGroup = new(
@@ -70,7 +74,7 @@ public static class MenuDefinitions
 
     [RegisterStaticObject]
     public static MenuItemDefinition LayoutMenuItem =
-        new TextMenuItemDefinition(LayoutMenuGroup, 0, "布局");
+        new TextMenuItemDefinition(LayoutMenuGroup, 0, "布局".ToLocalizedStringByRawText());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition LayoutMenuItemGroup = new(

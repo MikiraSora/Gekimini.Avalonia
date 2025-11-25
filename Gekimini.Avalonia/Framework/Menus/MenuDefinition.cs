@@ -1,51 +1,32 @@
 ﻿using System;
-using System.Windows.Input;
 using Avalonia.Input;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
+using Gemini.Framework.Menus;
 
-namespace Gemini.Framework.Menus
+namespace Gekimini.Avalonia.Framework.Menus;
+
+public class MenuDefinition : MenuDefinitionBase
 {
-    public class MenuDefinition : MenuDefinitionBase
+    private readonly int _sortOrder;
+    private readonly LocalizedString _text;
+
+    public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, LocalizedString text)
     {
-        private readonly MenuBarDefinition _menuBar;
-        private readonly int _sortOrder;
-        private readonly string _text;
-
-        public MenuBarDefinition MenuBar
-        {
-            get { return _menuBar; }
-        }
-
-        public override int SortOrder
-        {
-            get { return _sortOrder; }
-        }
-
-        public override string Text
-        {
-            get { return _text; }
-        }
-
-        public override Uri IconSource
-        {
-            get { return null; }
-        }
-
-        public override KeyGesture KeyGesture
-        {
-            get { return null; }
-        }
-
-        public override CommandDefinitionBase CommandDefinition
-        {
-            get { return null; }
-        }
-
-        public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
-        {
-            _menuBar = menuBar;
-            _sortOrder = sortOrder;
-            _text = text;
-        }
+        MenuBar = menuBar;
+        _sortOrder = sortOrder;
+        _text = text;
     }
+
+    public MenuBarDefinition MenuBar { get; }
+
+    public override int SortOrder => _sortOrder;
+
+    public override LocalizedString Text => _text;
+
+    public override Uri IconSource => null;
+
+    public override KeyGesture KeyGesture => null;
+
+    public override CommandDefinitionBase CommandDefinition => null;
 }

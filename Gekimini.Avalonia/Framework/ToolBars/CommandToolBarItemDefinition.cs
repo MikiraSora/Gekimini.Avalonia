@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia.Input;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Framework.ToolBars;
@@ -21,7 +22,7 @@ public class CommandToolBarItemDefinition<TCommandDefinition> : ToolBarItemDefin
         (App.Current as App).ServiceProvider.GetService<ICommandService>()
         .GetCommandDefinition(typeof(TCommandDefinition));
 
-    public override string Text => CommandDefinition.ToolTip;
+    public override LocalizedString Text => CommandDefinition.ToolTip;
 
     public override Uri IconSource => CommandDefinition.IconSource;
 

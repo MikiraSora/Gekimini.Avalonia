@@ -1,4 +1,6 @@
 ﻿using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.InternalTest.Commands;
@@ -10,7 +12,7 @@ public class ViewInternalTestToolCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => "内部测试Toolbox";
+    public override LocalizedString Text { get; } = "内部测试Toolbox".ToLocalizedStringByRawText();
 
-    public override string ToolTip => "内部测试Toolbox的ToolTip";
+    public override LocalizedString ToolTip { get; } = "内部测试Toolbox的ToolTip".ToLocalizedStringByRawText();
 }

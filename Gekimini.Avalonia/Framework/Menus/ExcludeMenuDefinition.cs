@@ -1,4 +1,6 @@
-﻿namespace Gemini.Framework.Menus
+﻿using Gekimini.Avalonia.Framework.Menus;
+
+namespace Gemini.Framework.Menus
 {
     public class ExcludeMenuDefinition
     {

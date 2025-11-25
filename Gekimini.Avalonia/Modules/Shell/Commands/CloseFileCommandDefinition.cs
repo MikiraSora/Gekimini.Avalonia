@@ -1,5 +1,6 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
@@ -11,7 +12,9 @@ public class CloseFileCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => Resources.FileCloseCommandText;
+    public override LocalizedString Text { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.FileCloseCommandText));
 
-    public override string ToolTip => Resources.FileCloseCommandToolTip;
+    public override LocalizedString ToolTip { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.FileCloseCommandToolTip));
 }

@@ -1,5 +1,7 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Framework.RecentFiles.Commands;
@@ -11,7 +13,7 @@ public class RecentFilesCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => Resources.CommandRecentFiles;
+    public override LocalizedString Text { get; } = LocalizedString.CreateFromResourceKey(nameof(Resources.CommandRecentFiles));
 
-    public override string ToolTip => string.Empty;
+    public override LocalizedString ToolTip { get; } = string.Empty.ToLocalizedStringByRawText();
 }

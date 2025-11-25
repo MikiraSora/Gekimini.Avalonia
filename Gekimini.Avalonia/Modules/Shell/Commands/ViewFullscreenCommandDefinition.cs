@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
@@ -18,9 +19,11 @@ public class ViewFullScreenCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => Resources.ViewFullScreenCommandText;
+    public override LocalizedString Text { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewFullScreenCommandText));
 
-    public override string ToolTip => Resources.ViewFullScreenCommandToolTip;
+    public override LocalizedString ToolTip { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewFullScreenCommandToolTip));
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/FullScreen.png");
 }

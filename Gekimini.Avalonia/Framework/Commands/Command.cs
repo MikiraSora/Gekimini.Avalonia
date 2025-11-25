@@ -1,5 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gekimini.Avalonia.Framework.Languages;
 
 namespace Gekimini.Avalonia.Framework.Commands;
 
@@ -25,10 +26,10 @@ public partial class Command : ObservableObject
     public partial bool Checked { get; set; }
 
     [ObservableProperty]
-    public partial string Text { get; set; }
+    public partial LocalizedString Text { get; set; }
 
     [ObservableProperty]
-    public partial string ToolTip { get; set; }
+    public partial LocalizedString ToolTip { get; set; }
 
     [ObservableProperty]
     public partial Uri IconSource { get; set; }

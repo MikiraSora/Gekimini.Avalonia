@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using Avalonia.Input;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.MainMenu.ViewModels.MenuItems;
@@ -29,7 +30,7 @@ public class CommandMenuItemViewModel : StandardMenuItemViewModel, ICommandUiIte
         _command.PropertyChanged += CommandPropertyChanged;
     }
 
-    public override string Text => _command.Text;
+    public override LocalizedString Text => _command.Text;
 
     public override Uri IconSource => _command.IconSource;
 

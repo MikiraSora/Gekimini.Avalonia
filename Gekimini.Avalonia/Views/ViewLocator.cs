@@ -50,7 +50,10 @@ public class ViewLocator : IDataTemplate
 
         if (view is Control control)
         {
-            control.Loaded += (a, aa) => { viewModel.OnViewAfterLoaded(control); };
+            control.Loaded += (a, aa) =>
+            {
+                viewModel.OnViewAfterLoaded(control);
+            };
             control.Unloaded += (a, aa) =>
             {
                 viewModel.OnViewBeforeUnload(control);

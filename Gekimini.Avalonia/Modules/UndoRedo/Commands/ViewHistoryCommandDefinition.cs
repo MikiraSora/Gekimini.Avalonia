@@ -1,5 +1,6 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.UndoRedo.Commands;
@@ -11,7 +12,9 @@ public class ViewHistoryCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => Resources.ViewHistoryCommandText;
+    public override LocalizedString Text { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewHistoryCommandText));
 
-    public override string ToolTip => Resources.ViewHistoryCommandToolTip;
+    public override LocalizedString ToolTip { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewHistoryCommandToolTip));
 }

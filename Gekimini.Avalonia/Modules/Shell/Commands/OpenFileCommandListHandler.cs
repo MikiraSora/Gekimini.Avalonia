@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
@@ -26,7 +27,7 @@ public partial class OpenFileCommandListHandler : CommandListHandlerBase<OpenFil
             foreach (var editorFileType in editorProvider.FileTypes)
                 commands.Add(new Command(command.CommandDefinition)
                 {
-                    Text = editorFileType.Name,
+                    Text = editorFileType.Name.ToLocalizedStringByRawText(),
                     IconSource = editorFileType.IconSource,
                     Tag = new OpenFileTag
                     {

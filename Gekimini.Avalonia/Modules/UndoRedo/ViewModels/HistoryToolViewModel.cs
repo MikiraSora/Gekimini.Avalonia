@@ -6,7 +6,8 @@ using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Assets.Languages;
-using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Framework.Tools;
 using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.Modules.Shell;
 using Injectio.Attributes;
@@ -14,14 +15,14 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.UndoRedo.ViewModels;
 
 [RegisterSingleton<IHistoryTool>]
-public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
+public partial class HistoryToolViewModel : GekiminiToolViewModelBase, IHistoryTool
 {
     private int _selectedIndex;
 
-    public HistoryViewModel(IShell shell)
+    public HistoryToolViewModel(IShell shell) : base(
+        LocalizedString.CreateFromResourceKey(nameof(Resources.HistoryDisplayName)))
     {
         Dock = DockMode.Right;
-        Title = Resources.HistoryDisplayName;
 
         if (shell == null)
             return;

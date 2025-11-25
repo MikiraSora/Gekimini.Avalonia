@@ -5,10 +5,10 @@
                 xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.UndoRedo.ViewModels"
                 xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                x:DataType="viewModels:HistoryViewModel"
+                x:DataType="viewModels:HistoryToolViewModel"
                 x:Class="Gekimini.Avalonia.Modules.UndoRedo.Views.HistoryView">
     <Design.DataContext>
-        <viewModels:HistoryViewModel />
+        <viewModels:HistoryToolViewModel />
     </Design.DataContext>
 
     <Grid Margin="5">

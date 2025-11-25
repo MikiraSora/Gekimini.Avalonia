@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Menus;
 using Gekimini.Avalonia.Modules.MainMenu.ViewModels;
 using Gekimini.Avalonia.Modules.MainMenu.ViewModels.MenuItems;
 using Gemini.Framework.Menus;

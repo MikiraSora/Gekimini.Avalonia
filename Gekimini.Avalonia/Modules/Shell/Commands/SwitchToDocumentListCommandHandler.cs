@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,7 +30,7 @@ public class SwitchToDocumentListCommandHandler : CommandListHandlerBase<SwitchT
             commands.Add(new Command(command.CommandDefinition)
             {
                 Checked = _shell.ActiveDocument == document,
-                Text = string.Format("_{0} {1}", i + 1, document.Title /*todo document.DisplayName*/),
+                Text = string.Format("_{0} {1}", i + 1, document.Title /*todo document.DisplayName*/).ToLocalizedStringByRawText(),
                 Tag = document
             });
         }

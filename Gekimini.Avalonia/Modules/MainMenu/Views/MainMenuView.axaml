@@ -19,7 +19,7 @@
             <Setter Property="IsVisible" Value="{Binding IsVisible}" />
             <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=OneWay}" />
             <Setter Property="Command" Value="{Binding Command}" />
-            <Setter Property="Header" Value="{Binding Text}" />
+            <Setter Property="Header" Value="{Binding Text.Text}" />
             <Setter Property="ItemsSource" Value="{Binding Children}" />
             <Setter Property="behaviors:MenuBehavior.UpdateCommandUiItems" Value="True" />
         </Style>

@@ -5,7 +5,8 @@ using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Assets.Languages;
-using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Framework.Tools;
 using Gekimini.Avalonia.Modules.Shell;
 using Gekimini.Avalonia.Modules.Toolbox.Services;
 using Gekimini.Avalonia.Utils;
@@ -15,7 +16,7 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.Toolbox.ViewModels;
 
 [RegisterSingleton<IToolbox>]
-public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
+public partial class ToolboxViewModel : GekiminiToolViewModelBase, IToolbox
 {
     private readonly ObservableCollection<ToolboxItemGroupViewModel> _filteredItems = new();
     private readonly ObservableCollection<ToolboxItemGroupViewModel> _groupedItems = new();
@@ -25,10 +26,10 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     private readonly IToolboxService _toolboxService;
     private Type prevType;
 
-    public ToolboxViewModel(IShell shell, IToolboxService toolboxService)
+    public ToolboxViewModel(IShell shell, IToolboxService toolboxService) : base(
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ToolboxDisplayName)))
     {
         Dock = DockMode.Left;
-        Title = Resources.ToolboxDisplayName;
 
         _toolboxService = toolboxService;
 

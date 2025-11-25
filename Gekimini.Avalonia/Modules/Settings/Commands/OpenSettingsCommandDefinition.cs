@@ -1,5 +1,6 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Settings.Commands;
@@ -11,7 +12,9 @@ public class OpenSettingsCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => Resources.ToolsOptionsCommandText;
+    public override LocalizedString Text { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ToolsOptionsCommandText));
 
-    public override string ToolTip => Resources.ToolsOptionsCommandToolTip;
+    public override LocalizedString ToolTip { get; } =
+        LocalizedString.CreateFromResourceKey(nameof(Resources.ToolsOptionsCommandToolTip));
 }

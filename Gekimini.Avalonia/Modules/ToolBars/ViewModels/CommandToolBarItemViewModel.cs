@@ -3,13 +3,17 @@ using System.ComponentModel;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.ToolBars;
+using Gekimini.Avalonia.Models.Events;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.ToolBars.ViewModels;
 
-public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiItem
+public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiItem,
+    IRecipient<CurrentCultureInfoChangedEvent>
 {
     private readonly Command _command;
     private readonly ToolBarItemDefinition _toolBarItem;
@@ -37,7 +41,7 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
                 ? string.Format(" ({0})", KeyGesture.ToString())
                 : string.Empty;
 
-            return string.Format("{0}{1}", _command.ToolTip, inputGestureText).Trim();
+            return string.Format("{0}{1}", _command.ToolTip.Text, inputGestureText).Trim();
         }
     }
 
@@ -55,6 +59,12 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
     void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
         // TODO?
+    }
+
+    public void Receive(CurrentCultureInfoChangedEvent message)
+    {
+        OnPropertyChanged(nameof(Text));
+        OnPropertyChanged(nameof(ToolTip));
     }
 
     public override void OnViewAfterLoaded(Control view)
@@ -99,17 +109,17 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
     ///     Also replace escaped/double underscores by a single underscore.
     ///     Displayed text will be the same than with a menu item.
     /// </summary>
-    private static string TrimMnemonics(string text)
+    private static string TrimMnemonics(LocalizedString localizedStr)
     {
-        var resultArray = new char[text.Length];
+        var resultArray = new char[localizedStr.Text.Length];
 
         var resultLength = 0;
         var previousWasUnderscore = false;
         var mnemonicsFound = false;
 
-        for (var textIndex = 0; textIndex < text.Length; textIndex++)
+        for (var textIndex = 0; textIndex < localizedStr.Text.Length; textIndex++)
         {
-            var c = text[textIndex];
+            var c = localizedStr.Text[textIndex];
 
             if (c == '_')
             {

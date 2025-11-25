@@ -7,6 +7,7 @@ using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Modules.Shell;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
 
@@ -39,7 +40,7 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
             var item = recentOpened.ElementAtOrDefault(i);
             commands.Add(new Command(command.CommandDefinition)
             {
-                Text = $"_{i + 1} {item.Name} ({item.LocationDescription})",
+                Text = $"_{i + 1} {item.Name} ({item.LocationDescription})".ToLocalizedStringByRawText(),
                 Tag = item,
                 Enabled = PickDocumentProvider(item) is not null
             });

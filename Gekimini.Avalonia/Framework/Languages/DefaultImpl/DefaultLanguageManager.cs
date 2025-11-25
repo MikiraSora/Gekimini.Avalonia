@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
 using System.Threading;
+using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Injectio.Attributes;
@@ -71,6 +73,11 @@ public partial class DefaultLanguageManager : ILanguageManager
         return source;
     }
 
+    public string GetTranslatedText(string resKey)
+    {
+        return Resources.ResourceManager.GetString(resKey);
+    }
+
     public void Initalize()
     {
         SetLanguage(SettingManager.GetSetting(GekiminiSetting.JsonTypeInfo).LanguageCode);
@@ -89,7 +96,9 @@ public partial class DefaultLanguageManager : ILanguageManager
 
         Thread.CurrentThread.CurrentUICulture = culture;
         Thread.CurrentThread.CurrentCulture = uiCulture;
+        Resources.Culture = culture;
 
+        WeakReferenceMessenger.Default.Send(new CurrentCultureInfoChangedEvent(culture));
         foreach (var source in cachedSources.Values)
             source.Refresh();
 

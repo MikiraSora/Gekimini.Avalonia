@@ -1,4 +1,6 @@
 ﻿using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
@@ -10,7 +12,8 @@ public class ResetLayoutCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override string Text => "Reset Layout";
+    public override LocalizedString Text { get; } = "Reset Layout".ToLocalizedStringByRawText();
 
-    public override string ToolTip => "Clean all layout and your tools will be removed.";
+    public override LocalizedString ToolTip { get; } =
+        "Clean all layout and your tools will be removed.".ToLocalizedStringByRawText();
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
+using Gekimini.Avalonia.Framework.Languages;
 using Gemini.Framework.Menus;
 
 namespace Gekimini.Avalonia.Modules.MainMenu.ViewModels.MenuItems;
@@ -13,7 +14,7 @@ public class TextMenuItemViewModel : StandardMenuItemViewModel
         _menuDefinition = menuDefinition;
     }
 
-    public override string Text => _menuDefinition.Text;
+    public override LocalizedString Text => _menuDefinition.Text;
 
     public override Uri IconSource => _menuDefinition.IconSource;
 
