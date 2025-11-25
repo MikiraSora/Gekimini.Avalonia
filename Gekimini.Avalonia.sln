@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model", "..\Dock\src\D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model.Mvvm", "..\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj", "{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Browser", "Gekimini.Avalonia.Browser\Gekimini.Avalonia.Browser.csproj", "{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

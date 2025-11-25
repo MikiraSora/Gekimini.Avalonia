@@ -2,21 +2,27 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gekimini.Avalonia.Platforms.Services;
 using Gekimini.Avalonia.Platforms.Services.MainWindow;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Desktop.Platforms.Services.MainWindow;
 
 [RegisterSingleton<IPlatformMainWindow>]
-public partial class DesktopPlatformMainWindow : ObservableObject, IPlatformMainWindow
+public class DesktopPlatformMainWindow : ObservableObject, IPlatformMainWindow
 {
-    public WindowState WindowState
+    public bool IsFullScreen
     {
-        get => GetCurrentMainWindow()?.WindowState ?? default;
+        get => GetCurrentMainWindow()?.WindowState == WindowState.FullScreen;
         set
         {
-            ApplyWindowState(value);
+            if (GetCurrentMainWindow() is { } mainWindow)
+            {
+                if (value)
+                    mainWindow.WindowState = WindowState.FullScreen;
+                else
+                    mainWindow.WindowState = WindowState.Normal;
+            }
+
             OnPropertyChanged();
         }
     }
@@ -41,7 +47,7 @@ public partial class DesktopPlatformMainWindow : ObservableObject, IPlatformMain
         }
     }
 
-    public Rect WindowRect
+    public Rect? WindowRect
     {
         get
         {
@@ -53,7 +59,8 @@ public partial class DesktopPlatformMainWindow : ObservableObject, IPlatformMain
         }
         set
         {
-            ApplyWindowRect(value);
+            if (value is { } val)
+                ApplyWindowRect(val);
             OnPropertyChanged();
         }
     }

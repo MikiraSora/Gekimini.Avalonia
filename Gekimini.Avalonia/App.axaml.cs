@@ -51,7 +51,7 @@ public abstract class App : Application
 
         BindingPlugins.DataValidators.Clear();
 
-        ServiceProvider.GetService<IThemeManager>().Initalize();
+        //ServiceProvider.GetService<IThemeManager>().Initalize();
         ServiceProvider.GetService<ILanguageManager>().Initalize();
 
         var viewLocator = ServiceProvider.GetService<ViewLocator>();
@@ -80,7 +80,7 @@ public abstract class App : Application
 
         platformMainWindow.WindowRect = new Rect(new Point(setting.MainWindowRectTop, setting.MainWindowRectTop),
             new Size(setting.MainWindowRectWidth, setting.MainWindowRectHeight));
-        platformMainWindow.WindowState = setting.IsFullScreen ? WindowState.FullScreen : WindowState.Normal;
+        platformMainWindow.IsFullScreen = setting.IsFullScreen;
     }
 
     private void SaveMainWindowLocationAndSize()
@@ -89,12 +89,15 @@ public abstract class App : Application
         var settingManager = ServiceProvider.GetService<ISettingManager>();
         var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
 
-        setting.MainWindowRectTop = platformMainWindow.WindowRect.Top;
-        setting.MainWindowRectLeft = platformMainWindow.WindowRect.Left;
-        setting.MainWindowRectWidth = platformMainWindow.WindowRect.Width;
-        setting.MainWindowRectHeight = platformMainWindow.WindowRect.Height;
+        if (platformMainWindow.WindowRect is { } rect)
+        {
+            setting.MainWindowRectTop = rect.Top;
+            setting.MainWindowRectLeft = rect.Left;
+            setting.MainWindowRectWidth = rect.Width;
+            setting.MainWindowRectHeight = rect.Height;
+        }
 
-        setting.IsFullScreen = platformMainWindow.WindowState == WindowState.FullScreen;
+        setting.IsFullScreen = platformMainWindow.IsFullScreen;
 
         settingManager.SaveSetting(setting, GekiminiSetting.JsonTypeInfo);
     }

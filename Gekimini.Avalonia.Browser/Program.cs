@@ -1,17 +1,33 @@
-﻿using System.Runtime.Versioning;
-using System.Threading.Tasks;
-
+﻿using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
+using Avalonia.Media;
 
-using Gekimini.Avalonia;
+namespace Gekimini.Avalonia.Browser;
 
-internal sealed partial class Program
+internal sealed class Program
 {
-    private static Task Main(string[] args) => BuildAvaloniaApp()
+    private static Task Main(string[] args)
+    {
+        return BuildAvaloniaApp()
             .WithInterFont()
+            .With(new FontManagerOptions
+            {
+                FontFallbacks = new[]
+                {
+                    new FontFallback
+                    {
+                        FontFamily =
+                            new FontFamily(
+                                "avares://Gekimini.Avalonia.Browser/Assets/Fonts/NotoSansSC-VariableFont_wght.ttf#Noto Sans SC")
+                    }
+                }
+            })
             .StartBrowserAppAsync("out");
+    }
 
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>();
+    {
+        return AppBuilder.Configure<BrowserApp>();
+    }
 }

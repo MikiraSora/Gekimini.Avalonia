@@ -7,8 +7,8 @@ namespace Gekimini.Avalonia.Platforms.Services.MainWindow;
 
 public interface IPlatformMainWindow
 {
-    WindowState WindowState { get; set; }
+    bool IsFullScreen { get; set; }
     string Title { get; set; }
-    Rect WindowRect { get; set; }
+    Rect? WindowRect { get; set; }
     WindowIcon Icon { get; set; }
 }

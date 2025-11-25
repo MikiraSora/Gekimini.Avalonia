@@ -6,6 +6,7 @@
              RequestedThemeVariant="Default">
 
     <Application.Styles>
+        <FluentTheme/>
         <dialogHostAvalonia:DialogHostStyles />
         <DockFluentTheme />
         <status:StatusBarTheme />
