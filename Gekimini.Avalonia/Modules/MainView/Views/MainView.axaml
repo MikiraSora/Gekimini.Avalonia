@@ -55,11 +55,13 @@
                                     <TextBlock Margin="8,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource ContainerTitleForegroundBrush}"
                                                Text="{Binding ViewModel.Title}" />
-                                    <Button Content="{markupExtensions:FluentIcon Icon=Dismiss}" Grid.Column="1"
-                                            Width="24" Height="24" Margin="5"
-                                            Foreground="{DynamicResource ContainerTitleForegroundBrush}"
-                                            Command="{Binding #windowItemsControl.DataContext.CloseWindowCommand}"
-                                            CommandParameter="{Binding ViewModel}" />
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Button Content="{markupExtensions:FluentIcon Icon=Dismiss}"
+                                                Width="24" Height="24" Margin="5"
+                                                Foreground="{DynamicResource ContainerTitleForegroundBrush}"
+                                                Command="{Binding #windowItemsControl.DataContext.CloseWindowCommand}"
+                                                CommandParameter="{Binding ViewModel}" />
+                                    </StackPanel>
                                 </Grid>
 
                                 <ContentPresenter HorizontalContentAlignment="Stretch"

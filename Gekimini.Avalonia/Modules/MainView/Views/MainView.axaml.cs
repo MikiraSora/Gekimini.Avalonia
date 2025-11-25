@@ -46,8 +46,14 @@ public partial class MainView : ViewBase
         var pos = e.GetPosition(null);
         var delta = pos - _dragStart;
 
-        control.Width = Math.Max(150, _startSize.Width + delta.X);
-        control.Height = Math.Max(100, _startSize.Height + delta.Y);
+        var width = _startSize.Width + delta.X;
+        width = Math.Clamp(width, 50, Bounds.Width - Canvas.GetLeft(control));
+
+        var height = _startSize.Height + delta.Y;
+        height = Math.Clamp(height, 50, Bounds.Height - Canvas.GetTop(control));
+
+        control.Width = width;
+        control.Height = height;
     }
 
     private void StopResizing(object sender, PointerReleasedEventArgs e)
@@ -61,11 +67,11 @@ public partial class MainView : ViewBase
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             return;
-        
+
         control = (sender as Control).FindAncestorOfType<ContentPresenter>();
         if (control is null)
             return;
-        
+
         _dragging = true;
         _dragStart = e.GetPosition(null);
         _startPosition = new Point(Canvas.GetLeft(control), Canvas.GetTop(control));
@@ -81,10 +87,16 @@ public partial class MainView : ViewBase
         var pos = e.GetPosition(null);
         var delta = pos - _dragStart;
 
-        Canvas.SetLeft(control, _startPosition.X + delta.X);
-        Canvas.SetTop(control, _startPosition.Y + delta.Y);
-    }
+        var left = _startPosition.X + delta.X;
+        left = Math.Clamp(left, 0, Bounds.Width - control.Bounds.Width);
 
+        var top = _startPosition.Y + delta.Y;
+        top = Math.Clamp(top, 0, Bounds.Height - control.Bounds.Height);
+
+        Canvas.SetLeft(control, left);
+        Canvas.SetTop(control, top);
+    }
+    
     private void StopDragging(object sender, PointerReleasedEventArgs e)
     {
         _dragging = false;
