@@ -33,9 +33,6 @@ jobs:
     - name: Setup wasm-tool
       run: dotnet workload install wasm-tools
       
-    - name: Setup android
-      run: dotnet workload install android
-
     - name: Restore dependencies
       run: dotnet restore Gekimini.Avalonia.sln
 
