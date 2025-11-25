@@ -56,13 +56,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Dock\src\Dock.Avalonia.Diagnostics\Dock.Avalonia.Diagnostics.csproj" />
-        <ProjectReference Include="..\..\Dock\src\Dock.Avalonia.Themes.Fluent\Dock.Avalonia.Themes.Fluent.csproj" />
-        <ProjectReference Include="..\..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
-        <ProjectReference Include="..\..\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj" />
-        <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
-        <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\..\Injectio\src\Injectio.Attributes\Injectio.Attributes.csproj" />
-        <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\..\Injectio\src\Injectio.Generators\Injectio.Generators.csproj" />
+        <ProjectReference Include="..\Dependencies\Dock\src\Dock.Avalonia.Diagnostics\Dock.Avalonia.Diagnostics.csproj" />
+        <ProjectReference Include="..\Dependencies\Dock\src\Dock.Avalonia.Themes.Fluent\Dock.Avalonia.Themes.Fluent.csproj" />
+        <ProjectReference Include="..\Dependencies\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
+        <ProjectReference Include="..\Dependencies\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj" />
+        <ProjectReference Include="..\Dependencies\Dock\src\Dock.Model\Dock.Model.csproj" />
+        <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\Dependencies\Injectio\src\Injectio.Attributes\Injectio.Attributes.csproj" />
+        <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\Dependencies\Injectio\src\Injectio.Generators\Injectio.Generators.csproj" />
         <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\Gekimini.Avalonia.Attributes\Gekimini.Avalonia.Attributes.csproj" />
         <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\Gekimini.Avalonia.Generator\Gekimini.Avalonia.Generator.csproj" />
     </ItemGroup>

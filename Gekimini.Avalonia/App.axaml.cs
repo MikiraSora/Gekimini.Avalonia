@@ -51,7 +51,7 @@ public abstract class App : Application
 
         BindingPlugins.DataValidators.Clear();
 
-        //ServiceProvider.GetService<IThemeManager>().Initalize();
+        ServiceProvider.GetService<IThemeManager>().Initalize();
         ServiceProvider.GetService<ILanguageManager>().Initalize();
 
         var viewLocator = ServiceProvider.GetService<ViewLocator>();
