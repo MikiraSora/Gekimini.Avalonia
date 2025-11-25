@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.Media;
+using Dock.Settings;
 
 namespace Gekimini.Avalonia.Browser;
 
