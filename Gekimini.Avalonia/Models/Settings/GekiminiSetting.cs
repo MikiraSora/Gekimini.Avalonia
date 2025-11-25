@@ -10,6 +10,9 @@ public partial class GekiminiSetting : ObservableObject
     public static JsonTypeInfo<GekiminiSetting> JsonTypeInfo => JsonSourceGenerateContext.Default.GekiminiSetting;
 
     [ObservableProperty]
+    public partial bool IsFullScreen { get; set; } = false;
+    
+    [ObservableProperty]
     public partial bool AutoHideMainMenu { get; set; } = false;
 
     [ObservableProperty]

@@ -6,4 +6,9 @@ public class RawTextString(string rawText) : LocalizedString(false)
     {
         return rawText;
     }
+
+    public override string ToString()
+    {
+        return $"<rawText: {rawText}>";
+    }
 }

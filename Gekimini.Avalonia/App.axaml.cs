@@ -10,8 +10,10 @@ using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
 using Gekimini.Avalonia.Models.Events;
+using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.MainView;
-using Gekimini.Avalonia.Utils;
+using Gekimini.Avalonia.Platforms.Services.MainWindow;
+using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,7 +68,35 @@ public abstract class App : Application
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             singleViewPlatform.MainView = mainView;
 
+        RestoreMainWindowLocationAndSize();
+
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void RestoreMainWindowLocationAndSize()
+    {
+        var platformMainWindow = ServiceProvider.GetService<IPlatformMainWindow>();
+        var setting = ServiceProvider.GetService<ISettingManager>().GetSetting(GekiminiSetting.JsonTypeInfo);
+
+        platformMainWindow.WindowRect = new Rect(new Point(setting.MainWindowRectTop, setting.MainWindowRectTop),
+            new Size(setting.MainWindowRectWidth, setting.MainWindowRectHeight));
+        platformMainWindow.WindowState = setting.IsFullScreen ? WindowState.FullScreen : WindowState.Normal;
+    }
+
+    private void SaveMainWindowLocationAndSize()
+    {
+        var platformMainWindow = ServiceProvider.GetService<IPlatformMainWindow>();
+        var settingManager = ServiceProvider.GetService<ISettingManager>();
+        var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
+
+        setting.MainWindowRectTop = platformMainWindow.WindowRect.Top;
+        setting.MainWindowRectLeft = platformMainWindow.WindowRect.Left;
+        setting.MainWindowRectWidth = platformMainWindow.WindowRect.Width;
+        setting.MainWindowRectHeight = platformMainWindow.WindowRect.Height;
+
+        setting.IsFullScreen = platformMainWindow.WindowState == WindowState.FullScreen;
+
+        settingManager.SaveSetting(setting, GekiminiSetting.JsonTypeInfo);
     }
 
     protected virtual void RegisterServices(IServiceCollection serviceCollection)
@@ -146,6 +176,8 @@ public abstract class App : Application
     {
         //notify handlers to do something for preparing application exit. such as save log, shell layout and application settings.
         WeakReferenceMessenger.Default.Send<ApplicationQuitEvent>();
+
+        SaveMainWindowLocationAndSize();
 
         return Task.CompletedTask;
     }

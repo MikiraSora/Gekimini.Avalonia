@@ -8,4 +8,9 @@ public class TemplateLocalizedString(Func<string> templateFunc) : LocalizedStrin
     {
         return templateFunc?.Invoke();
     }
+    
+    public override string ToString()
+    {
+        return $"<templated Text:{Text}>";
+    }
 }

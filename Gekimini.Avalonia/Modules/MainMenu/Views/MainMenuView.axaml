@@ -7,6 +7,7 @@
                 xmlns:behaviors="clr-namespace:Gekimini.Avalonia.Modules.MainMenu.Behaviors"
                 xmlns:menuItems="clr-namespace:Gekimini.Avalonia.Modules.MainMenu.ViewModels.MenuItems"
                 xmlns:controls="clr-namespace:Gekimini.Avalonia.Modules.MainMenu.Controls"
+                xmlns:valueConverters="clr-namespace:Gekimini.Avalonia.UI.ValueConverters"
                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                 x:DataType="viewModels:MainMenuViewModel"
                 x:Class="Gekimini.Avalonia.Modules.MainMenu.Views.MainMenuView">
@@ -17,13 +18,21 @@
     <views:ViewBase.Styles>
         <Style Selector=":is(MenuItem)" x:DataType="menuItems:StandardMenuItemViewModel">
             <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-            <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=OneWay}" />
+            <Setter Property="IsChecked" Value="{Binding IsChecked}" />
             <Setter Property="Command" Value="{Binding Command}" />
             <Setter Property="Header" Value="{Binding Text.Text}" />
+            <Setter Property="Icon">
+                <Setter.Value>
+                    <Template>
+                        <Image Width="16" Height="16"
+                               Source="{Binding IconSource,Converter={x:Static valueConverters:UriToBitmapConverter.Instance}}" />
+                    </Template>
+                </Setter.Value>
+            </Setter>
             <Setter Property="ItemsSource" Value="{Binding Children}" />
             <Setter Property="behaviors:MenuBehavior.UpdateCommandUiItems" Value="True" />
         </Style>
     </views:ViewBase.Styles>
 
-    <controls:MenuEx ItemsSource="{Binding MenuItems}"/>
+    <controls:MenuEx ItemsSource="{Binding MenuItems}" />
 </views:ViewBase>

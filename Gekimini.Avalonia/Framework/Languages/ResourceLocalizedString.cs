@@ -11,4 +11,9 @@ public partial class ResourceLocalizedString(string resourceKey) : LocalizedStri
     {
         return LanguageManager?.GetTranslatedText(resourceKey) ?? $"<i18n {resourceKey}>";
     }
+
+    public override string ToString()
+    {
+        return $"<resourceKey:{resourceKey} Text:{Text}>";
+    }
 }
