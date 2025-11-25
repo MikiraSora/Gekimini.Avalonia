@@ -1,0 +1,6 @@
+[submodule "Dependencies/Dock"]
+	path = Dependencies/Dock
+	url = https://github.com/wieslawsoltes/Dock
+[submodule "Dependencies/Injectio"]
+	path = Dependencies/Injectio
+	url = https://github.com/MikiraSora/Injectio.git

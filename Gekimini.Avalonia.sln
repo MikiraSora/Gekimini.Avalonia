@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Desktop",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injectio.Attributes", "..\Injectio\src\Injectio.Attributes\Injectio.Attributes.csproj", "{9102CF0A-CA9C-84EC-DE20-ACE7EF5D1328}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injectio.Attributes", "Dependencies\Injectio\src\Injectio.Attributes\Injectio.Attributes.csproj", "{9102CF0A-CA9C-84EC-DE20-ACE7EF5D1328}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injectio.Generators", "..\Injectio\src\Injectio.Generators\Injectio.Generators.csproj", "{44595262-4601-D228-225B-48683E05019C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injectio.Generators", "Dependencies\Injectio\src\Injectio.Generators\Injectio.Generators.csproj", "{44595262-4601-D228-225B-48683E05019C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Generator", "Gekimini.Avalonia.Generator\Gekimini.Avalonia.Generator.csproj", "{652AD26C-4228-4293-A0C1-C6E446DC6304}"
 EndProject
@@ -21,15 +21,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dock", "Dock", "{292AD6FB-C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Injectio", "Injectio", "{5A835409-A2B9-47E4-B86C-81FED0246515}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Avalonia", "..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj", "{AB65482E-0B0C-44FF-8FDA-18E63EDF337B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Avalonia", "Dependencies\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj", "{AB65482E-0B0C-44FF-8FDA-18E63EDF337B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Avalonia.Diagnostics", "..\Dock\src\Dock.Avalonia.Diagnostics\Dock.Avalonia.Diagnostics.csproj", "{2FC0FC04-1DE2-418F-B058-876CC1CFD036}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Avalonia.Diagnostics", "Dependencies\Dock\src\Dock.Avalonia.Diagnostics\Dock.Avalonia.Diagnostics.csproj", "{2FC0FC04-1DE2-418F-B058-876CC1CFD036}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Avalonia.Themes.Fluent", "..\Dock\src\Dock.Avalonia.Themes.Fluent\Dock.Avalonia.Themes.Fluent.csproj", "{7B389FAA-69CC-4111-8E97-0C2569375C2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Avalonia.Themes.Fluent", "Dependencies\Dock\src\Dock.Avalonia.Themes.Fluent\Dock.Avalonia.Themes.Fluent.csproj", "{7B389FAA-69CC-4111-8E97-0C2569375C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model", "..\Dock\src\Dock.Model\Dock.Model.csproj", "{EE6AF6F1-3F5A-4F63-93D4-905F53961281}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model", "Dependencies\Dock\src\Dock.Model\Dock.Model.csproj", "{EE6AF6F1-3F5A-4F63-93D4-905F53961281}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model.Mvvm", "..\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj", "{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model.Mvvm", "Dependencies\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj", "{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Browser", "Gekimini.Avalonia.Browser\Gekimini.Avalonia.Browser.csproj", "{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}"
 EndProject
