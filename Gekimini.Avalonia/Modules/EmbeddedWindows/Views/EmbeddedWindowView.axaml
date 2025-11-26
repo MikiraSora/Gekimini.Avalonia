@@ -1,0 +1,86 @@
+﻿<views:ViewBase xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.EmbeddedWindows.ViewModels"
+                xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
+                xmlns:valueConverters="clr-namespace:Gekimini.Avalonia.UI.ValueConverters"
+                xmlns:markupExtensions="clr-namespace:FluentIcons.Avalonia.Fluent.MarkupExtensions;assembly=FluentIcons.Avalonia.Fluent"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:EmbeddedWindowViewModel"
+                x:Class="Gekimini.Avalonia.Modules.EmbeddedWindows.Views.EmbeddedWindowView">
+    <Design.DataContext>
+        <viewModels:EmbeddedWindowViewModel />
+    </Design.DataContext>
+
+    <ItemsControl x:Name="windowItemsControl" ItemsSource="{Binding  WindowViewModelWrappers }">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Canvas />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.Styles>
+            <Style Selector="ItemsControl > ContentPresenter" x:DataType="viewModels:WindowViewModelWrapper">
+                <Setter Property="Canvas.Left" Value="{Binding LeftX,Mode=TwoWay}" />
+                <Setter Property="Canvas.Top" Value="{Binding TopY,Mode=TwoWay}" />
+                <Setter Property="Width"
+                        Value="{Binding Width,Mode=TwoWay,Converter={x:Static valueConverters:ControlSizeConverter.Instance}, ConverterParameter=Width}" />
+                <Setter Property="Height"
+                        Value="{Binding Height,Mode=TwoWay,Converter={x:Static valueConverters:ControlSizeConverter.Instance}, ConverterParameter=Height}" />
+                <Setter Property="ZIndex" Value="{Binding ZIndex}" />
+            </Style>
+        </ItemsControl.Styles>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border Loaded="Control_OnLoaded" IsVisible="{Binding ViewModel.Visible}"
+                        Background="{DynamicResource ContainerBackgroundBrush}"
+                        BorderBrush="{DynamicResource SystemAccentColor}"
+                        BorderThickness="3"
+                        CornerRadius="2">
+                    <Interaction.Behaviors>
+                        <ExecuteCommandOnPointerPressedBehavior
+                            Command="{Binding ((viewModels:EmbeddedWindowViewModel)DataContext).FocusWindowCommand, ElementName=windowItemsControl}"
+                            CommandParameter="{Binding ViewModel}" />
+                    </Interaction.Behaviors>
+                    <Grid RowDefinitions="Auto,*">
+                        <!-- 标题栏 -->
+                        <Grid IsVisible="{Binding ViewModel.TitleBarVisible}"
+                              Background="{DynamicResource SystemAccentColor}" ColumnDefinitions="*,Auto"
+                              PointerPressed="InputElement_Drag">
+                            <TextBlock Margin="8,0" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource ContainerTitleForegroundBrush}"
+                                       Text="{Binding ViewModel.Title.Text}" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="{markupExtensions:FluentIcon Icon=Dismiss}"
+                                        Width="24" Height="24" Margin="5"
+                                        IsVisible="{Binding ViewModel.CloseButtonVisible}"
+                                        Foreground="{DynamicResource ContainerTitleForegroundBrush}"
+                                        Command="{Binding ((viewModels:EmbeddedWindowViewModel)DataContext).CloseWindowCommand, ElementName=windowItemsControl}"
+                                        CommandParameter="{Binding ViewModel}" />
+                            </StackPanel>
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Reset Window Position/Size"
+                                              CommandParameter="{Binding ViewModel}"
+                                              Command="{Binding ((viewModels:EmbeddedWindowViewModel)DataContext).ResetWindowPositionAndSizeCommand, ElementName=windowItemsControl}" />
+                                </ContextMenu>
+                            </Grid.ContextMenu>
+                        </Grid>
+
+                        <ContentPresenter HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" Grid.Row="1"
+                                          Content="{Binding ViewModel}" />
+
+                        <Border Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Width="6" Height="6"
+                                Background="Transparent"
+                                Cursor="SizeAll"
+                                PointerPressed="InputElement_Resize" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</views:ViewBase>

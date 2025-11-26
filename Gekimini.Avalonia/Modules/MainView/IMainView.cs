@@ -7,8 +7,4 @@ namespace Gekimini.Avalonia.Modules.MainView;
 public interface IMainView
 {
     IShell Shell { get; }
-
-    void AddWindow(WindowViewModelBase window);
-    void RemoveWindow(WindowViewModelBase window);
-    void MakeFrontShow(WindowViewModelBase window);
 }

@@ -97,7 +97,6 @@
     <ItemGroup>
         <Folder Include="Framework\Behaviors\" />
         <Folder Include="Framework\Themes\DefaultImpl\Fluent\Styles\" />
-        <Folder Include="Modules\EmbeddedWindows\" />
         <Folder Include="Modules\InternalTest\ViewModels\Dialogs\" />
         <Folder Include="Modules\InternalTest\Views\Dialogs\" />
     </ItemGroup>

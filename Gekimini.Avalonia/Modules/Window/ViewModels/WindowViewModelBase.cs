@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Models;
 using Gekimini.Avalonia.Platforms.Services.Window;
 using Gekimini.Avalonia.ViewModels;
@@ -11,7 +12,7 @@ namespace Gekimini.Avalonia.Modules.Window.ViewModels;
 public partial class WindowViewModelBase : ViewModelBase
 {
     [ObservableProperty]
-    public partial string Title { get; set; }
+    public partial LocalizedString Title { get; set; }
 
     [ObservableProperty]
     public partial int DefaultLeftX { get; set; } = 200;
@@ -24,6 +25,15 @@ public partial class WindowViewModelBase : ViewModelBase
 
     [ObservableProperty]
     public partial ControlSize DefaultHeight { get; set; } = 600;
+
+    [ObservableProperty]
+    public partial bool Visible { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool TitleBarVisible { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool CloseButtonVisible { get; set; } = true;
 
     protected Task TryCloseAsync(bool dialogResult)
     {

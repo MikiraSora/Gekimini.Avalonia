@@ -2,7 +2,7 @@
 using Gekimini.Avalonia.Models;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
 
-namespace Gekimini.Avalonia.Modules.MainView.ViewModels;
+namespace Gekimini.Avalonia.Modules.EmbeddedWindows.ViewModels;
 
 public partial class WindowViewModelWrapper : ObservableObject
 {

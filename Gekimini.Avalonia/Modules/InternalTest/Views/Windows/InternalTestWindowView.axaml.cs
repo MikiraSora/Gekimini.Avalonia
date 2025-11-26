@@ -1,10 +1,8 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Gekimini.Avalonia.Modules.Window.Views;
 
 namespace Gekimini.Avalonia.Modules.InternalTest.Views.Windows;
 
-public partial class InternalTestWindowView : UserControl
+public partial class InternalTestWindowView : WindowViewBase
 {
     public InternalTestWindowView()
     {
