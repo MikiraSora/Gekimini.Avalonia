@@ -11,6 +11,7 @@ using Gekimini.Avalonia.Modules.Shell;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.ViewModels;
+using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
 
@@ -31,10 +32,14 @@ public partial class MainViewModel : ViewModelBase, IMainView
     [GetServiceLazy]
     public partial IEmbeddedWindow EmbeddedWindow { get; }
 
-    public override void OnViewAfterLoaded(Control view)
+    public override void OnViewAfterLoaded(IView view)
     {
-        var rootVisual = TopLevel.GetTopLevel(view);
-        KeyGestureService.BindKeyGestures(rootVisual);
+        if (view is Control control)
+        {
+            var rootVisual = TopLevel.GetTopLevel(control);
+            KeyGestureService.BindKeyGestures(rootVisual);
+        }
+
         base.OnViewAfterLoaded(view);
     }
 }

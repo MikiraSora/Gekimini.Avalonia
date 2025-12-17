@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model.Mvvm", "Dependen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Browser", "Gekimini.Avalonia.Browser\Gekimini.Avalonia.Browser.csproj", "{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iciclecreek.Avalonia.WindowManager", "Dependencies\Iciclecreek.Avalonia.WindowManager\source\Iciclecreek.Avalonia.WindowManager\Iciclecreek.Avalonia.WindowManager.csproj", "{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{7B389FAA-69CC-4111-8E97-0C2569375C2B} = {292AD6FB-C1AA-4D6C-A363-E5B65B1084A2}
 		{EE6AF6F1-3F5A-4F63-93D4-905F53961281} = {292AD6FB-C1AA-4D6C-A363-E5B65B1084A2}
 		{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403} = {292AD6FB-C1AA-4D6C-A363-E5B65B1084A2}
+		{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63573E9E-347A-4E2B-A436-93882CB2B9CD}

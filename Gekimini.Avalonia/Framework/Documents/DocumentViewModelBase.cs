@@ -8,6 +8,7 @@ using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.Modules.Shell.Commands;
 using Gekimini.Avalonia.Modules.UndoRedo.Commands;
+using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Framework.Documents;
@@ -38,18 +39,18 @@ public abstract partial class DocumentViewModelBase : Document, IDocumentViewMod
         typeof(SaveFileAsCommandDefinition)
     ];
 
-    public virtual void OnViewAfterLoaded(Control view)
+    public virtual void OnViewAfterLoaded(IView view)
     {
         ViewAfterLoaded?.Invoke(view);
     }
 
-    public virtual void OnViewBeforeUnload(Control view)
+    public virtual void OnViewBeforeUnload(IView view)
     {
         ViewBeforeUnload?.Invoke(view);
     }
 
-    public event Action<Control> ViewAfterLoaded;
-    public event Action<Control> ViewBeforeUnload;
+    public event Action<IView> ViewAfterLoaded;
+    public event Action<IView> ViewBeforeUnload;
 
     public IUndoRedoManager UndoRedoManager => field ??= UndoRedoManagerFactory.Create();
 

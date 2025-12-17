@@ -8,6 +8,7 @@ using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.ToolBars;
 using Gekimini.Avalonia.Models.Events;
+using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.ToolBars.ViewModels;
@@ -67,13 +68,13 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
         OnPropertyChanged(nameof(ToolTip));
     }
 
-    public override void OnViewAfterLoaded(Control view)
+    public override void OnViewAfterLoaded(IView view)
     {
         base.OnViewAfterLoaded(view);
         _command.PropertyChanged += OnCommandPropertyChanged;
     }
 
-    public override void OnViewBeforeUnload(Control view)
+    public override void OnViewBeforeUnload(IView view)
     {
         base.OnViewBeforeUnload(view);
         _command.PropertyChanged -= OnCommandPropertyChanged;

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Gekimini.Avalonia.ViewModels;
+using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
 using StatusBar.Avalonia;
 
@@ -12,13 +13,13 @@ public class StatusBarViewModel : ViewModelBase, IStatusBar
 
     public StatusBarManager StatusBarManager => statusBarView.StatusBarManager;
 
-    public override void OnViewAfterLoaded(Control view)
+    public override void OnViewAfterLoaded(IView view)
     {
         base.OnViewAfterLoaded(view);
         statusBarView = view as IStatusBarView;
     }
 
-    public override void OnViewBeforeUnload(Control view)
+    public override void OnViewBeforeUnload(IView view)
     {
         base.OnViewBeforeUnload(view);
         statusBarView = null;

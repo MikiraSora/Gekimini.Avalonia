@@ -5,6 +5,7 @@ using Avalonia.Layout;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Modules.ToolBars.Views;
 using Gekimini.Avalonia.ViewModels;
+using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.ToolBars.ViewModels;
@@ -24,7 +25,7 @@ public partial class ToolBarsViewModel : ViewModelBase, IToolBars
 
     public ObservableCollection<IToolBar> Items { get; } = new();
 
-    public override void OnViewAfterLoaded(Control view)
+    public override void OnViewAfterLoaded(IView view)
     {
         base.OnViewAfterLoaded(view);
 

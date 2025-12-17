@@ -52,11 +52,11 @@ public class ViewLocator : IDataTemplate
         {
             control.Loaded += (a, aa) =>
             {
-                viewModel.OnViewAfterLoaded(control);
+                viewModel.OnViewAfterLoaded(view);
             };
             control.Unloaded += (a, aa) =>
             {
-                viewModel.OnViewBeforeUnload(control);
+                viewModel.OnViewBeforeUnload(view);
                 control.DataContext = null;
             };
 

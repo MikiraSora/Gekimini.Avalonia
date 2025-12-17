@@ -3,6 +3,7 @@
              x:Class="Gekimini.Avalonia.App"
              xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              xmlns:status="https://github.com/xiyaowong/StatusBar.Avalonia"
+             xmlns:windowManager="clr-namespace:Iciclecreek.Avalonia.WindowManager;assembly=Iciclecreek.Avalonia.WindowManager"
              RequestedThemeVariant="Default">
 
     <Application.Styles>
@@ -11,7 +12,8 @@
         <DockFluentTheme />
         <status:StatusBarTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
-
+        <windowManager:WindowManagerTheme/>
+        
         <!---->
 
         <Style Selector="Button.DialogButton">

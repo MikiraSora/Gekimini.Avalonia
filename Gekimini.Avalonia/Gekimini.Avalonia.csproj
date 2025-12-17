@@ -61,6 +61,7 @@
         <ProjectReference Include="..\Dependencies\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
         <ProjectReference Include="..\Dependencies\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj" />
         <ProjectReference Include="..\Dependencies\Dock\src\Dock.Model\Dock.Model.csproj" />
+        <ProjectReference Include="..\Dependencies\Iciclecreek.Avalonia.WindowManager\source\Iciclecreek.Avalonia.WindowManager\Iciclecreek.Avalonia.WindowManager.csproj" />
         <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\Dependencies\Injectio\src\Injectio.Attributes\Injectio.Attributes.csproj" />
         <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="false" Include="..\Dependencies\Injectio\src\Injectio.Generators\Injectio.Generators.csproj" />
         <ProjectReference OutputItemType="Analyzer" ReferenceOutputAssembly="true" Include="..\Gekimini.Avalonia.Attributes\Gekimini.Avalonia.Attributes.csproj" />
@@ -99,6 +100,7 @@
         <Folder Include="Framework\Themes\DefaultImpl\Fluent\Styles\" />
         <Folder Include="Modules\InternalTest\ViewModels\Dialogs\" />
         <Folder Include="Modules\InternalTest\Views\Dialogs\" />
+        <Folder Include="Modules\Shell\Models\" />
     </ItemGroup>
 
     <ItemGroup>

@@ -24,6 +24,7 @@ using Gekimini.Avalonia.Modules.Toolbox.ViewModels;
 using Gekimini.Avalonia.Platforms.Services.Window;
 using Gekimini.Avalonia.Utils;
 using Gekimini.Avalonia.Utils.MethodExtensions;
+using Gekimini.Avalonia.Views;
 using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Modules.InternalTest.ViewModels.Documents;
@@ -65,20 +66,26 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     [ObservableProperty]
     public partial bool IsDirty { get; set; }
 
-    public override void OnViewAfterLoaded(Control view)
+    public override void OnViewAfterLoaded(IView view)
     {
         base.OnViewAfterLoaded(view);
 
-        DragDrop.SetAllowDrop(view, true);
-        DragDrop.AddDropHandler(view, OnDragDrop);
+        if (view is Control control)
+        {
+            DragDrop.SetAllowDrop(control, true);
+            DragDrop.AddDropHandler(control, OnDragDrop);
+        }
     }
 
-    public override void OnViewBeforeUnload(Control view)
+    public override void OnViewBeforeUnload(IView view)
     {
         base.OnViewBeforeUnload(view);
 
-        DragDrop.RemoveDropHandler(view, OnDragDrop);
-        DragDrop.SetAllowDrop(view, false);
+        if (view is Control control)
+        {
+            DragDrop.RemoveDropHandler(control, OnDragDrop);
+            DragDrop.SetAllowDrop(control, false);
+        }
     }
 
     [ObservableProperty]

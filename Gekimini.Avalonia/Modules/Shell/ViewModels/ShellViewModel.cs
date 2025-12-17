@@ -15,13 +15,13 @@ using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.MainMenu;
-using Gekimini.Avalonia.Modules.Shell.Models;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.ViewModels;
+using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -308,7 +308,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         }
     }
 
-    public override void OnViewAfterLoaded(Control view)
+    public override void OnViewAfterLoaded(IView view)
     {
         base.OnViewAfterLoaded(view);
 

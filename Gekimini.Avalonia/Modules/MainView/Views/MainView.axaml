@@ -5,6 +5,7 @@
                  xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.MainView.ViewModels"
                  xmlns:views="clr-namespace:AvaloniaDialogs.Views;assembly=AvaloniaDialogs"
                  xmlns:views1="clr-namespace:Gekimini.Avalonia.Views"
+                 xmlns:windowManager="clr-namespace:Iciclecreek.Avalonia.WindowManager;assembly=Iciclecreek.Avalonia.WindowManager"
                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                  x:DataType="viewModels:MainViewModel"
                  Background="{DynamicResource ContainerBackgroundBrush}"
@@ -14,10 +15,9 @@
     </Design.DataContext>
 
     <views:ReactiveDialogHost OverlayBackground="WhiteSmoke">
-        <Grid>
+        <windowManager:WindowsPanel>
             <TransitioningContentControl Content="{Binding Shell}" />
-            <ContentControl Content="{Binding EmbeddedWindow}" />
-        </Grid>
+        </windowManager:WindowsPanel>
     </views:ReactiveDialogHost>
 
 </views1:ViewBase>

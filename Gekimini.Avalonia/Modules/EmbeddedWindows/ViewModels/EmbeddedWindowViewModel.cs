@@ -9,6 +9,7 @@ using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.ViewModels;
+using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +20,7 @@ public partial class EmbeddedWindowViewModel : ViewModelBase, IEmbeddedWindow
 {
     private readonly ISettingManager settingManager;
     private readonly WindowPositionSizeSetting windowPositionSizeSetting;
-    private Control view;
+    private IView view;
 
     public EmbeddedWindowViewModel(ISettingManager settingManager)
     {
@@ -31,10 +32,11 @@ public partial class EmbeddedWindowViewModel : ViewModelBase, IEmbeddedWindow
     private partial ILogger<EmbeddedWindowViewModel> Logger { get; }
 
     public ObservableCollection<WindowViewModelWrapper> WindowViewModelWrappers { get; } = [];
+    public ObservableCollection<WindowViewModelWrapper> MinimizedWindowViewModelWrappers { get; } = [];
 
     public void AddWindow(WindowViewModelBase window)
     {
-        if (WindowViewModelWrappers.All(x => x.ViewModel != window))
+        if (FindWindowWrapper(window) is null)
         {
             var (leftX, topY, width, height) = LoadWindowSavedPositionSize(window);
 
@@ -52,7 +54,7 @@ public partial class EmbeddedWindowViewModel : ViewModelBase, IEmbeddedWindow
 
     public void RemoveWindow(WindowViewModelBase window)
     {
-        if (WindowViewModelWrappers.FirstOrDefault(x => x.ViewModel == window) is not { } wrapper)
+        if (FindWindowWrapper(window) is not { } wrapper)
             return;
         WindowViewModelWrappers.Remove(wrapper);
         SaveWindowSavedPositionSize(wrapper);
@@ -65,7 +67,7 @@ public partial class EmbeddedWindowViewModel : ViewModelBase, IEmbeddedWindow
     {
         if (window is null)
             return;
-        if (WindowViewModelWrappers.FirstOrDefault(x => x.ViewModel == window) is not { } wrapper)
+        if (FindWindowWrapper(window) is not { } wrapper)
             return;
         var resortIndex = 0;
         foreach (var windowViewModel in WindowViewModelWrappers.OrderBy(x => x.ZIndex))
@@ -79,22 +81,31 @@ public partial class EmbeddedWindowViewModel : ViewModelBase, IEmbeddedWindow
         Logger.LogInformationEx($"make window front: [{wrapper.ViewModel.GetHashCode()}]{wrapper.ViewModel.Title}");
     }
 
-    private void LimitWindowPositionAndSize(WindowViewModelWrapper wrapper)
+    private WindowViewModelWrapper FindWindowWrapper(WindowViewModelBase window)
     {
-        //limit window position&size
-        wrapper.LeftX = Math.Clamp(wrapper.LeftX, 0, view.Bounds.Width);
-        wrapper.TopY = Math.Clamp(wrapper.TopY, 0, view.Bounds.Height);
-        wrapper.Width = Math.Clamp(wrapper.Width.Value, 0d, view.Bounds.Width - wrapper.LeftX);
-        wrapper.Height = Math.Clamp(wrapper.Height.Value, 0d, view.Bounds.Height - wrapper.TopY);
+        return WindowViewModelWrappers.FirstOrDefault(x => x.ViewModel == window) ??
+               MinimizedWindowViewModelWrappers.FirstOrDefault(x => x.ViewModel == window);
     }
 
-    public override void OnViewAfterLoaded(Control view)
+    private void LimitWindowPositionAndSize(WindowViewModelWrapper wrapper)
+    {
+        if (view is not Control control)
+            return;
+
+        //limit window position&size
+        wrapper.LeftX = Math.Clamp(wrapper.LeftX, 0, control.Bounds.Width);
+        wrapper.TopY = Math.Clamp(wrapper.TopY, 0, control.Bounds.Height);
+        wrapper.Width = Math.Clamp(wrapper.Width.Value, 0d, control.Bounds.Width - wrapper.LeftX);
+        wrapper.Height = Math.Clamp(wrapper.Height.Value, 0d, control.Bounds.Height - wrapper.TopY);
+    }
+
+    public override void OnViewAfterLoaded(IView view)
     {
         base.OnViewAfterLoaded(view);
         this.view = view;
     }
 
-    public override void OnViewBeforeUnload(Control view)
+    public override void OnViewBeforeUnload(IView view)
     {
         base.OnViewBeforeUnload(view);
         this.view = null;
@@ -144,6 +155,12 @@ public partial class EmbeddedWindowViewModel : ViewModelBase, IEmbeddedWindow
 
     [RelayCommand]
     private void FocusWindow(WindowViewModelBase window)
+    {
+        MakeFrontShow(window);
+    }
+
+    [RelayCommand]
+    private void MinimizeWindow(WindowViewModelBase window)
     {
         MakeFrontShow(window);
     }

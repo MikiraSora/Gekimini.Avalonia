@@ -12,7 +12,7 @@ using Gekimini.Avalonia.Modules.Documents.Models;
 using Gekimini.Avalonia.Modules.Documents.ViewModels;
 using Injectio.Attributes;
 
-namespace Gekimini.Avalonia.Modules.Shell.Models;
+namespace Gekimini.Avalonia.Modules.Shell;
 
 [RegisterSingleton<IFactory>]
 public sealed partial class ShellDockFactory : Factory, IFactory
