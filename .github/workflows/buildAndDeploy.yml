@@ -45,7 +45,9 @@ jobs:
         dotnet publish Gekimini.Avalonia.Desktop/Gekimini.Avalonia.Desktop.csproj -p:PublishProfile=FolderProfile -o ./windows/x64
         
     - name: Compress Build Windows
-      run: Compress-Archive -Path "./windows/x64/*" -DestinationPath "./publish/wwwroot/downloads/win_x64.zip"
+      run: |
+        mkdir -p ./publish/wwwroot/downloads
+        Compress-Archive -Path "./windows/x64/*" -DestinationPath "./publish/wwwroot/downloads/win_x64.zip"
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
