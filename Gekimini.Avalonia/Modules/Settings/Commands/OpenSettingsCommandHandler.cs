@@ -21,6 +21,6 @@ public class OpenSettingsCommandHandler : CommandHandlerBase<OpenSettingsCommand
     public override async Task Run(Command command)
     {
         await serviceProvider.GetService<IWindowManager>()
-            .ShowWindowAsync(serviceProvider.GetService<SettingsViewModel>());
+            .ShowDialogAsync(serviceProvider.GetService<SettingsViewModel>());
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Input;
+using Avalonia.Threading;
 
 namespace Gekimini.Avalonia.Framework.Commands;
 
@@ -30,8 +31,8 @@ public class TargetableCommand : ICommand
         var commandHandler = _commandRouter.GetCommandHandler(_command.CommandDefinition);
         if (commandHandler == null)
             return;
-
-        await commandHandler.Run(_command);
+        
+        await Dispatcher.UIThread.InvokeAsync(()=>commandHandler.Run(_command));
     }
 
     public event EventHandler CanExecuteChanged

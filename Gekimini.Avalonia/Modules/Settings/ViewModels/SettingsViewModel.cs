@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gekimini.Avalonia.Assets.Languages;
-using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
 using Injectio.Attributes;
 
@@ -18,10 +16,6 @@ public partial class SettingsViewModel : WindowViewModelBase
 
     public SettingsViewModel(IEnumerable<ISettingsEditor> settingsEditors)
     {
-        Title = LocalizedString.CreateFromResourceKey(nameof(Resources.SettingsDisplayName));
-        DefaultWidth = 1000;
-        DefaultHeight = 600;
-
         var pages = new List<SettingsPageViewModel>();
         _settingsEditors = settingsEditors;
 

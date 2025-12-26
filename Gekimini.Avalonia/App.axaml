@@ -7,13 +7,13 @@
              RequestedThemeVariant="Default">
 
     <Application.Styles>
-        <FluentTheme/>
+        <FluentTheme />
         <dialogHostAvalonia:DialogHostStyles />
         <DockFluentTheme />
         <status:StatusBarTheme />
         <StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
-        <windowManager:WindowManagerTheme/>
-        
+        <windowManager:WindowManagerTheme />
+
         <!---->
 
         <Style Selector="Button.DialogButton">
@@ -29,7 +29,21 @@
     <Application.Resources>
         <!--容器背景色(比如window控件背景色)-->
         <SolidColorBrush x:Key="ContainerBackgroundBrush" Color="{DynamicResource SystemRegionColor}" />
+        
         <!--容器标题字体色-->
         <SolidColorBrush x:Key="ContainerTitleForegroundBrush" Color="{DynamicResource SystemAltHighColor}" />
+
+        <!--覆写 WindowManagerTheme-->
+        <SolidColorBrush x:Key='ManagedWindow_BackgroundBrush' Color='{DynamicResource SystemRegionColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_ForegroundBrush' Color='{DynamicResource SystemBaseHighColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_Active_TitleBarForegroundBrush'
+                         Color='{DynamicResource SystemAltHighColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_TitleBarForegroundBrush' Color='{DynamicResource SystemAltHighColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_Active_TitleBarBackgroundBrush'
+                         Color='{DynamicResource SystemAccentColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_TitleBarBackgroundBrush' Color='{DynamicResource SystemChromeGrayColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_Active_BorderBrush' Color='{DynamicResource SystemAccentColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_BorderBrush' Color='{DynamicResource SystemChromeGrayColor}' />
+        <SolidColorBrush x:Key='ManagedWindow_ModalBackgroundBrush' Color='#A0FFFFFF' />
     </Application.Resources>
 </Application>

@@ -9,7 +9,7 @@ public partial class InternalTestWindowViewModel : WindowViewModelBase
 {
     public InternalTestWindowViewModel()
     {
-        Title = "Internal Test Window~".ToLocalizedStringByRawText();
+        
     }
 
     [ObservableProperty]

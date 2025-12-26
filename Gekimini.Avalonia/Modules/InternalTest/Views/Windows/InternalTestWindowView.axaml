@@ -6,6 +6,7 @@
                       xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.InternalTest.ViewModels.Windows"
                       mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                       x:DataType="viewModels:InternalTestWindowViewModel"
+                      Title="Oh my test window~"
                       x:Class="Gekimini.Avalonia.Modules.InternalTest.Views.Windows.InternalTestWindowView">
     <Design.DataContext>
         <viewModels:InternalTestWindowViewModel />
