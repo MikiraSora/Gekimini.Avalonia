@@ -26,13 +26,11 @@ public class TargetableCommand : ICommand
         return _command.Enabled;
     }
 
-    public async void Execute(object parameter)
+    public void Execute(object parameter)
     {
         var commandHandler = _commandRouter.GetCommandHandler(_command.CommandDefinition);
-        if (commandHandler == null)
-            return;
-        
-        await Dispatcher.UIThread.InvokeAsync(()=>commandHandler.Run(_command));
+
+        commandHandler?.Run(_command).NoWait();
     }
 
     public event EventHandler CanExecuteChanged
