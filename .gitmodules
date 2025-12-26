@@ -1,9 +1,9 @@
 [submodule "Dependencies/Dock"]
 	path = Dependencies/Dock
-	url = https://github.com/wieslawsoltes/Dock
+	url = https://github.com/MikiraSora/Dock
 [submodule "Dependencies/Injectio"]
 	path = Dependencies/Injectio
 	url = https://github.com/MikiraSora/Injectio.git
 [submodule "Dependencies/Iciclecreek.Avalonia.WindowManager"]
 	path = Dependencies/Iciclecreek.Avalonia.WindowManager
-	url = https://github.com/tomlm/Iciclecreek.Avalonia.WindowManager
+	url = https://github.com/MikiraSora/Iciclecreek.Avalonia.WindowManager

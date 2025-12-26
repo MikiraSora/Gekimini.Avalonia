@@ -232,6 +232,7 @@ public sealed partial class ShellDockFactory : Factory, IFactory
 
     public void AddDocument(IDocument dockable)
     {
+        dockable.CanFloat = false;
         var documentDock = FindOrCreateDocumentDock(dockable.Dock);
 
         AddDockable(documentDock, dockable);
