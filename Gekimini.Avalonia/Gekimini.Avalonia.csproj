@@ -101,6 +101,7 @@
         <Folder Include="Modules\InternalTest\ViewModels\Dialogs\" />
         <Folder Include="Modules\InternalTest\Views\Dialogs\" />
         <Folder Include="Modules\Shell\Models\" />
+        <Folder Include="UI\Controls\" />
     </ItemGroup>
 
     <ItemGroup>

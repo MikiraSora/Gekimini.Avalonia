@@ -71,8 +71,9 @@ public sealed class CommandHandlerWrapper
         _populateMethod.Invoke(_commandHandler, command, commands);
     }
 
-    public Task Run(Command command)
+    public async Task Run(Command command)
     {
-        return _runMethod.Invoke(_commandHandler, command);
+        await _runMethod.Invoke(_commandHandler, command);
+        CommandManager.InvalidateRequerySuggested("commandExecuted");
     }
 }

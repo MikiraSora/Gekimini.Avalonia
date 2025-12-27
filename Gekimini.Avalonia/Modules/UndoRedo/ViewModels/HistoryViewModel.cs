@@ -6,6 +6,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Assets.Languages;
+using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Tools;
 using Gekimini.Avalonia.Framework.UndoRedo;
@@ -171,5 +172,9 @@ public partial class HistoryViewModel : GekiminiToolViewModelBase, IHistoryTool
 
         if (setSelectedIndex)
             SelectedIndex = HistoryItems.IndexOf(item) + 1;
+        
+        //UndoRedoManager cannot affect the updates to the undo/redo commands, so just update these commands manually. 
+        //todo: maybe we could improve them.
+        CommandManager.InvalidateRequerySuggested(nameof(UndoOrRedoTo));
     }
 }
