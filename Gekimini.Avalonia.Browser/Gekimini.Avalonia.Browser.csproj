@@ -9,13 +9,6 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
         <DefineConstants>TRACE;AVALONIA_BROWSER;</DefineConstants>
-        
-        <!--
-        <EnableDiagnostics>true</EnableDiagnostics>
-        <WasmPerformanceInstrumentation>all</WasmPerformanceInstrumentation>
-        <MetricsSupport>true</MetricsSupport>
-        <EventSourceSupport>true</EventSourceSupport>
-        -->
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -27,7 +20,7 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia.Browser" Version="$(AvaloniaVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10"/>
     </ItemGroup>
 
 
@@ -41,7 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Assets\Fonts\NotoSansSC-VariableFont_wght.ttf"/>
-        <AvaloniaResource Include="Assets\Fonts\NotoSansSC-VariableFont_wght.ttf"/>
+        <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 </Project>

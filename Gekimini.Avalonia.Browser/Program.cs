@@ -1,9 +1,7 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.Media;
-using Gekimini.Avalonia.Browser.Utils;
 
 namespace Gekimini.Avalonia.Browser;
 
@@ -21,7 +19,7 @@ internal sealed class Program
                     {
                         FontFamily =
                             new FontFamily(
-                                "avares://Gekimini.Avalonia.Browser/Assets/Fonts/NotoSansSC-VariableFont_wght.ttf#Noto Sans SC")
+                                "avares://Gekimini.Avalonia.Browser/Assets/Fonts/NotoSansSC-Regular.ttf#Noto Sans SC")
                     }
                 }
             })

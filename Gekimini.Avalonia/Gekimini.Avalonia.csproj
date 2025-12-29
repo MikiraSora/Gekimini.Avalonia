@@ -97,6 +97,7 @@
         <Folder Include="UI\Controls\"/>
     </ItemGroup>
 
+    <!-- to generate I18N by SimpleTypedLocalizer.SourceGenerator -->
     <ItemGroup>
         <AdditionalFiles Include="Assets\Languages\*.resx"/>
     </ItemGroup>
