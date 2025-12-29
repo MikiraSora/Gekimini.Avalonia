@@ -19,10 +19,10 @@ public class UndoCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.EditUndoCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditUndoCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.EditUndoCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditUndoCommandToolTip));
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/Undo.png");
 }

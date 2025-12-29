@@ -5,9 +5,10 @@
                       xmlns:views="clr-namespace:Gekimini.Avalonia.Modules.Window.Views"
                       xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.Settings.ViewModels"
                       xmlns:markup="clr-namespace:Gekimini.Avalonia.Framework.Markup"
+                      xmlns:languages="clr-namespace:Gekimini.Avalonia.Assets.Languages"
                       mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                       x:DataType="viewModels:SettingsViewModel"
-                      Title="{markup:Translate [SettingsDisplayName]}"
+                      Title="{markup:Translate {x:Static languages:ProgramLanguages+B.SettingsDisplayName}}"
                       Width="800" Height="450"
                       x:Class="Gekimini.Avalonia.Modules.Settings.Views.SettingsView">
     <Design.DataContext>

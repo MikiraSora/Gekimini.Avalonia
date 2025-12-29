@@ -20,10 +20,10 @@ public class ViewFullScreenCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewFullScreenCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewFullScreenCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewFullScreenCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewFullScreenCommandToolTip));
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/FullScreen.png");
 }

@@ -1,16 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.Media;
-using Dock.Settings;
+using Gekimini.Avalonia.Browser.Utils;
 
 namespace Gekimini.Avalonia.Browser;
 
 internal sealed class Program
 {
-    private static Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        return BuildAvaloniaApp()
+        await BuildAvaloniaApp()
             .WithInterFont()
             .With(new FontManagerOptions
             {

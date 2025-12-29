@@ -13,8 +13,8 @@ public class ViewToolboxCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewToolboxCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewToolboxCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewToolboxCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewToolboxCommandToolTip));
 }

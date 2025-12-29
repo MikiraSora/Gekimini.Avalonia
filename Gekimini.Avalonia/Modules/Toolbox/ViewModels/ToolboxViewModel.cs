@@ -27,7 +27,7 @@ public partial class ToolboxViewModel : GekiminiToolViewModelBase, IToolbox
     private Type prevType;
 
     public ToolboxViewModel(IShell shell, IToolboxService toolboxService) : base(
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ToolboxDisplayName)))
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ToolboxDisplayName)))
     {
         Dock = DockMode.Left;
 

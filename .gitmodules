@@ -7,3 +7,6 @@
 [submodule "Dependencies/Iciclecreek.Avalonia.WindowManager"]
 	path = Dependencies/Iciclecreek.Avalonia.WindowManager
 	url = https://github.com/MikiraSora/Iciclecreek.Avalonia.WindowManager
+[submodule "Dependencies/SimpleTypedLocalizer"]
+	path = Dependencies/SimpleTypedLocalizer
+	url = https://github.com/MikiraSora/SimpleTypedLocalizer

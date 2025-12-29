@@ -24,10 +24,10 @@ public class RedoCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.EditRedoCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditRedoCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.EditRedoCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditRedoCommandToolTip));
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/Redo.png");
 }

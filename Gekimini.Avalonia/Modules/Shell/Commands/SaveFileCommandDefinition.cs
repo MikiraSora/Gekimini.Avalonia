@@ -19,10 +19,10 @@ public class SaveFileCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileSaveCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileSaveCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileSaveCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileSaveCommandToolTip));
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/Save.png");
 }

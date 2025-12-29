@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Resources;
-using System.Threading;
+using System.Linq;
 using CommunityToolkit.Mvvm.Messaging;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Attributes;
@@ -12,16 +11,21 @@ using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
+using SimpleTypedLocalizer;
 
 namespace Gekimini.Avalonia.Framework.Languages.DefaultImpl;
 
 [RegisterSingleton<ILanguageManager>]
 public partial class DefaultLanguageManager : ILanguageManager
 {
-    private readonly Dictionary<int, TranslationSource> cachedSources = new();
     private List<string> cachedAvaliableLanguages;
 
     private string currentLanguage;
+
+    static DefaultLanguageManager()
+    {
+        _ = ProgramLanguages.AdvancedSliderCommitErrorFormat;
+    }
 
     [GetServiceLazy]
     public partial ISettingManager SettingManager { get; }
@@ -34,15 +38,11 @@ public partial class DefaultLanguageManager : ILanguageManager
         if (cachedAvaliableLanguages is not null)
             return cachedAvaliableLanguages;
         cachedAvaliableLanguages = new List<string>();
-        var rm = new ResourceManager(typeof(Resources));
 
-        var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-        foreach (var culture in cultures)
+        var providers = ProgramLanguages.LocalizerManager.Providers;
+
+        foreach (var culture in providers.Select(x => x.CultureInfo).DistinctBy(x => x.Name))
         {
-            var rs = rm.GetResourceSet(culture, true, false);
-            if (rs == null)
-                continue;
-
             cachedAvaliableLanguages.Add(string.IsNullOrWhiteSpace(culture.Name) ? "Default" : culture.Name);
             Logger.LogInformationEx($"available language found: {culture.Name}");
         }
@@ -55,30 +55,12 @@ public partial class DefaultLanguageManager : ILanguageManager
         return currentLanguage;
     }
 
-    public INotifyPropertyChanged GetTranslationSource(Func<string, CultureInfo, string> callback)
-    {
-        var key = callback.GetHashCode();
-        if (!cachedSources.TryGetValue(key, out var source))
-            cachedSources[key] =
-                source = new TranslationSource(key => callback(key, Thread.CurrentThread.CurrentUICulture));
-        return source;
-    }
-
-    public INotifyPropertyChanged GetTranslationSource(string resKey)
-    {
-        var key = resKey.GetHashCode();
-        if (!cachedSources.TryGetValue(key, out var source))
-            cachedSources[key] =
-                source = new TranslationSource(key => GetTranslatedText(key, Thread.CurrentThread.CurrentUICulture));
-        return source;
-    }
-
     public string GetTranslatedText(string resKey)
     {
-        return Resources.ResourceManager.GetString(resKey);
+        return GetTranslatedText(resKey, LocalizerManager.CurrentDefaultCultureInfo);
     }
 
-    public void Initalize()
+    public void Initialize()
     {
         SetLanguage(SettingManager.GetSetting(GekiminiSetting.JsonTypeInfo).LanguageCode);
     }
@@ -90,17 +72,17 @@ public partial class DefaultLanguageManager : ILanguageManager
         var culture = isDefaultRequest
             ? CultureInfo.InvariantCulture
             : CultureInfo.GetCultureInfo(languageName);
+        /*
         var uiCulture = isDefaultRequest
             ? CultureInfo.InvariantCulture
             : CultureInfo.GetCultureInfo(languageName);
 
         Thread.CurrentThread.CurrentUICulture = culture;
         Thread.CurrentThread.CurrentCulture = uiCulture;
-        Resources.Culture = culture;
+        */
+        LocalizerManager.CurrentDefaultCultureInfo = culture;
 
         WeakReferenceMessenger.Default.Send(new CurrentCultureInfoChangedEvent(culture));
-        foreach (var source in cachedSources.Values)
-            source.Refresh();
 
         currentLanguage = isDefaultRequest ? "Default" : languageName;
 
@@ -109,6 +91,6 @@ public partial class DefaultLanguageManager : ILanguageManager
 
     private string GetTranslatedText(string resKey, CultureInfo culture)
     {
-        return Resources.ResourceManager.GetString(resKey, culture);
+        return LocalizerManager.GetLocalizedStringGlobally(resKey, culture);
     }
 }

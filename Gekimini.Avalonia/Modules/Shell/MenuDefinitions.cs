@@ -12,7 +12,7 @@ public static class MenuDefinitions
     [RegisterStaticObject]
     public static MenuItemDefinition FileNewMenuItem = new TextMenuItemDefinition(
         MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0,
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileNewCommandText)));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileNewCommandText)));
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition FileNewCascadeGroup = new(
@@ -25,7 +25,7 @@ public static class MenuDefinitions
     [RegisterStaticObject]
     public static MenuItemDefinition FileOpenMenuItem = new TextMenuItemDefinition(
         MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0,
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileOpenCommandText)));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileOpenCommandText)));
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition FileOpenCascadeGroup = new(

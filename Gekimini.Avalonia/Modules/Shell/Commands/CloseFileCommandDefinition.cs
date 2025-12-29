@@ -13,8 +13,8 @@ public class CloseFileCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileCloseCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileCloseCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileCloseCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileCloseCommandToolTip));
 }

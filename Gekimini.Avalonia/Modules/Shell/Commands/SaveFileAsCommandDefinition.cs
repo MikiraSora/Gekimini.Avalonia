@@ -12,7 +12,7 @@ public class SaveFileAsCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override LocalizedString Text { get; } = LocalizedString.CreateFromResourceKey(nameof(Resources.FileSaveAsCommandText));
+    public override LocalizedString Text { get; } = LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileSaveAsCommandText));
 
-    public override LocalizedString ToolTip { get; } = LocalizedString.CreateFromResourceKey(nameof(Resources.FileSaveAsCommandToolTip));
+    public override LocalizedString ToolTip { get; } = LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileSaveAsCommandToolTip));
 }

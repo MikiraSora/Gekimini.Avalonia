@@ -20,10 +20,10 @@ public class SaveAllFilesCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileSaveAllCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileSaveAllCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileSaveAllCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileSaveAllCommandToolTip));
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/SaveAll.png");
 }

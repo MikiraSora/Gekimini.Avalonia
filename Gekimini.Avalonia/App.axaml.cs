@@ -6,6 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
@@ -52,7 +53,7 @@ public abstract class App : Application
         BindingPlugins.DataValidators.Clear();
 
         ServiceProvider.GetService<IThemeManager>().Initalize();
-        ServiceProvider.GetService<ILanguageManager>().Initalize();
+        ServiceProvider.GetService<ILanguageManager>().Initialize();
 
         var viewLocator = ServiceProvider.GetService<ViewLocator>();
         DataTemplates.Add(viewLocator);

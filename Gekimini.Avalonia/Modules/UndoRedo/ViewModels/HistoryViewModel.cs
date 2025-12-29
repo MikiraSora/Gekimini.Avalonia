@@ -21,7 +21,7 @@ public partial class HistoryViewModel : GekiminiToolViewModelBase, IHistoryTool
     private int _selectedIndex;
 
     public HistoryViewModel(IShell shell) : base(
-        LocalizedString.CreateFromResourceKey(nameof(Resources.HistoryDisplayName)))
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.HistoryDisplayName)))
     {
         Dock = DockMode.Right;
 
@@ -86,7 +86,7 @@ public partial class HistoryViewModel : GekiminiToolViewModelBase, IHistoryTool
     private void ResetItems()
     {
         HistoryItems.Clear();
-        HistoryItems.Add(new HistoryItemViewModel(Resources.HistoryInitialState));
+        HistoryItems.Add(new HistoryItemViewModel(ProgramLanguages.HistoryInitialState));
 
         if (UndoRedoManager is not null)
             foreach (var vm in UndoRedoManager.ActionStack.Select(a => new HistoryItemViewModel(a)))

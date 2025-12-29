@@ -13,8 +13,8 @@ public class ViewHistoryCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewHistoryCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewHistoryCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ViewHistoryCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewHistoryCommandToolTip));
 }

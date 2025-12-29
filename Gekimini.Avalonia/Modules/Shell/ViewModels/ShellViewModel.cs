@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -177,7 +178,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         Layout = newLayout;
     }
 
-    public void ShowTool<TTool>(bool allowDuplicate = false)
+    public void ShowTool<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TTool>(bool allowDuplicate = false)
         where TTool : IToolViewModel
     {
         if (Tools.OfType<TTool>().Any())

@@ -18,8 +18,8 @@ public class ExitCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileExitCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileExitCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.FileExitCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileExitCommandToolTip));
 }

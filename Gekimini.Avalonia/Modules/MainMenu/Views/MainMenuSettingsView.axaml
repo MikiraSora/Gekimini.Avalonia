@@ -5,6 +5,7 @@
                 xmlns:views="clr-namespace:Gekimini.Avalonia.Views"
                 xmlns:viewModels="clr-namespace:Gekimini.Avalonia.Modules.MainMenu.ViewModels"
                 xmlns:markup="clr-namespace:Gekimini.Avalonia.Framework.Markup"
+                xmlns:languages="clr-namespace:Gekimini.Avalonia.Assets.Languages"
                 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                 x:DataType="viewModels:MainMenuSettingsViewModel"
                 IsTabStop="False"
@@ -15,7 +16,8 @@
 
     <StackPanel>
         <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
-            <Label VerticalAlignment="Center" Content="ControlTheme" />
+            <Label VerticalAlignment="Center"
+                   Content="{markup:Translate {x:Static languages:ProgramLanguages+B.MainMenuSettingsControlTheme}}" />
             <ComboBox ItemsSource="{Binding ControlThemes}" SelectedItem="{Binding SelectedControlTheme}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -25,7 +27,8 @@
             </ComboBox>
         </StackPanel>
         <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
-            <Label VerticalAlignment="Center" Content="{markup:Translate [MainMenuSettingsColorTheme]}" />
+            <Label VerticalAlignment="Center"
+                   Content="{markup:Translate {x:Static languages:ProgramLanguages+B.MainMenuSettingsColorTheme}}" />
             <ComboBox ItemsSource="{Binding ColorThemes}" SelectedItem="{Binding SelectedColorTheme}"
                       SelectedValueBinding="">
                 <ComboBox.ItemTemplate>
@@ -36,7 +39,8 @@
             </ComboBox>
         </StackPanel>
         <StackPanel Margin="0,3,0,0" Orientation="Horizontal">
-            <Label VerticalAlignment="Center" Content="{markup:Translate [MainMenuSettingsLanguage]}" />
+            <Label VerticalAlignment="Center"
+                   Content="{markup:Translate {x:Static languages:ProgramLanguages+B.MainMenuSettingsLanguage}}" />
             <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -47,11 +51,12 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Label Content="{markup:Translate [MainMenuSettingsLanguageRestart]}" />
+            <Label VerticalAlignment="Center"
+                   Content="{markup:Translate {x:Static languages:ProgramLanguages+B.MainMenuSettingsLanguageRestart}}" />
         </StackPanel>
         <CheckBox
             Margin="0,5,0,0"
-            Content="{markup:Translate [MainMenuSettingsAutoHideMainMenu]}"
+            Content="{markup:Translate {x:Static languages:ProgramLanguages+B.MainMenuSettingsAutoHideMainMenu}}"
             IsChecked="{Binding AutoHideMainMenu}" />
     </StackPanel>
 </views:ViewBase>

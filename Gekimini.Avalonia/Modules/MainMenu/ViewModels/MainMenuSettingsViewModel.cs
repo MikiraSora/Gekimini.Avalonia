@@ -52,9 +52,9 @@ public partial class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
     [ObservableProperty]
     public partial IControlTheme SelectedControlTheme { get; set; }
 
-    public string SettingsPageName => Resources.SettingsPageGeneral;
+    public string SettingsPageName => ProgramLanguages.SettingsPageGeneral;
 
-    public string SettingsPagePath => Resources.SettingsPathEnvironment;
+    public string SettingsPagePath => ProgramLanguages.SettingsPathEnvironment;
 
     public void ApplyChanges()
     {

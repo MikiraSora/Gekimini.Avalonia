@@ -68,7 +68,7 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
 
         if (documentProvider is null)
         {
-            await DialogManager.ShowMessageDialog(Resources.NoDocumentSupportOpenRecentInfo, DialogMessageType.Error);
+            await DialogManager.ShowMessageDialog(ProgramLanguages.NoDocumentSupportOpenRecentInfo, DialogMessageType.Error);
             return;
         }
 

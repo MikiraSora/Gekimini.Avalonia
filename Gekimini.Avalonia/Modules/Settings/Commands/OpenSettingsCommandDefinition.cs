@@ -13,8 +13,8 @@ public class OpenSettingsCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ToolsOptionsCommandText));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ToolsOptionsCommandText));
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(Resources.ToolsOptionsCommandToolTip));
+        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ToolsOptionsCommandToolTip));
 }
