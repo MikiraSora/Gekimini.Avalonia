@@ -8,15 +8,17 @@ A UI framework like VisualStudio for Avalonia Browser/Desktop/Android with Nativ
 ### Demo
 [Browser Online](https://mikirasora.github.io/Gekimini.Avalonia/)
 
-### Technology
-
+### Technology Implemet Picked
 * UI Framework: [Avalonia](https://github.com/AvaloniaUI/Avalonia)
-* UI/UX: [Gemini](https://github.com/tgjones/gemini) + [Dock](https://github.com/wieslawsoltes/Dock)
-* IOC/DI: [Microsoft.Extensions.DependencyInjection](https://learn.microsoft.com/zh-cn/dotnet/api/microsoft.extensions.dependencyinjection) + [forked Injectio](https://github.com/MikiraSora/Injectio) + SourceGenerator
+* I18n: [SimpleTypedLocalizer](https://github.com/MikiraSora/SimpleTypedLocalizer)
+* WindowManager: [Iciclecreek.Avalonia.WindowManager](https://github.com/MikiraSora/Iciclecreek.Avalonia.WindowManager)
+* UI/UX: [Gemini](https://github.com/tgjones/gemini) + [Dock](https://github.com/MikiraSora/Dock)
+* IOC/DI: [Microsoft.Extensions.DependencyInjection](https://learn.microsoft.com/zh-cn/dotnet/api/microsoft.extensions.dependencyinjection) + [Injectio](https://github.com/MikiraSora/Injectio)
 
 ### Screenshoots
 <img width="1500" height="839" alt="image" src="https://github.com/user-attachments/assets/ccadb986-469c-4eb3-9188-3855c46b4caf" />
 <img width="1500" height="839" alt="image" src="https://github.com/user-attachments/assets/79daa267-19f7-41ae-b52f-39a628a36c6a" />
+
 
 
 
