@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Browser.Utils;
-
-public partial class JsConsoleLog
-{
-    [JSImport("globalThis.console.log")]
-    public static partial void Log([JSMarshalAs<JSType.String>] string message);
-}
 
 public class ConsoleLoggerProvider : ILoggerProvider
 {
@@ -94,7 +87,7 @@ public class ConsoleLoggerProvider : ILoggerProvider
                 logRecord += $"--------------------------{Environment.NewLine}";
             }
 
-            JsConsoleLog.Log(logRecord);
+            Interops.JsConsoleLogInterop.Log(logRecord);
             //Console.Write(logRecord);
         }
 

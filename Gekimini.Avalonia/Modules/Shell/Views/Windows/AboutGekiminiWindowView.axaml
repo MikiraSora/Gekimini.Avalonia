@@ -1,0 +1,110 @@
+﻿<views:WindowViewBase xmlns="https://github.com/avaloniaui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:windows="clr-namespace:Gekimini.Avalonia.Modules.Shell.ViewModels.Windows"
+                      xmlns:views="clr-namespace:Gekimini.Avalonia.Modules.Window.Views"
+                      mc:Ignorable="d"
+                      SizeToContent="WidthAndHeight"
+                      Title="About Gekimini.Avalonia"
+                      x:DataType="windows:AboutGekiminiWindowViewModel"
+                      x:Class="Gekimini.Avalonia.Modules.Shell.Views.Windows.AboutGekiminiWindowView">
+    <Design.DataContext>
+        <windows:AboutGekiminiWindowViewModel />
+    </Design.DataContext>
+
+    <StackPanel Margin="10">
+        <Label
+            Name="myTitle"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Center"
+            FontSize="25"
+            FontWeight="ExtraBlack">
+            Gekimini.Avalonia
+        </Label>
+
+        <StackPanel HorizontalAlignment="Center" Margin="0,5" Orientation="Horizontal">
+            <TextBlock Text="github"
+                       Foreground="DodgerBlue"
+                       TextDecorations="Underline"
+                       Cursor="Hand">
+                <Interaction.Behaviors>
+                    <ExecuteCommandOnPointerPressedBehavior Command="{Binding OpenURLCommand }"
+                                                            CommandParameter="https://github.com/MikiraSora/Gekimini.Avalonia" />
+                </Interaction.Behaviors>
+            </TextBlock>
+        </StackPanel>
+
+        <Grid Margin="10,15,10,15" ColumnDefinitions="Auto,*" RowDefinitions="*,*,*,*,*,*">
+            <Label VerticalAlignment="Center" FontSize="15">Product Version</Label>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                <Label
+                    VerticalAlignment="Center"
+                    d:Content="1.5.0"
+                    Content="{Binding ProductVersion}"
+                    FontSize="15"
+                    FontWeight="Bold" />
+            </StackPanel>
+
+            <Label
+                Grid.Row="1" Grid.Column="0"
+                VerticalAlignment="Center"
+                FontSize="15">
+                Commit Hash
+            </Label>
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                d:Content="abcdefg"
+                Content="{Binding ProgramCommitIdShort}"
+                FontSize="15"
+                FontWeight="Bold" />
+
+            <Label
+                Grid.Row="2" Grid.Column="0"
+                VerticalAlignment="Center"
+                FontSize="15">
+                Commit Time
+            </Label>
+            <Label
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                d:Content="abcdefg"
+                Content="{Binding ProgramCommitDate}"
+                FontSize="15"
+                FontWeight="Bold" />
+
+            <Label
+                Grid.Row="3" Grid.Column="0"
+                VerticalAlignment="Center"
+                FontSize="15">
+                Build Time
+            </Label>
+            <Label
+                Grid.Row="3"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                d:Content="abcdefg"
+                Content="{Binding ProgramBuildTime}"
+                FontSize="15"
+                FontWeight="Bold" />
+
+            <Label
+                Grid.Row="4" Grid.Column="0"
+                VerticalAlignment="Center"
+                FontSize="15">
+                Build Configuration
+            </Label>
+            <Label
+                Grid.Row="4"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                d:Content="abcdefg"
+                Content="{Binding ProgramBuildConfiguration}"
+                FontSize="15"
+                FontWeight="Bold" />
+        </Grid>
+    </StackPanel>
+</views:WindowViewBase>

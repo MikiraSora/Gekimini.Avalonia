@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices.JavaScript;
 using Gekimini.Avalonia.Browser.Utils;
 using Gekimini.Avalonia.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,12 +39,6 @@ public class BrowserApp : App
     protected override void DoExit(int exitCode = 0)
     {
         logger.LogInformationEx($"bye. exitCode={exitCode}");
-        JsApplication.Exit();
+        Utils.Interops.JsApplicationInterop.Exit();
     }
-}
-
-public partial class JsApplication
-{
-    [JSImport("globalThis.JsApplication.exit")]
-    public static partial void Exit();
 }

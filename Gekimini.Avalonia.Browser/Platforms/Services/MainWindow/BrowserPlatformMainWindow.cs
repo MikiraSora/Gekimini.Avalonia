@@ -19,13 +19,13 @@ public partial class BrowserPlatformMainWindow : ObservableObject, IPlatformMain
 
     public bool IsFullScreen
     {
-        get => WindowInterop.IsFullScreen();
+        get => Utils.Interops.WindowInterop.IsFullScreen();
         set
         {
             if (value)
-                WindowInterop.RequestFullScreen();
+                Utils.Interops.WindowInterop.RequestFullScreen();
             else
-                WindowInterop.ExitFullScreen();
+                Utils.Interops.WindowInterop.ExitFullScreen();
             OnPropertyChanged();
         }
     }

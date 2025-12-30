@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 
-namespace Gekimini.Avalonia.Browser.Platforms.Services.MainWindow;
+namespace Gekimini.Avalonia.Browser.Utils.Interops;
 
 public partial class WindowInterop
 {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 
-namespace Gekimini.Avalonia.Browser.Platforms.Services.Settings;
+namespace Gekimini.Avalonia.Browser.Utils.Interops;
 
 public partial class LocalStorageInterop
 {

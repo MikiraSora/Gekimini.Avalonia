@@ -102,13 +102,13 @@ public class BrowserSettingManager : ISettingManager
 
     private void SetLocalStorage(string key, string value)
     {
-        LocalStorageInterop.Save(key, value);
+        Utils.Interops.LocalStorageInterop.Save(key, value);
         logger.LogDebugEx($"setting from storage {key} = {value}");
     }
 
     private string GetLocalStorage(string key)
     {
-        var value = LocalStorageInterop.Load(key);
+        var value = Utils.Interops.LocalStorageInterop.Load(key);
 
         logger.LogDebugEx($"getting from storage {key} = {value}");
         return value;

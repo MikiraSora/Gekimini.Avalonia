@@ -61,4 +61,7 @@ public static class MenuDefinitions
     [RegisterStaticObject]
     public static MenuDefinition HelpMenu = new(MainMenuBar, 30,
         LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.HelpMenuText)));
+    
+    [RegisterStaticObject]
+    public static MenuItemGroupDefinition HelpMenuGroup = new(HelpMenu, 10);
 }

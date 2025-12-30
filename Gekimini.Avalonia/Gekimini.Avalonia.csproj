@@ -20,7 +20,7 @@
         <CompilerVisibleProperty Include="InjectioDuplicateStrategy"/>
     </ItemGroup>
     <!---->
-
+    
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
@@ -42,6 +42,10 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10"/>
         <PackageReference Include="AvaloniaDialogs" Version="3.7.0"/>
         <PackageReference Include="DialogHost.Avalonia" Version="0.9.3"/>
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.9.50">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
 
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     </ItemGroup>
@@ -87,8 +91,8 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="Modules\Shell\Views\ToolContainerView.axaml.cs">
-          <DependentUpon>ToolContainerView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ToolContainerView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

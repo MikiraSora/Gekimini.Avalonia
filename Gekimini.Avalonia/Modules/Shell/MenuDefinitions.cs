@@ -61,6 +61,11 @@ public static class MenuDefinitions
         new CommandMenuItemDefinition<ViewFullScreenCommandDefinition>(
             MainMenu.MenuDefinitions.ViewPropertiesMenuGroup, 0);
 
+    [RegisterStaticObject]
+    public static MenuItemDefinition AubotGekiminiMenuItem =
+        new CommandMenuItemDefinition<AboutGekiminiCommandDefinition>(
+            MainMenu.MenuDefinitions.HelpMenuGroup, 0);
+
     #region Window
 
     [RegisterStaticObject]
