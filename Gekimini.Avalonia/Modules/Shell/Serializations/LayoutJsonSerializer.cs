@@ -249,7 +249,16 @@ public class LayoutJsonSerializer : IDockSerializer
         {
             var childDockable = DeserializeLayout(childLayoutDockable);
             if (childDockable != null)
+            {
                 dock.VisibleDockables.Add(childDockable);
+
+                if (childDockable is ITool or IDocument)
+                {
+                    //active child.
+                    dock.FocusedDockable = childDockable;
+                    dock.ActiveDockable = childDockable;
+                }
+            }
         }
 
         return dock;

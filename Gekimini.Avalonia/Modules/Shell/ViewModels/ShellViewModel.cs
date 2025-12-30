@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Threading;
@@ -45,6 +44,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     private readonly IDialogManager dialogManager;
     private readonly IDockSerializer dockSerializer;
     private readonly ILogger<ShellViewModel> logger;
+    private readonly ILogger printLogger;
     private readonly IServiceProvider serviceProvider;
     private readonly ISettingManager settingManager;
 
@@ -83,6 +83,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         IToolBars toolBars,
         IMenu mainMenu,
         IDialogManager dialogManager,
+        ILoggerFactory loggerFactory,
         ILogger<ShellViewModel> logger)
     {
         this.serviceProvider = serviceProvider;
@@ -96,6 +97,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         StatusBar = statusBar;
         ToolBars = toolBars;
         MainMenu = mainMenu;
+        printLogger = loggerFactory.CreateLogger("DumpDock");
     }
 
     public void Receive(ApplicationAskQuitEvent message)
@@ -407,19 +409,46 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     {
         var json = dockSerializer.Serialize(Layout);
         settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
-        logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
+        //logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
     }
 
     private void LoadLayout()
     {
         var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
-        logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
+        //logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
         var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
         if (dockable is null)
         {
             logger.LogErrorEx("Deserialize layout file failed, deserialized dockable object is null.");
             return;
         }
+
+        void printDock(IDockable dockable, int stack = 0)
+        {
+            printLogger.LogDebugEx($"stack: {stack}");
+            printLogger.LogDebugEx($"id: {dockable.Id}");
+            printLogger.LogDebugEx($"title: {dockable.Title}");
+            printLogger.LogDebugEx($"dockMode: {dockable.Dock}");
+            printLogger.LogDebugEx($"owner: {dockable.Owner?.Title}");
+            printLogger.LogDebugEx($"originalOwner: {dockable.OriginalOwner?.Title}");
+
+            if (dockable is IDock dock)
+            {
+                printLogger.LogDebugEx($"isActive: {dock.IsActive}");
+                printLogger.LogDebugEx($"openedDockablesCount: {dock.OpenedDockablesCount}");
+                printLogger.LogDebugEx($"defaultDockable: {dock.DefaultDockable?.Title}");
+                printLogger.LogDebugEx($"focusedDockable: {dock.FocusedDockable?.Title}");
+                printLogger.LogDebugEx($"activeDockable: {dock.ActiveDockable?.Title}");
+                if (dock.VisibleDockables.Any())
+                {
+                    printLogger.LogDebugEx("children:");
+                    foreach (var childDockable in dock.VisibleDockables)
+                        printDock(childDockable, stack + 1);
+                }
+            }
+        }
+
+        printDock(dockable);
 
         Factory.InitLayout(dockable);
         Layout = dockable;
