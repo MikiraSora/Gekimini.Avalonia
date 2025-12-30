@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Framework;
@@ -23,7 +24,7 @@ public interface IShell
     IEnumerable<IToolViewModel> Tools { get; }
     event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
 
-    void ShowTool<TTool>(bool allowDuplicate = false) where TTool : IToolViewModel;
+    void ShowTool<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TTool>(bool allowDuplicate = false) where TTool : IToolViewModel;
     void ShowTool(IToolViewModel model);
     void HideTool<TTool>() where TTool : IToolViewModel;
     void HideTool(IToolViewModel model);

@@ -6,7 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
-using Gekimini.Avalonia.Assets.Languages;
+using Dock.Settings;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Themes;
@@ -49,6 +49,12 @@ public abstract class App : Application
         InitailizeServices();
 
         logger = ServiceProvider.GetService<ILogger<App>>();
+
+        var dockLogger = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("ShellDock");
+        var dockLogFunc = (string str) => dockLogger.LogDebugEx(str, "DiagnosticsLogHandler");
+        DockSettings.DiagnosticsLogHandler = DockSettings.DiagnosticsLogHandler is { } prevHandler
+            ? prevHandler + dockLogFunc
+            : dockLogFunc;
 
         BindingPlugins.DataValidators.Clear();
 

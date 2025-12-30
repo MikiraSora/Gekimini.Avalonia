@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,6 +13,7 @@ using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.MainMenu;
@@ -38,6 +39,9 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
     private readonly List<IDocumentViewModel> addedDocuments = new();
     private readonly List<IToolViewModel> addTools = new();
+
+    private readonly Dictionary<string, DocumentContainerViewModel> cachedIdToDocumentContainerMap = new();
+    private readonly Dictionary<string, ToolContainerViewModel> cachedIdToToolContainerMap = new();
     private readonly IDialogManager dialogManager;
     private readonly IDockSerializer dockSerializer;
     private readonly ILogger<ShellViewModel> logger;
@@ -113,14 +117,21 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     public void ShowTool(IToolViewModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
+        var id = GetId(model);
 
         if (Tools.Contains(model))
         {
-            logger.LogWarningEx($"can't show tool multi times, tool {model.Id}: {model.GetType().Name}");
+            logger.LogWarningEx($"can't show tool multi times, tool {id}: {model.GetType().Name}");
             return;
         }
 
-        Factory.AddTool(model);
+        var toolContainer = new ToolContainerViewModel
+        {
+            Id = id, Context = model
+        };
+        //Factory.ContextLocator![id] = () => model;
+        Factory.AddTool(toolContainer);
+        cachedIdToToolContainerMap[id] = toolContainer;
     }
 
     public void HideTool<TTool>() where TTool : IToolViewModel
@@ -132,24 +143,46 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     {
         if (model is null)
             return;
-        logger.LogInformationEx($"Hide tool {model.Id}: {model.GetType().Name}");
-        Factory.RemoveTool(model);
+        var id = GetId(model);
+
+        if (cachedIdToToolContainerMap.TryGetValue(id, out var toolContainer))
+        {
+            logger.LogInformationEx($"Hide tool {id}: {model.GetType().Name}");
+            Factory.RemoveTool(toolContainer);
+            cachedIdToToolContainerMap.Remove(id);
+        }
+        else
+        {
+            logger.LogWarningEx($"Hide tool {id} but can't find its container.");
+        }
     }
 
     public Task OpenDocumentAsync(IDocumentViewModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
 
+        var id = GetId(model);
+
         if (addedDocuments.Contains(model))
         {
             //exist, just active it.
-            logger.LogInformationEx($"Active&Focus existed document {model.Id}: {model.GetType().Name}");
-            Factory.ActiveAndFocus(model);
+            logger.LogInformationEx($"Active&Focus existed document {id}: {model.GetType().Name}");
+            if (cachedIdToDocumentContainerMap.TryGetValue(id, out var documentContainer))
+                Factory.ActiveAndFocus(documentContainer);
+            else
+                logger.LogWarningEx($"Active&Focus existed document {id} but can't find its container.");
         }
         else
         {
-            logger.LogInformationEx($"Open new document {model.Id}: {model.GetType().Name}");
-            Factory.AddDocument(model);
+            logger.LogInformationEx($"Open new document {id}: {model.GetType().Name}");
+
+            var documentContainer = new DocumentContainerViewModel
+            {
+                Id = id, Context = model
+            };
+            //Factory.ContextLocator![id] = () => model;
+            Factory.AddDocument(documentContainer);
+            cachedIdToDocumentContainerMap[id] = documentContainer;
         }
 
         return Task.CompletedTask;
@@ -159,9 +192,18 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     {
         if (model is null)
             return Task.CompletedTask;
+        var id = GetId(model);
 
-        logger.LogInformationEx($"Close document {model.Id}: {model.GetType().Name}");
-        Factory.RemoveDocument(model);
+        if (cachedIdToDocumentContainerMap.TryGetValue(id, out var documentContainer))
+        {
+            logger.LogInformationEx($"Close document {id}: {model.GetType().Name}");
+            Factory.RemoveDocument(documentContainer);
+            cachedIdToDocumentContainerMap.Remove(id);
+        }
+        else
+        {
+            logger.LogWarningEx($"Close document {id} but can't find its container.");
+        }
 
         return Task.CompletedTask;
     }
@@ -178,7 +220,8 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         Layout = newLayout;
     }
 
-    public void ShowTool<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TTool>(bool allowDuplicate = false)
+    public void ShowTool<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTool>(
+        bool allowDuplicate = false)
         where TTool : IToolViewModel
     {
         if (Tools.OfType<TTool>().Any())
@@ -194,6 +237,12 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         else
             toolViewModel = serviceProvider.Resolve<TTool>();
         ShowTool(toolViewModel);
+    }
+
+    private string GetId(IDockableViewModel dockableViewModel)
+    {
+        ArgumentNullException.ThrowIfNull(dockableViewModel);
+        return dockableViewModel.GetType().FullName;
     }
 
     private async void InitLayout()
@@ -238,11 +287,12 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
     private void CheckIfRaiseActiveDocumentChanged(object sender, IDocumentViewModel document)
     {
-        if (prevDocumentId != document?.Id)
+        var id = GetId(document);
+        if (prevDocumentId != id)
         {
-            logger.LogDebugEx($"active document changed: [{document?.Id}] {document?.Title}");
+            logger.LogDebugEx($"active document changed: [{id}] {document?.Title.Text}");
             ActiveDocument = document;
-            prevDocumentId = document?.Id;
+            prevDocumentId = id;
         }
     }
 
@@ -259,7 +309,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
         logger.LogDebugEx($"focus dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         ActiveDockable = e.Dockable;
-        if (e.Dockable is IDocumentViewModel documentViewModel)
+        if (e.Dockable is IDocument {Context: IDocumentViewModel documentViewModel})
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
 
@@ -271,7 +321,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
         logger.LogDebugEx($"active dockable changed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         ActiveDockable = e.Dockable;
-        if (e.Dockable is IDocumentViewModel documentViewModel)
+        if (e.Dockable is IDocument {Context: IDocumentViewModel documentViewModel})
             CheckIfRaiseActiveDocumentChanged(sender, documentViewModel);
     }
 
@@ -280,14 +330,14 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         logger.LogDebugEx($"dockable removed: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         switch (e.Dockable)
         {
-            case IDocumentViewModel document:
-                addedDocuments.Remove(document);
-                if (ActiveDocument == document)
+            case IDocument {Context: IDocumentViewModel documentViewModel}:
+                addedDocuments.Remove(documentViewModel);
+                if (ActiveDocument == documentViewModel)
                     ActiveDocument = default;
 
                 break;
-            case IToolViewModel tool:
-                addTools.Remove(tool);
+            case ITool {Context: IToolViewModel toolViewModel}:
+                addTools.Remove(toolViewModel);
                 break;
         }
 
@@ -300,11 +350,11 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         logger.LogDebugEx($"dockable added: [{e.Dockable?.Id}] {e.Dockable?.Title}");
         switch (e.Dockable)
         {
-            case IDocumentViewModel document:
-                addedDocuments.Add(document);
+            case IDocument {Context: IDocumentViewModel documentViewModel}:
+                addedDocuments.Add(documentViewModel);
                 break;
-            case IToolViewModel tool:
-                addTools.Add(tool);
+            case ITool {Context: IToolViewModel toolViewModel}:
+                addTools.Add(toolViewModel);
                 break;
         }
     }
@@ -337,8 +387,18 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     private async Task<bool> OnApplicationAskQuit(ApplicationAskQuitEvent message)
     {
         foreach (var document in Documents)
-            if (!await Factory.CanCloseDocument(document))
-                return false;
+        {
+            var id = GetId(document);
+            if (cachedIdToDocumentContainerMap.TryGetValue(id, out var documentContainer))
+            {
+                if (!await Factory.CanCloseDocument(documentContainer))
+                    return false;
+            }
+            else
+            {
+                logger.LogWarningEx($"can't find document container {id} to ask quit.");
+            }
+        }
 
         return true;
     }
@@ -347,13 +407,13 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     {
         var json = dockSerializer.Serialize(Layout);
         settingManager.LoadAndSave(GekiminiSetting.JsonTypeInfo, setting => setting.ShellLayout = json);
-        //logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
+        logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
     }
 
     private void LoadLayout()
     {
         var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
-        //logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
+        logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
         var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
         if (dockable is null)
         {

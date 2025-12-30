@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTypedLocalizer", "Dep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTypedLocalizer.SourceGenerator", "Dependencies\SimpleTypedLocalizer\SimpleTypedLocalizer.SourceGenerator\SimpleTypedLocalizer.SourceGenerator\SimpleTypedLocalizer.SourceGenerator.csproj", "{5D942A36-A0C8-4E61-9F02-A361305EFAE8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Settings", "Dependencies\Dock\src\Dock.Settings\Dock.Settings.csproj", "{7F67E2D0-70A0-4DB7-BBD1-6FC6F1C80CDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{5D942A36-A0C8-4E61-9F02-A361305EFAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D942A36-A0C8-4E61-9F02-A361305EFAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D942A36-A0C8-4E61-9F02-A361305EFAE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F67E2D0-70A0-4DB7-BBD1-6FC6F1C80CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F67E2D0-70A0-4DB7-BBD1-6FC6F1C80CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F67E2D0-70A0-4DB7-BBD1-6FC6F1C80CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F67E2D0-70A0-4DB7-BBD1-6FC6F1C80CDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{7C85B5D8-02E9-4844-BC67-37EF34F014B5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{02ABAEA8-503A-411C-AC4D-870F74BDDCC6} = {7C85B5D8-02E9-4844-BC67-37EF34F014B5}
 		{5D942A36-A0C8-4E61-9F02-A361305EFAE8} = {7C85B5D8-02E9-4844-BC67-37EF34F014B5}
+		{7F67E2D0-70A0-4DB7-BBD1-6FC6F1C80CDE} = {292AD6FB-C1AA-4D6C-A363-E5B65B1084A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63573E9E-347A-4E2B-A436-93882CB2B9CD}

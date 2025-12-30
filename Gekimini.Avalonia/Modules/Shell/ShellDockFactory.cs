@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dock.Model.Controls;
@@ -23,6 +24,7 @@ public sealed partial class ShellDockFactory : Factory, IFactory
     {
         HideToolsOnClose = true;
         HideDocumentsOnClose = true;
+        //ContextLocator = new Dictionary<string, Func<object>>();
     }
 
     [GetServiceLazy]
@@ -30,6 +32,8 @@ public sealed partial class ShellDockFactory : Factory, IFactory
 
     public override IRootDock CreateLayout()
     {
+        ContextLocator ??= new Dictionary<string, Func<object>>();
+
         var root = CreateRootDock();
 
         var leftToolDock = new ToolDock
@@ -40,7 +44,8 @@ public sealed partial class ShellDockFactory : Factory, IFactory
             Proportion = 0.25,
             IsCollapsable = true,
             Dock = DockMode.Left,
-            CanFloat = false
+            CanFloat = false,
+            Title = "_leftToolDock"
         };
         var documentDock = new DocumentDock
         {
@@ -48,7 +53,8 @@ public sealed partial class ShellDockFactory : Factory, IFactory
             IsCollapsable = false,
             Proportion = 0.5,
             CanFloat = false,
-            Dock = DockMode.Center
+            Dock = DockMode.Center,
+            Title = "_documentDock"
         };
         var rightToolDock = new ToolDock
         {
@@ -58,7 +64,8 @@ public sealed partial class ShellDockFactory : Factory, IFactory
             Proportion = 0.25,
             IsCollapsable = true,
             CanFloat = false,
-            Dock = DockMode.Right
+            Dock = DockMode.Right,
+            Title = "_rightToolDock"
         };
         var bottomToolDock = new ToolDock
         {
@@ -68,7 +75,8 @@ public sealed partial class ShellDockFactory : Factory, IFactory
             Proportion = 0.25,
             IsCollapsable = true,
             CanFloat = false,
-            Dock = DockMode.Bottom
+            Dock = DockMode.Bottom,
+            Title = "_bottomToolDock"
         };
         var topToolDock = new ToolDock
         {
@@ -78,7 +86,8 @@ public sealed partial class ShellDockFactory : Factory, IFactory
             Proportion = 0.25,
             IsCollapsable = true,
             CanFloat = false,
-            Dock = DockMode.Top
+            Dock = DockMode.Top,
+            Title = "_topToolDock"
         };
 
         var horizonLayout = new ProportionalDock
@@ -149,7 +158,13 @@ public sealed partial class ShellDockFactory : Factory, IFactory
                 //todo log it
                 return;
 
+        var beforeDock = dockable.Owner;
+        var beforeIdx = (beforeDock as IDock)?.VisibleDockables?.IndexOf(dockable) ?? -1;
+
         base.CloseDockable(dockable);
+
+        if (beforeDock is IDock dock)
+            dock.ActiveDockable = dock.VisibleDockables.ElementAtOrDefault(Math.Max(0, beforeIdx - 1));
     }
 
     private IDock FindOrCreateToolDock(DockMode dock)

@@ -14,6 +14,7 @@ using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Framework.DragDrops;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.RecentFiles;
 using Gekimini.Avalonia.Modules.InternalTest.Models;
 using Gekimini.Avalonia.Modules.InternalTest.ToolboxItems;
@@ -267,7 +268,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         if (IsDirty)
             title = "* " + title;
 
-        Title = title;
+        Title = LocalizedString.CreateFromRawText(title);
     }
 
     [RelayCommand]

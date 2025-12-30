@@ -16,7 +16,7 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.Toolbox.ViewModels;
 
 [RegisterSingleton<IToolbox>]
-public partial class ToolboxViewModel : GekiminiToolViewModelBase, IToolbox
+public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
 {
     private readonly ObservableCollection<ToolboxItemGroupViewModel> _filteredItems = new();
     private readonly ObservableCollection<ToolboxItemGroupViewModel> _groupedItems = new();

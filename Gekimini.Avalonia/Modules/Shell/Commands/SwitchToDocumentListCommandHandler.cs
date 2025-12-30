@@ -30,7 +30,7 @@ public class SwitchToDocumentListCommandHandler : CommandListHandlerBase<SwitchT
             commands.Add(new Command(command.CommandDefinition)
             {
                 Checked = _shell.ActiveDocument == document,
-                Text = string.Format("_{0} {1}", i + 1, document.Title /*todo document.DisplayName*/).ToLocalizedStringByRawText(),
+                Text = string.Format("_{0} {1}", i + 1, document.Title.Text /*todo document.DisplayName*/).ToLocalizedStringByRawText(),
                 Tag = document
             });
         }

@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using Dock.Model.Mvvm.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.Modules.Shell.Commands;
 using Gekimini.Avalonia.Modules.UndoRedo.Commands;
-using Gekimini.Avalonia.Views;
+using Gekimini.Avalonia.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Framework.Documents;
 
-public abstract partial class DocumentViewModelBase : Document, IDocumentViewModel,
+public abstract partial class DocumentViewModelBase : ViewModelBase, IDocumentViewModel,
     ICommandHandler<RedoCommandDefinition>,
     ICommandHandler<UndoCommandDefinition>,
     ICommandHandler<SaveFileCommandDefinition>,
     ICommandHandler<SaveFileAsCommandDefinition>
 {
+    [ObservableProperty]
+    private LocalizedString title;
+
     public DocumentViewModelBase()
     {
-        Id = Guid.NewGuid().ToString();
-        Title = GetType().Name;
+        Title = LocalizedString.CreateFromRawText(GetType().Name);
     }
 
     [GetServiceLazy]
@@ -38,19 +40,6 @@ public abstract partial class DocumentViewModelBase : Document, IDocumentViewMod
         typeof(SaveFileCommandDefinition),
         typeof(SaveFileAsCommandDefinition)
     ];
-
-    public virtual void OnViewAfterLoaded(IView view)
-    {
-        ViewAfterLoaded?.Invoke(view);
-    }
-
-    public virtual void OnViewBeforeUnload(IView view)
-    {
-        ViewBeforeUnload?.Invoke(view);
-    }
-
-    public event Action<IView> ViewAfterLoaded;
-    public event Action<IView> ViewBeforeUnload;
 
     public IUndoRedoManager UndoRedoManager => field ??= UndoRedoManagerFactory.Create();
 

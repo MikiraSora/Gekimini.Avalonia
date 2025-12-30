@@ -1,33 +1,28 @@
-﻿using System;
-using Avalonia.Controls;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Dock.Model.Core;
-using Dock.Model.Mvvm.Controls;
-using Gekimini.Avalonia.Views;
+using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Models.Events;
+using Gekimini.Avalonia.ViewModels;
 
 namespace Gekimini.Avalonia.Framework.Tools;
 
-public abstract class ToolViewModelBase : Tool, IToolViewModel
+public abstract partial class ToolViewModelBase : ViewModelBase, IToolViewModel,
+    IRecipient<CurrentCultureInfoChangedEvent>
 {
-    public ToolViewModelBase()
+    [ObservableProperty]
+    private DockMode dock;
+
+    [ObservableProperty]
+    private LocalizedString title;
+
+    public ToolViewModelBase(LocalizedString localizedTitle)
     {
-        Id = GetType().FullName;
-        Title = GetType().Name;
-        Dock = DockMode.Left;
+        Title = localizedTitle;
     }
 
-    public virtual void OnViewAfterLoaded(IView view)
+    public virtual void Receive(CurrentCultureInfoChangedEvent message)
     {
-        WeakReferenceMessenger.Default.RegisterAll(this);
-        ViewAfterLoaded?.Invoke(view);
+        OnPropertyChanged(nameof(Title));
     }
-
-    public virtual void OnViewBeforeUnload(IView view)
-    {
-        ViewBeforeUnload?.Invoke(view);
-        WeakReferenceMessenger.Default.UnregisterAll(this);
-    }
-
-    public event Action<IView> ViewAfterLoaded;
-    public event Action<IView> ViewBeforeUnload;
 }

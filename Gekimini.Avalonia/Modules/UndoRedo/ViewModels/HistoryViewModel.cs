@@ -16,7 +16,7 @@ using Injectio.Attributes;
 namespace Gekimini.Avalonia.Modules.UndoRedo.ViewModels;
 
 [RegisterSingleton<IHistoryTool>]
-public partial class HistoryViewModel : GekiminiToolViewModelBase, IHistoryTool
+public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
 {
     private int _selectedIndex;
 

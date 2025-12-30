@@ -7,6 +7,7 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Modules.Shell.Serializations.Layouts;
+using Gekimini.Avalonia.Modules.Shell.ViewModels;
 using Gekimini.Avalonia.Utils;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
@@ -54,13 +55,12 @@ public class LayoutJsonSerializer : IDockSerializer
                 return SerializeToLayoutObject<LayoutToolDock>(toolDock);
             case IDocumentDock documentDock:
                 return SerializeToLayoutObject<LayoutDocumentDock>(documentDock);
+            //--------------------------------
             // spcial process
-            case IDocumentViewModel document:
+            case IDocument {Context: IDocumentViewModel} document:
                 return SerializeToLayoutObject<LayoutDocument>(document);
-            case IToolViewModel tool:
+            case ITool {Context: IToolViewModel} tool:
                 return SerializeToLayoutObject<LayoutTool>(tool);
-            case ITool or IDocument:
-                throw new NotSupportedException("Only support IDocumentViewModel/IToolViewModel");
         }
 
         return null;
@@ -103,19 +103,19 @@ public class LayoutJsonSerializer : IDockSerializer
         return layout;
     }
 
-    private T SerializeToLayoutObject<T>(IDocumentViewModel dockable)
+    private T SerializeToLayoutObject<T>(IDocument dockable)
         where T : LayoutDocument, new()
     {
         var layout = SerializeToLayoutObject<T>(dockable as IDockable);
-        layout.ToolType = dockable.GetType().FullName;
+        layout.ContextType = dockable?.Context?.GetType().FullName;
         return layout;
     }
 
-    private T SerializeToLayoutObject<T>(IToolViewModel dockable)
+    private T SerializeToLayoutObject<T>(ITool dockable)
         where T : LayoutTool, new()
     {
         var layout = SerializeToLayoutObject<T>(dockable as IDockable);
-        layout.ToolType = dockable.GetType().FullName;
+        layout.ContextType = dockable?.Context?.GetType().FullName;
         return layout;
     }
 
@@ -186,22 +186,26 @@ public class LayoutJsonSerializer : IDockSerializer
 
     private IDockable TryOpenTool(LayoutTool layoutTool)
     {
-        if (factory.DockableLocator?.TryGetValue(layoutTool.ToolType, out var toolCreateFactory) ?? false)
+        if (factory.DockableLocator?.TryGetValue(layoutTool.ContextType, out var toolCreateFactory) ?? false)
         {
             var tool = toolCreateFactory.Invoke();
             layoutTool.CopyTo(tool);
             return tool;
         }
 
-        if (TypeCollectedActivatorHelper<IToolViewModel>.TryCreateInstance(serviceProvider, layoutTool.ToolType,
+        if (TypeCollectedActivatorHelper<IToolViewModel>.TryCreateInstance(serviceProvider, layoutTool.ContextType,
                 out var toolViewModel))
         {
-            layoutTool.CopyTo(toolViewModel);
-            return toolViewModel;
+            var toolContainer = new ToolContainerViewModel
+            {
+                Context = toolViewModel
+            };
+            layoutTool.CopyTo(toolContainer);
+            return toolContainer;
         }
 
         logger.LogWarningEx(
-            $"Can't find deserialize layoutTool to dockable: layoutTool.ToolType = {layoutTool.ToolType}");
+            $"Can't find deserialize layoutTool to dockable: layoutTool.ToolType = {layoutTool.ContextType}");
 
         return default;
     }
