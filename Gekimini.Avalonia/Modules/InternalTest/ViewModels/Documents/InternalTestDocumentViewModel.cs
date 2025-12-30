@@ -58,9 +58,6 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     [ObservableProperty]
     public partial string FileName { get; set; }
 
-    [ObservableProperty]
-    public partial string FilePath { get; set; }
-
     [GetServiceLazy]
     private partial IDialogManager DialogManager { get; }
 
@@ -265,8 +262,10 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         var title = FileName;
         if (IsNew)
             title = "[New] " + title;
+        /*
         if (IsDirty)
             title = "* " + title;
+        */
 
         Title = LocalizedString.CreateFromRawText(title);
     }

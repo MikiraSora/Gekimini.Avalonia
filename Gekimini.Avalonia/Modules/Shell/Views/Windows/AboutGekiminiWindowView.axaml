@@ -29,8 +29,8 @@
                        TextDecorations="Underline"
                        Cursor="Hand">
                 <Interaction.Behaviors>
-                    <ExecuteCommandOnPointerPressedBehavior Command="{Binding OpenURLCommand }"
-                                                            CommandParameter="https://github.com/MikiraSora/Gekimini.Avalonia" />
+                    <ExecuteCommandOnTappedBehavior Command="{Binding OpenURLCommand }"
+                                                    CommandParameter="https://github.com/MikiraSora/Gekimini.Avalonia" />
                 </Interaction.Behaviors>
             </TextBlock>
         </StackPanel>

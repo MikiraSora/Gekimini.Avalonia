@@ -45,6 +45,9 @@ public class DocumentContainerViewModel : Document, IViewModel
                 };
 
                 Title = documentViewModel.Title.Text;
+
+                if (documentViewModel is IPersistedDocumentViewModel persistedDocumentViewModel)
+                    IsModified = persistedDocumentViewModel.IsDirty;
             }
         }
     }

@@ -287,7 +287,7 @@ public sealed partial class ShellDockFactory : Factory, IFactory
 
     public async Task<bool> CanCloseDocument(IDocument document)
     {
-        if (document is not IPersistedDocumentViewModel persistedDocumentViewModel)
+        if (document?.Context is not IPersistedDocumentViewModel persistedDocumentViewModel)
             return true;
 
         if (!persistedDocumentViewModel.IsDirty)
