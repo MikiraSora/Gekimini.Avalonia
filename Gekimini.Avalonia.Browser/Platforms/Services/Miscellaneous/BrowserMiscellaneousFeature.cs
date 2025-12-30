@@ -1,4 +1,5 @@
-﻿using Gekimini.Avalonia.Browser.Utils.Interops;
+﻿using Avalonia.Threading;
+using Gekimini.Avalonia.Browser.Utils.Interops;
 using Gekimini.Avalonia.Platforms.Services.Miscellaneous;
 using Injectio.Attributes;
 
@@ -9,6 +10,6 @@ public class BrowserMiscellaneousFeature : IMiscellaneousFeature
 {
     public void OpenUrl(string url)
     {
-        WindowInterop.OpenURL(url);
+        Dispatcher.UIThread.Invoke(() => WindowInterop.OpenURL(url), DispatcherPriority.Background);
     }
 }
