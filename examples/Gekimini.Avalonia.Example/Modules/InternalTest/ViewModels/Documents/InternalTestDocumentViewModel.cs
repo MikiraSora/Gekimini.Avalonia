@@ -13,6 +13,7 @@ using Gekimini.Avalonia.Example.Modules.InternalTest.ToolboxItems;
 using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Tools;
 using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Windows;
 using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Framework.DragDrops;
@@ -216,7 +217,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
 
         return true;
     }
-
+    
     private async Task<bool> DoLoad(InternalTestValueStoreData recentData)
     {
         Value = recentData.StoredValue;
@@ -333,10 +334,15 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
             () => Value = beforeValue));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanShowNewWindow))]
     private void ShowNewWindow()
     {
         WindowManager.ShowWindowAsync(new InternalTestWindowViewModel());
+    }
+
+    private bool CanShowNewWindow()
+    {
+        return true;
     }
 
     [RelayCommand]
