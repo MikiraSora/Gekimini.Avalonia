@@ -60,7 +60,7 @@ public class GetServiceLazyGenerator : IIncrementalGenerator
                 {classAccess} partial class {className}
                 {{
                     {propAccess} partial {propType} {propName} 
-                        => field ??= (App.Current as App)?.ServiceProvider.GetService<{propType}>();
+                        => field ??= ((App.Current as App)?.ServiceProvider.GetService<{propType}>() ?? throw new global::System.InvalidOperationException(""Get service {propType} failed, maybe you inject it before App initialization or there's no any implement registered.""));
                 }}
             }}
             ");

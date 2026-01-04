@@ -13,6 +13,7 @@ using Gekimini.Avalonia.Framework.Themes;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.MainView;
+using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Platforms.Services.MainWindow;
 using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Utils.MethodExtensions;
@@ -76,6 +77,9 @@ public abstract class App : Application
             singleViewPlatform.MainView = mainView;
 
         RestoreMainWindowLocationAndSize();
+
+        serviceProvider.GetService<IStatusBar>()?.GetApplicationGlobalStatusBarItem()?.Message =
+            "Application ready.";
 
         base.OnFrameworkInitializationCompleted();
     }

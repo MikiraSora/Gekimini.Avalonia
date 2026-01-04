@@ -1,32 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Commands;
+using Gekimini.Avalonia.Modules.StatusBar;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Gekimini.Avalonia.Modules.Shell.Commands;
 
 [RegisterSingleton<ICommandHandler>]
-public class SaveAllFilesCommandHandler : CommandHandlerBase<SaveAllFilesCommandDefinition>
+public partial class SaveAllFilesCommandHandler : CommandHandlerBase<SaveAllFilesCommandDefinition>
 {
-    private readonly IServiceProvider _serviceProvider;
+    [GetServiceLazy]
+    private partial IShell Shell { get; }
 
-    public SaveAllFilesCommandHandler(IServiceProvider serviceProvider)
+    [GetServiceLazy]
+    private partial IStatusBar StatusBar { get; }
+
+    public override void Update(Command command)
     {
-        _serviceProvider = serviceProvider;
+        command.Enabled = Shell?.Documents.OfType<IPersistedDocumentViewModel>().Any() ?? false;
     }
 
     public override async Task Run(Command command)
     {
-        var shell = _serviceProvider.GetService<IShell>();
-        var tasks = new List<Task<Tuple<IPersistedDocumentViewModel, bool>>>();
+        var statusBarItem = StatusBar?.GetApplicationGlobalStatusBarItem();
 
-        foreach (var document in shell.Documents.OfType<IPersistedDocumentViewModel>().Where(x => !x.IsNew))
-            await document.Save();
+        //force save all documents.
+        foreach (var document in Shell.Documents.OfType<IPersistedDocumentViewModel>() /*.Where(x => x.IsDirty)*/)
+            if (!await document.Save())
+            {
+                //one document save failed, just stop remains.
+                statusBarItem?.Message = "A document save failed, cancel remains.";
+                return;
+            }
 
-        // TODO: display "Item(s) saved" in statusbar
+        statusBarItem?.Message = "All documents are saved.";
     }
 }
