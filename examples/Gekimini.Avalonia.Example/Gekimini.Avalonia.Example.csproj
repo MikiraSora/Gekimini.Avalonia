@@ -5,6 +5,15 @@
         <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
+
+    <!--For Injectio-->
+    <PropertyGroup>
+        <InjectioDuplicateStrategy>Append</InjectioDuplicateStrategy>
+    </PropertyGroup>
+    <ItemGroup>
+        <CompilerVisibleProperty Include="InjectioDuplicateStrategy"/>
+    </ItemGroup>
+    <!---->
     
     <ItemGroup>
         <AdditionalFiles Include="Assets\Languages\*.resx"/>

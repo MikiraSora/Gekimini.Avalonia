@@ -289,7 +289,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
     private void CheckIfRaiseActiveDocumentChanged(object sender, IDocumentViewModel document)
     {
-        var id = GetId(document);
+        var id = document is null ? default : GetId(document);
         if (prevDocumentId != id)
         {
             logger.LogDebugEx($"active document changed: [{id}] {document?.Title.Text}");
@@ -335,7 +335,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
             case IDocument {Context: IDocumentViewModel documentViewModel}:
                 addedDocuments.Remove(documentViewModel);
                 if (ActiveDocument == documentViewModel)
-                    ActiveDocument = default;
+                    CheckIfRaiseActiveDocumentChanged(sender, default);
 
                 break;
             case ITool {Context: IToolViewModel toolViewModel}:
