@@ -7,7 +7,7 @@ using Avalonia.Media;
 [assembly: SupportedOSPlatform("browser")]
 namespace Gekimini.Avalonia.Example.Browser;
 
-internal partial class Program
+public partial class Program
 {
     private static async Task Main(string[] args)
     {
