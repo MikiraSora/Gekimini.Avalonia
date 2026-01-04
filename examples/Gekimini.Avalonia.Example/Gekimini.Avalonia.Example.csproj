@@ -16,7 +16,7 @@
     <!---->
     
     <ItemGroup>
-        <AdditionalFiles Include="Assets\Languages\*.resx"/>
+        <AdditionalFiles Include="Assets\Languages\*.json"/>
         <AdditionalFiles Include="Modules\InternalTest\Views\Documents\InternalTestDocumentView.axaml" />
         <AdditionalFiles Include="Modules\InternalTest\Views\Tools\InternalTestToolView.axaml" />
         <AdditionalFiles Include="Modules\InternalTest\Views\Windows\InternalTestWindowView.axaml" />

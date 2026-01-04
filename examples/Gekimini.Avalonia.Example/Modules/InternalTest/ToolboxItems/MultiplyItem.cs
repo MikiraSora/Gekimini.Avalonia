@@ -1,5 +1,7 @@
 ﻿using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Documents;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Modules.Toolbox.Models;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Example.Modules.InternalTest.ToolboxItems;
@@ -7,7 +9,7 @@ namespace Gekimini.Avalonia.Example.Modules.InternalTest.ToolboxItems;
 [RegisterSingleton<ToolboxItem>]
 public class MultiplyItem : ToolboxItem<InternalTestDocumentViewModel>
 {
-    public override string Category => "High";
-    public override string Name => "Multiply Item";
+    public override LocalizedString Category => "High".ToLocalizedStringByRawText();
+    public override LocalizedString Name => "Multiply Item".ToLocalizedStringByRawText();
     public override Uri IconSource => default;
 }

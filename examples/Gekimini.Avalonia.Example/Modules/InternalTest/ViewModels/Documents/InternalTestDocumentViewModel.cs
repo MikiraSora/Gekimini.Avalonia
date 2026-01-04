@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Example.Assets.Languages;
 using Gekimini.Avalonia.Example.Modules.InternalTest.Models;
 using Gekimini.Avalonia.Example.Modules.InternalTest.ToolboxItems;
 using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Tools;
@@ -102,10 +103,10 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         storageFile = (await (App.Current as App).TopLevel.StorageProvider.OpenFilePickerAsync(
             new FilePickerOpenOptions
             {
-                Title = "Select a internal document file to load.",
+                Title = Lang.InternalTestDocumentFileDialogTitle,
                 FileTypeFilter = new[]
                 {
-                    new FilePickerFileType("Internal Document File")
+                    new FilePickerFileType(Lang.InternalTestDocumentFileExtDesc)
                     {
                         Patterns = ["*.internal"]
                     }
@@ -131,7 +132,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         if (storageFile is null)
         {
             await DialogManager.ShowMessageDialog(
-                "Can't load document file because recent data has been expired/invalid.", DialogMessageType.Error);
+                Lang.InternalTestDocumentLoadFailedByBadRecentData, DialogMessageType.Error);
             return false;
         }
 
@@ -149,7 +150,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
                 DefaultExtension = ".internal",
                 FileTypeChoices = new[]
                 {
-                    new FilePickerFileType("Internal Document File")
+                    new FilePickerFileType(Lang.InternalTestDocumentFileExtDesc)
                     {
                         Patterns = ["*.internal"]
                     }
@@ -175,7 +176,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
                 DefaultExtension = ".internal",
                 FileTypeChoices = new[]
                 {
-                    new FilePickerFileType("Internal Document File")
+                    new FilePickerFileType(Lang.InternalTestDocumentFileExtDesc)
                     {
                         Patterns = ["*.internal"]
                     }
@@ -184,7 +185,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
 
         if (storageFile is null)
         {
-            await DialogManager.ShowMessageDialog("Can't save document file.", DialogMessageType.Error);
+            await DialogManager.ShowMessageDialog(Lang.InternalTestDocumentCantSaveFile, DialogMessageType.Error);
             return false;
         }
 
@@ -271,7 +272,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     private void Increment()
     {
         var beforeValue = Value;
-        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create("Increment Value",
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.IncrementValue,
             () => Value++,
             () => Value = beforeValue));
     }
@@ -280,7 +281,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     private void Decrement()
     {
         var beforeValue = Value;
-        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create("Decrement Value",
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.DecrementValue,
             () => Value--,
             () => Value = beforeValue));
     }
@@ -327,7 +328,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     private void Multiply()
     {
         var beforeValue = Value;
-        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create("Multiply Value",
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.MultiplyValue,
             () => Value *= Value,
             () => Value = beforeValue));
     }
