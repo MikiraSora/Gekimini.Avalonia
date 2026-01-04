@@ -28,6 +28,6 @@ internal sealed class Program
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        return AppBuilder.Configure<BrowserApp>();
+        return AppBuilder.Configure<ExampleBrowserApp>();
     }
 }

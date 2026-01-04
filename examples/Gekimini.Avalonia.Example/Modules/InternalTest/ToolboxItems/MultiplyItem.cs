@@ -1,0 +1,13 @@
+﻿using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Documents;
+using Gekimini.Avalonia.Modules.Toolbox.Models;
+using Injectio.Attributes;
+
+namespace Gekimini.Avalonia.Example.Modules.InternalTest.ToolboxItems;
+
+[RegisterSingleton<ToolboxItem>]
+public class MultiplyItem : ToolboxItem<InternalTestDocumentViewModel>
+{
+    public override string Category => "High";
+    public override string Name => "Multiply Item";
+    public override Uri IconSource => default;
+}
