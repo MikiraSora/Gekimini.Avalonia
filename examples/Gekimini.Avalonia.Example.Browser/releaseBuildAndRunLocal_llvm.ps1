@@ -1,9 +1,9 @@
 Remove-Item -Path "bin" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "obj" -Recurse -Force -ErrorAction SilentlyContinue
 
-dotnet publish -c Release -o "bin/publish" Gekimini.Avalonia.Example.Browser.csproj
+dotnet publish -c Release -o "bin/publish" Gekimini.Avalonia.Example.Browser.LLVM.csproj
 
-Push-Location "bin/publish/wwwroot"
+Push-Location "bin/publish"
 try {
     dotnet serve -h "Cross-Origin-Embedder-Policy:require-corp" -h "Cross-Origin-Opener-Policy:same-origin" -p 12999
 }

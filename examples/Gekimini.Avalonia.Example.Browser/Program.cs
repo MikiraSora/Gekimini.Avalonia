@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.Media;
 
+[assembly: SupportedOSPlatform("browser")]
 namespace Gekimini.Avalonia.Example.Browser;
 
 internal partial class Program
