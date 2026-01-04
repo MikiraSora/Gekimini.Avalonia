@@ -5,8 +5,10 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.VisualTree;
 using Gekimini.Avalonia.Attributes;
+using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.Window.ViewModels;
 using Gekimini.Avalonia.Modules.Window.Views;
+using Gekimini.Avalonia.Platforms.Services.Settings;
 using Gekimini.Avalonia.Views;
 using Iciclecreek.Avalonia.WindowManager;
 using Injectio.Attributes;
@@ -19,6 +21,9 @@ public partial class DefaultWindowManager : IWindowManager
 {
     [GetServiceLazy]
     private partial ILogger<DefaultWindowManager> Logger { get; }
+
+    [GetServiceLazy]
+    private partial ISettingManager SettingManager { get; }
 
     [GetServiceLazy]
     private partial ViewLocator ViewLocator { get; }
@@ -75,6 +80,12 @@ public partial class DefaultWindowManager : IWindowManager
             return;
         }
 
+        RestoreWindowPositionAndSize(window);
+        AdjustWindowPositionAndSize(window);
+        
+        window.Closed -= WindowOnClosed;
+        window.Closed += WindowOnClosed;
+
         if (isModel)
         {
             var visual = /*
@@ -85,7 +96,52 @@ public partial class DefaultWindowManager : IWindowManager
             await window.ShowDialog(visual);
         }
         else
+        {
             window.Show(windowPanel);
+        }
+    }
+
+    private void WindowOnClosed(object sender, EventArgs e)
+    {
+        SaveWindowPositionAndSize(sender as WindowViewBase);
+    }
+
+    private void RestoreWindowPositionAndSize(WindowViewBase windowView)
+    {
+        if (windowView is null)
+            return;
+
+        var setting = SettingManager.GetSetting(WindowPositionSizeSetting.JsonTypeInfo);
+
+        if (!setting.WindowPositionSizeMap.TryGetValue(windowView.GetType().FullName!, out var windowPositionSizeMap))
+            return;
+
+        windowView.Position = new PixelPoint((int) windowPositionSizeMap.LeftX, (int) windowPositionSizeMap.TopY);
+        windowView.Width = windowView.Width;
+        windowView.Height = windowView.Height;
+    }
+
+    private void SaveWindowPositionAndSize(WindowViewBase windowView)
+    {
+        if (windowView is null)
+            return;
+
+        var setting = SettingManager.GetSetting(WindowPositionSizeSetting.JsonTypeInfo);
+        var controlPositionSize = new ControlPositionSize(windowView.Position.X, windowView.Position.Y,
+            windowView.Width, windowView.Height);
+        setting.WindowPositionSizeMap[windowView.GetType().FullName!] = controlPositionSize;
+        SettingManager.SaveSetting(setting, WindowPositionSizeSetting.JsonTypeInfo);
+    }
+
+    private void AdjustWindowPositionAndSize(WindowViewBase windowView)
+    {
+        if (windowView is null)
+            return;
+
+        if (!TryGetCurrentWindowPanel(out var windowPanel))
+            return;
+
+        windowView.AdjustWindowPositionAndSize(windowPanel);
     }
 
     private WindowViewBase FindWindowViewInCurrentWindows(WindowViewModelBase windowViewModelBase)
