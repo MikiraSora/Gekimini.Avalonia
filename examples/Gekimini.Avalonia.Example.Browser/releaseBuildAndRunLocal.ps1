@@ -1,1 +1,1 @@
-Remove-Item -Path "bin" -Recurse -Force;Remove-Item -Path "obj" -Recurse -Force; dotnet publish -c Release -o "bin/publish"; dotnet serve -h "Cross-Origin-Embedder-Policy:require-corp" -h "Cross-Origin-Opener-Policy:same-origin" -p 12999 -d .\bin\publish\wwwroot\
+Remove-Item -Path "bin" -Recurse -Force;Remove-Item -Path "obj" -Recurse -Force; dotnet publish -c Release -o "bin/publish" Gekimini.Avalonia.Example.Browser.csproj; dotnet serve -h "Cross-Origin-Embedder-Policy:require-corp" -h "Cross-Origin-Opener-Policy:same-origin" -p 12999 -d .\bin\publish\wwwroot\
