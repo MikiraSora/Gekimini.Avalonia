@@ -82,7 +82,7 @@ public partial class DefaultWindowManager : IWindowManager
 
         RestoreWindowPositionAndSize(window);
         AdjustWindowPositionAndSize(window);
-        
+
         window.Closed -= WindowOnClosed;
         window.Closed += WindowOnClosed;
 
@@ -117,8 +117,8 @@ public partial class DefaultWindowManager : IWindowManager
             return;
 
         windowView.Position = new PixelPoint((int) windowPositionSizeMap.LeftX, (int) windowPositionSizeMap.TopY);
-        windowView.Width = windowView.Width;
-        windowView.Height = windowView.Height;
+        windowView.Width = windowPositionSizeMap.Width.Value;
+        windowView.Height = windowPositionSizeMap.Height.Value;
     }
 
     private void SaveWindowPositionAndSize(WindowViewBase windowView)
@@ -128,7 +128,7 @@ public partial class DefaultWindowManager : IWindowManager
 
         var setting = SettingManager.GetSetting(WindowPositionSizeSetting.JsonTypeInfo);
         var controlPositionSize = new ControlPositionSize(windowView.Position.X, windowView.Position.Y,
-            windowView.Width, windowView.Height);
+            windowView.Bounds.Width, windowView.Bounds.Height);
         setting.WindowPositionSizeMap[windowView.GetType().FullName!] = controlPositionSize;
         SettingManager.SaveSetting(setting, WindowPositionSizeSetting.JsonTypeInfo);
     }
