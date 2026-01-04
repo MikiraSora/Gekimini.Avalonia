@@ -5,7 +5,7 @@ using Avalonia.Media;
 
 namespace Gekimini.Avalonia.Example.Browser;
 
-internal sealed class Program
+internal partial class Program
 {
     private static async Task Main(string[] args)
     {

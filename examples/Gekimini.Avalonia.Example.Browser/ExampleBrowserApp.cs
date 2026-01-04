@@ -1,5 +1,5 @@
-﻿using System;
-using Gekimini.Avalonia.Example.Browser.Utils;
+﻿using Gekimini.Avalonia.Example.Browser.Utils;
+using Gekimini.Avalonia.Example.Browser.Utils.Interops;
 using Gekimini.Avalonia.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,11 @@ public class ExampleBrowserApp : ExampleApp
     {
         base.RegisterServices(serviceCollection);
 
+#if LLVM_BUILD
+        serviceCollection.AddGekiminiAvaloniaExampleBrowserLLVM();
+#else
         serviceCollection.AddGekiminiAvaloniaExampleBrowser();
+#endif
 
 #if DEBUG
         if (DesignModeHelper.IsDesignMode)
@@ -39,6 +43,6 @@ public class ExampleBrowserApp : ExampleApp
     protected override void DoExit(int exitCode = 0)
     {
         logger.LogInformationEx($"bye. exitCode={exitCode}");
-        Utils.Interops.JsApplicationInterop.Exit();
+        JsApplicationInterop.Exit();
     }
 }
