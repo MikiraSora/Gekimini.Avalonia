@@ -10,8 +10,16 @@ public static class LocalizedStringEx
         return LocalizedString.CreateFromRawText(rawText);
     }
 
-    public static LocalizedString ToLocalizedString(this ILocalizedTextSource rawText)
+    extension(ILocalizedTextSource source)
     {
-        return LocalizedString.CreateFromTemplateFunc(() => rawText.Text);
+        public LocalizedString ToLocalizedString()
+        {
+            return LocalizedString.CreateFromTemplateFunc(() => source.Text);
+        }
+
+        public LocalizedString ToFormatLocalizedString(params object[] args)
+        {
+            return LocalizedString.CreateFromTemplateFunc(() => source.Text.FormatEx(args));
+        }
     }
 }

@@ -6,11 +6,13 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Modules.Documents.Models;
 using Gekimini.Avalonia.Modules.Documents.ViewModels;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell;
@@ -306,7 +308,7 @@ public sealed partial class ShellDockFactory : Factory, IFactory
                 if (!isSaveSuccess)
                 {
                     await DialogManager.ShowMessageDialog(
-                        $"Document {document.Title} saving is failed/canceled, application exit has been canceled.");
+                        ProgramLanguages.DocumentSaveFailedAndCancelledQuit.FormatEx(document.Title));
                     return false;
                 }
 

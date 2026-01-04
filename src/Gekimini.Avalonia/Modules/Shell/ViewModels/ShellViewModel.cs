@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Core.Events;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Framework.Documents;
@@ -263,7 +264,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
             Factory.InitLayout(l);
             Layout = l;
 
-            await dialogManager.ShowMessageDialog("Load stored layout failed, we will use default layout.",
+            await dialogManager.ShowMessageDialog(ProgramLanguages.LoadLayoutFileFailed,
                 DialogMessageType.Error);
         }
     }

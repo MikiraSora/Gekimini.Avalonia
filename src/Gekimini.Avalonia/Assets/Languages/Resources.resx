@@ -294,4 +294,34 @@
   <data name="MainMenuSettingsControlTheme" xml:space="preserve">
     <value>Control Theme:</value>
   </data>
+  <data name="LoadLayoutFileFailed" xml:space="preserve">
+    <value>Load stored layout failed, we will use default layout.</value>
+  </data>
+  <data name="AskResetLayout" xml:space="preserve">
+    <value>Do you want to reset the app layout? The positions of your toolbar and document pane will be cleared!</value>
+  </data>
+  <data name="ResetLayoutRequestUserCloseAllDocuments" xml:space="preserve">
+    <value>Please close all documents at first</value>
+  </data>
+  <data name="ResetLayoutSuccessfully" xml:space="preserve">
+    <value>Layout reset sucessfully.</value>
+  </data>
+  <data name="DocumentSaveFailedAndCancelledQuit" xml:space="preserve">
+    <value>Document {0} saving is failed/canceled, application exit has been canceled.</value>
+  </data>
+  <data name="Layout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="ResetLayout" xml:space="preserve">
+    <value>Reset Layout</value>
+  </data>
+  <data name="ResetLayoutTooltip" xml:space="preserve">
+    <value>Clean all layout and your tools will be removed.</value>
+  </data>
+  <data name="AboutGekiminiAvalonia" xml:space="preserve">
+    <value>About Gekimini.Avalonia</value>
+  </data>
+  <data name="AboutGekiminiAvaloniaTooltip" xml:space="preserve">
+    <value>Check information about framework Gekimini.Avalonia</value>
+  </data>
 </root>

@@ -4,9 +4,11 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:windows="clr-namespace:Gekimini.Avalonia.Modules.Shell.ViewModels.Windows"
                       xmlns:views="clr-namespace:Gekimini.Avalonia.Modules.Window.Views"
+                      xmlns:languages="clr-namespace:Gekimini.Avalonia.Assets.Languages"
+                      xmlns:markup="clr-namespace:Gekimini.Avalonia.Framework.Markup"
                       mc:Ignorable="d"
                       SizeToContent="WidthAndHeight"
-                      Title="About Gekimini.Avalonia"
+                      Title="{markup:Translate {x:Static languages:ProgramLanguages+B.AboutGekiminiAvalonia}}"
                       x:DataType="windows:AboutGekiminiWindowViewModel"
                       x:Class="Gekimini.Avalonia.Modules.Shell.Views.Windows.AboutGekiminiWindowView">
     <Design.DataContext>

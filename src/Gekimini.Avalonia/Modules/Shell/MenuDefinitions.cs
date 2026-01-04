@@ -79,7 +79,7 @@ public static class MenuDefinitions
 
     [RegisterStaticObject]
     public static MenuItemDefinition LayoutMenuItem =
-        new TextMenuItemDefinition(LayoutMenuGroup, 0, "布局".ToLocalizedStringByRawText());
+        new TextMenuItemDefinition(LayoutMenuGroup, 0, ProgramLanguages.B.Layout.ToLocalizedString());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition LayoutMenuItemGroup = new(

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Dialogs;
@@ -18,17 +19,18 @@ public partial class ResetLayoutCommandHandler : CommandHandlerBase<ResetLayoutC
 
     public override async Task Run(Command command)
     {
-        if (!await DialogManager.ShowComfirmDialog("是否重置应用布局? 你的工具栏和文档栏的位置分布将会被清除!"))
+        if (!await DialogManager.ShowComfirmDialog(ProgramLanguages.AskResetLayout))
             return;
 
         //make sure no document opened
         if (Shell.Documents.Any())
         {
-            await DialogManager.ShowMessageDialog("请先关闭所有文档再进行操作", DialogMessageType.Error);
+            await DialogManager.ShowMessageDialog(ProgramLanguages.ResetLayoutRequestUserCloseAllDocuments,
+                DialogMessageType.Error);
             return;
         }
 
         await Shell.ResetLayout();
-        await DialogManager.ShowMessageDialog("重置应用布局成功");
+        await DialogManager.ShowMessageDialog(ProgramLanguages.ResetLayoutSuccessfully);
     }
 }
