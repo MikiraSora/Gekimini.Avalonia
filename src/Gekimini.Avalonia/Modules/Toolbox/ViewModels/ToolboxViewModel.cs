@@ -7,6 +7,7 @@ using Dock.Model.Core;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Tools;
+using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Modules.Shell;
 using Gekimini.Avalonia.Modules.Toolbox.Services;
 using Gekimini.Avalonia.Utils;
@@ -22,8 +23,9 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     private readonly ObservableCollection<ToolboxItemGroupViewModel> _groupedItems = new();
 
     private readonly ObservableCollection<ToolboxItemViewModel> _items = new();
-
     private readonly IToolboxService _toolboxService;
+
+    private readonly IShell shell;
     private Type prevType;
 
     public ToolboxViewModel(IShell shell, IToolboxService toolboxService) : base(
@@ -31,6 +33,7 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     {
         Dock = DockMode.Left;
 
+        this.shell = shell;
         _toolboxService = toolboxService;
 
         if (DesignModeHelper.IsDesignMode)
@@ -42,6 +45,14 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
 
     public ObservableCollection<ToolboxItemGroupViewModel> Items =>
         _filteredItems.Count == 0 ? _groupedItems : _filteredItems;
+
+    public override void Receive(CurrentCultureInfoChangedEvent message)
+    {
+        base.Receive(message);
+
+        //refresh all
+        RefreshToolboxItems(shell);
+    }
 
     private void RefreshToolboxItems(IShell shell)
     {
@@ -58,8 +69,12 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
         {
             _items.AddRange(_toolboxService.GetToolboxItems(shell.ActiveDocument.GetType())
                 .Select(x => new ToolboxItemViewModel(x)));
-            _groupedItems.AddRange(_items.GroupBy(x => x.Category)
-                .Select(x => new ToolboxItemGroupViewModel(x.ToArray(), x.Key)));
+            _groupedItems.AddRange(_items.GroupBy(x => x.CategoryGroupId)
+                .Select(x =>
+                {
+                    var arr = x.ToArray();
+                    return new ToolboxItemGroupViewModel(arr, arr.FirstOrDefault()?.Category);
+                }));
         }
 
         OnPropertyChanged(nameof(Items));
@@ -71,12 +86,18 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
         var filters = new List<ToolboxItemViewModel>();
         if (searchTerm is {Length: >= 2})
             filters.AddRange(_items.Where(x =>
-                x.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                x.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
+                x.Name.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                x.Category.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
 
         _filteredItems.Clear();
         _filteredItems.AddRange(filters.GroupBy(x => x.Category)
-            .Select(x => new ToolboxItemGroupViewModel(x.ToArray(), x.Key + " (Filtered)")));
+            .Select(x =>
+            {
+                var arr = x.ToArray();
+                var first = arr.FirstOrDefault();
+                return new ToolboxItemGroupViewModel(arr,
+                    new TemplateLocalizedString(() => first?.Category?.Text + " (Filtered)"));
+            }));
 
         OnPropertyChanged(nameof(Items));
     }

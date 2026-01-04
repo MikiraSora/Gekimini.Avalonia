@@ -1,13 +1,15 @@
 ﻿using System;
 using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Languages;
 
 namespace Gekimini.Avalonia.Modules.Toolbox.Models;
 
 public abstract class ToolboxItem
 {
     public virtual string DocumentType { get; }
-    public virtual string Name { get; }
-    public virtual string Category { get; }
+    public virtual LocalizedString Name { get; }
+    public virtual LocalizedString Category { get; }
+    public virtual string CategoryGroupId { get; }
     public virtual Uri IconSource { get; }
     public virtual string ItemType { get; }
 }

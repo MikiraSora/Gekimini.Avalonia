@@ -37,7 +37,7 @@
                               HorizontalAlignment="Stretch"
                               HorizontalContentAlignment="Stretch"
                               Padding="0"
-                              Header="{Binding Name}">
+                              Header="{Binding Name.Text}">
                         <Expander.Styles>
                             <Style Selector="ToggleButton#ExpanderHeader.Border">
                                 <Setter Property="Background" Value="Transparent" />
@@ -67,7 +67,7 @@
                                         <TextBlock Grid.Column="1"
                                                    VerticalAlignment="Center"
                                                    Padding="2"
-                                                   Text="{Binding Name}" />
+                                                   Text="{Binding Name.Text}" />
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
