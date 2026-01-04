@@ -38,11 +38,11 @@ jobs:
 
     - name: Build Browser project
       run: |
-        dotnet publish Gekimini.Avalonia.Browser/Gekimini.Avalonia.Browser.csproj -c Release -o ./publish
+        dotnet publish examples/Gekimini.Avalonia.Example.Browser/Gekimini.Avalonia.Example.Browser.csproj -c Release -o ./publish
         
     - name: Build Windows (x64)
       run: |
-        dotnet publish Gekimini.Avalonia.Desktop/Gekimini.Avalonia.Desktop.csproj -p:PublishProfile=FolderProfile -o ./windows/x64
+        dotnet publish examples/Gekimini.Avalonia.Example.Desktop/Gekimini.Avalonia.Example.Desktop.csproj -p:PublishProfile=FolderProfile -o ./windows/x64
         
     - name: Compress Build Windows
       run: |

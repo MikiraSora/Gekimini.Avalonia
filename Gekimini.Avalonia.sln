@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia", "Gekimini.Avalonia\Gekimini.Avalonia.csproj", "{50B1EB3D-CDA8-5E38-911A-04BFCBD3E6A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia", "src\Gekimini.Avalonia\Gekimini.Avalonia.csproj", "{50B1EB3D-CDA8-5E38-911A-04BFCBD3E6A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Desktop", "Gekimini.Avalonia.Desktop\Gekimini.Avalonia.Desktop.csproj", "{C2375FFE-A095-DEDB-AEDB-1AFE583B34A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Example.Desktop", "examples\Gekimini.Avalonia.Example.Desktop\Gekimini.Avalonia.Example.Desktop.csproj", "{C2375FFE-A095-DEDB-AEDB-1AFE583B34A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -13,9 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injectio.Attributes", "Depe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Injectio.Generators", "Dependencies\Injectio\src\Injectio.Generators\Injectio.Generators.csproj", "{44595262-4601-D228-225B-48683E05019C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Generator", "Gekimini.Avalonia.Generator\Gekimini.Avalonia.Generator.csproj", "{652AD26C-4228-4293-A0C1-C6E446DC6304}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Generator", "src\Gekimini.Avalonia.Generator\Gekimini.Avalonia.Generator.csproj", "{652AD26C-4228-4293-A0C1-C6E446DC6304}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Attributes", "Gekimini.Avalonia.Attributes\Gekimini.Avalonia.Attributes.csproj", "{AA2FDDB2-F900-4A51-AC3B-071A9896B9AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Attributes", "src\Gekimini.Avalonia.Attributes\Gekimini.Avalonia.Attributes.csproj", "{AA2FDDB2-F900-4A51-AC3B-071A9896B9AC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dock", "Dock", "{292AD6FB-C1AA-4D6C-A363-E5B65B1084A2}"
 EndProject
@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model", "Dependencies\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dock.Model.Mvvm", "Dependencies\Dock\src\Dock.Model.Mvvm\Dock.Model.Mvvm.csproj", "{2E45B6B8-F9D8-481A-AEEB-4AAFD7422403}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Browser", "Gekimini.Avalonia.Browser\Gekimini.Avalonia.Browser.csproj", "{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gekimini.Avalonia.Example.Browser", "examples\Gekimini.Avalonia.Example.Browser\Gekimini.Avalonia.Example.Browser.csproj", "{6048AF2F-1867-4BEC-ADC9-D7D740FEF845}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iciclecreek.Avalonia.WindowManager", "Dependencies\Iciclecreek.Avalonia.WindowManager\source\Iciclecreek.Avalonia.WindowManager\Iciclecreek.Avalonia.WindowManager.csproj", "{BB37F456-EEB1-4F87-A0C6-3A1A3BD45DB6}"
 EndProject
