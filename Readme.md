@@ -5,6 +5,8 @@ A UI framework like VisualStudio for Avalonia Browser/Desktop/Android(in plan)/L
 
 **Attention!!!** I am still learning Avalonia development, and this project is currently solely for [my personal project](https://github.com/NyagekiFumenProject/OngekiFumenEditor) development and maintenance. Therefore, future updates to this project may contain significant breaking changes.
 
+[deepwiki](https://deepwiki.com/MikiraSora/Gekimini.Avalonia)
+
 ### Demo
 [Browser Online](https://mikirasora.github.io/Gekimini.Avalonia/)
 
@@ -18,6 +20,7 @@ A UI framework like VisualStudio for Avalonia Browser/Desktop/Android(in plan)/L
 ### Screenshoots
 <img width="1500" height="839" alt="image" src="https://github.com/user-attachments/assets/ccadb986-469c-4eb3-9188-3855c46b4caf" />
 <img width="1500" height="839" alt="image" src="https://github.com/user-attachments/assets/79daa267-19f7-41ae-b52f-39a628a36c6a" />
+
 
 
 
