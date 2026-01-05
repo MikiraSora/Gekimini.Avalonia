@@ -11,6 +11,11 @@ public class WindowViewBase : ManagedWindow, IView
 {
     private bool isAdjusting;
 
+    public WindowViewBase()
+    {
+        WindowStartupLocation = WindowStartupLocation.CenterOwner;
+    }
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
