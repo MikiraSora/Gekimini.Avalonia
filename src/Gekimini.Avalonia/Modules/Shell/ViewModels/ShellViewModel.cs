@@ -251,22 +251,16 @@ public partial class ShellViewModel : ViewModelBase, IShell,
     private async void InitLayout()
     {
         logger.LogInformationEx("Begin initialize shell dock layout");
-        try
-        {
-            LoadLayout();
-            logger.LogInformationEx("Initialize shell dock layout successfully.");
-        }
-        catch (Exception e)
-        {
-            logger.LogErrorEx(e, $"Initialize shell dock layout failed: {e.Message}");
+        var result = await LoadLayout();
+        logger.LogInformationEx($"LoadLayout() result: {result}.");
 
-            var l = Factory.CreateLayout();
-            Factory.InitLayout(l);
-            Layout = l;
+        if (result)
+            return;
 
-            await dialogManager.ShowMessageDialog(ProgramLanguages.LoadLayoutFileFailed,
-                DialogMessageType.Error);
-        }
+        //use default empty layout.
+        var l = Factory.CreateLayout();
+        Factory.InitLayout(l);
+        Layout = l;
     }
 
     partial void OnFactoryChanged(ShellDockFactory oldValue, ShellDockFactory newValue)
@@ -413,56 +407,73 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         //logger.LogDebugEx($"Saved setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(json))}");
     }
 
-    private void LoadLayout()
+    private async Task<bool> LoadLayout()
     {
-        var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
-        //logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
-        var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
-        if (dockable is null)
+        try
         {
-            logger.LogErrorEx("Deserialize layout file failed, deserialized dockable object is null.");
-            return;
-        }
-
-        void printDock(IDockable dockable, int stack = 0)
-        {
-            printLogger.LogDebugEx($"stack: {stack}");
-            printLogger.LogDebugEx($"id: {dockable.Id}");
-            printLogger.LogDebugEx($"title: {dockable.Title}");
-            printLogger.LogDebugEx($"dockMode: {dockable.Dock}");
-            printLogger.LogDebugEx($"owner: {dockable.Owner?.Title}");
-            printLogger.LogDebugEx($"originalOwner: {dockable.OriginalOwner?.Title}");
-
-            if (dockable is IDock dock)
+            var setting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
+            //logger.LogDebugEx($"loaded setting.ShellLayout Hex: {Convert.ToHexString(Encoding.UTF8.GetBytes(setting.ShellLayout))}");
+            if (string.IsNullOrWhiteSpace(setting.ShellLayout))
             {
-                printLogger.LogDebugEx($"isActive: {dock.IsActive}");
-                printLogger.LogDebugEx($"openedDockablesCount: {dock.OpenedDockablesCount}");
-                printLogger.LogDebugEx($"defaultDockable: {dock.DefaultDockable?.Title}");
-                printLogger.LogDebugEx($"focusedDockable: {dock.FocusedDockable?.Title}");
-                printLogger.LogDebugEx($"activeDockable: {dock.ActiveDockable?.Title}");
-                if (dock.VisibleDockables.Any())
+                logger.LogWarningEx("GekiminiSetting.ShellLayout is empty");
+                return false;
+            }
+
+            var dockable = dockSerializer.Deserialize<IRootDock>(setting.ShellLayout);
+            if (dockable is null)
+            {
+                logger.LogErrorEx("Deserialize layout file failed, deserialized dockable object is null.");
+                return false;
+            }
+
+            void printDock(IDockable dockable, int stack = 0)
+            {
+                printLogger.LogDebugEx($"stack: {stack}");
+                printLogger.LogDebugEx($"id: {dockable.Id}");
+                printLogger.LogDebugEx($"title: {dockable.Title}");
+                printLogger.LogDebugEx($"dockMode: {dockable.Dock}");
+                printLogger.LogDebugEx($"owner: {dockable.Owner?.Title}");
+                printLogger.LogDebugEx($"originalOwner: {dockable.OriginalOwner?.Title}");
+
+                if (dockable is IDock dock)
                 {
-                    printLogger.LogDebugEx("children:");
-                    foreach (var childDockable in dock.VisibleDockables)
-                        printDock(childDockable, stack + 1);
+                    printLogger.LogDebugEx($"isActive: {dock.IsActive}");
+                    printLogger.LogDebugEx($"openedDockablesCount: {dock.OpenedDockablesCount}");
+                    printLogger.LogDebugEx($"defaultDockable: {dock.DefaultDockable?.Title}");
+                    printLogger.LogDebugEx($"focusedDockable: {dock.FocusedDockable?.Title}");
+                    printLogger.LogDebugEx($"activeDockable: {dock.ActiveDockable?.Title}");
+                    if (dock.VisibleDockables.Any())
+                    {
+                        printLogger.LogDebugEx("children:");
+                        foreach (var childDockable in dock.VisibleDockables)
+                            printDock(childDockable, stack + 1);
+                    }
                 }
             }
+
+            //printDock(dockable);
+
+            Factory.InitLayout(dockable);
+            Layout = dockable;
+
+            addTools.Clear();
+            addedDocuments.Clear();
+
+            addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
+            logger.LogDebugEx(
+                $"Deserialized tools: {string.Join(", ", addTools.Select(x => x.GetType().Name))}");
+            addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
+            logger.LogDebugEx(
+                $"Deserialized documents: {string.Join(", ", addedDocuments.Select(x => x.GetType().Name))}");
+
+            return true;
         }
-
-        printDock(dockable);
-
-        Factory.InitLayout(dockable);
-        Layout = dockable;
-
-        addTools.Clear();
-        addedDocuments.Clear();
-
-        addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
-        logger.LogDebugEx(
-            $"Deserialized tools: {string.Join(", ", addTools.Select(x => x.GetType().Name))}");
-        addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
-        logger.LogDebugEx(
-            $"Deserialized documents: {string.Join(", ", addedDocuments.Select(x => x.GetType().Name))}");
+        catch (Exception e)
+        {
+            await dialogManager.ShowMessageDialog(ProgramLanguages.LoadLayoutFileFailed,
+                DialogMessageType.Error);
+            return false;
+        }
     }
 
     partial void OnShowFloatingWindowsInTaskbarChanged(bool value)

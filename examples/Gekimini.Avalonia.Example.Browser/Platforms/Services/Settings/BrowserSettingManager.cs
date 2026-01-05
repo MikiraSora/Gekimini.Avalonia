@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using Gekimini.Avalonia.Example.Browser.Utils.Interops;
 using Gekimini.Avalonia.Platforms.Services.Settings;
-using Gekimini.Avalonia.Utils;
 using Injectio.Attributes;
 using Microsoft.Extensions.Logging;
 
@@ -13,14 +13,12 @@ namespace Gekimini.Avalonia.Example.Browser.Platforms.Services.Settings;
 [RegisterSingleton<ISettingManager>]
 public class BrowserSettingManager : ISettingManager
 {
-    private const string persistenceStoreKey = "__browserPersistence";
+    private const string persistenceStoreKey = "__browserPersistence_";
     private readonly Dictionary<string, object> cacheObj = new();
     private readonly ILogger logger;
     private readonly IServiceProvider provider;
 
-    private Dictionary<string, string> settingMap;
-
-    public BrowserSettingManager(IServiceProvider provider, ILogger<BrowserSettingManager> logger)
+    public BrowserSettingManager(IServiceProvider provider, ILogger<__BrowserSettingManager> logger)
     {
         this.provider = provider;
         this.logger = logger;
@@ -35,60 +33,41 @@ public class BrowserSettingManager : ISettingManager
 
     public void SaveSetting<T>(T obj, JsonTypeInfo<T> jsonTypeInfo)
     {
+        if (obj is null)
+            return;
+
         var key = GetKey<T>();
-
-        settingMap[key] = JsonSerializer.Serialize(obj, jsonTypeInfo);
-        var content = JsonSerializer.Serialize(settingMap, JsonSourceGenerateContext.Default.DictionaryStringString);
-
-        // Use localStorage for browser persistence
-        SetLocalStorage(persistenceStoreKey, content);
+        var jsonContent = JsonSerializer.Serialize(obj, jsonTypeInfo);
+        SetLocalStorage(key, jsonContent);
+        cacheObj[key] = obj;
+        logger.LogDebugEx($"save/update cached {typeof(T).Name} object, hash = {obj.GetHashCode()}");
     }
 
     private T LoadInternal<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-        T>(JsonTypeInfo<T> jsonTypeInfo)
+        T>(JsonTypeInfo<T> jsonTypeInfo) where T : new()
     {
         var key = GetKey<T>();
+        var typeName = typeof(T).Name;
 
         if (cacheObj.TryGetValue(key, out var obj))
         {
-            logger.LogDebugEx($"return cached {typeof(T).Name} object, hash = {obj.GetHashCode()}");
+            logger.LogDebugEx($"return cached {typeName} object, hash = {obj.GetHashCode()}");
             return (T) obj;
         }
 
-        if (settingMap is null)
-        {
-            var content = GetLocalStorage(persistenceStoreKey);
-            if (string.IsNullOrWhiteSpace(content))
-                settingMap = new Dictionary<string, string>();
-            else
-                try
-                {
-                    settingMap = JsonSerializer.Deserialize(content,
-                        JsonSourceGenerateContext.Default.DictionaryStringString);
-                }
-                catch (Exception e)
-                {
-                    logger.LogErrorEx(e, $"Can't load browser settings : {e.Message}");
-                    settingMap = new Dictionary<string, string>();
-                }
-        }
-        else
-        {
-            settingMap = new Dictionary<string, string>();
-        }
-
+        var jsonContent = GetLocalStorage(key);
         T cw;
-        if (settingMap.TryGetValue(key, out var jsonContent))
+        if (!string.IsNullOrWhiteSpace(jsonContent))
         {
             cw = JsonSerializer.Deserialize(jsonContent, jsonTypeInfo);
-            logger.LogDebugEx($"create new {typeof(T).Name} object from browser storage, hash = {cw.GetHashCode()}");
+            logger.LogDebugEx($"create new {typeName} object from browser storage, hash = {cw.GetHashCode()}");
         }
         else
         {
             cw = provider.Resolve<T>();
             logger.LogDebugEx(
-                $"create new {typeof(T).Name} object from ActivatorUtilities.CreateInstance(), hash = {cw.GetHashCode()}");
+                $"create new {typeName} object from ActivatorUtilities.CreateInstance(), hash = {cw.GetHashCode()}");
         }
 
         cacheObj[key] = cw;
@@ -97,18 +76,18 @@ public class BrowserSettingManager : ISettingManager
 
     private string GetKey<T>()
     {
-        return typeof(T).FullName;
+        return persistenceStoreKey + typeof(T).FullName.Replace(".", "_");
     }
 
     private void SetLocalStorage(string key, string value)
     {
-        Utils.Interops.LocalStorageInterop.Save(key, value);
+        LocalStorageInterop.Save(key, value);
         logger.LogDebugEx($"setting from storage {key} = {value}");
     }
 
     private string GetLocalStorage(string key)
     {
-        var value = Utils.Interops.LocalStorageInterop.Load(key);
+        var value = LocalStorageInterop.Load(key);
 
         logger.LogDebugEx($"getting from storage {key} = {value}");
         return value;
