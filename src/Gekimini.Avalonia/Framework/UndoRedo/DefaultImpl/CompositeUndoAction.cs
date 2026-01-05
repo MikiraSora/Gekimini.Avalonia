@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
+using Gekimini.Avalonia.Framework.Languages;
 
 namespace Gekimini.Avalonia.Framework.UndoRedo.DefaultImpl;
 
 internal class CompositeUndoAction : IUndoableAction
 {
-    public CompositeUndoAction(string name, IEnumerable<IUndoableAction> combinedActions)
+    public CompositeUndoAction(LocalizedString name, IEnumerable<IUndoableAction> combinedActions)
     {
         CombinedActions = combinedActions;
         Name = name;
     }
 
-    public string Name { get; }
+    public LocalizedString Name { get; }
 
     public IEnumerable<IUndoableAction> CombinedActions { get; }
 

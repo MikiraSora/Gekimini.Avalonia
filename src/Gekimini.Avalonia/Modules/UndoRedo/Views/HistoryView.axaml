@@ -51,7 +51,7 @@
                                 </DataTriggerBehavior>
                             </Interaction.Behaviors>
 
-                            <TextBlock Text="{Binding Name}">
+                            <TextBlock Text="{Binding Name.Text}">
                                 <TextBlock.Styles>
                                     <Style Selector="TextBlock.ItemType_Redo">
                                         <Setter Property="FontStyle" Value="Italic" />

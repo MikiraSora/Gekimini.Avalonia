@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gekimini.Avalonia.Framework.Languages;
 
 namespace Gekimini.Avalonia.Framework.UndoRedo.DefaultImpl;
 
 internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 {
     private readonly Stack<List<IUndoableAction>> _combineStack = new();
-
-    private int _undoActionCount;
-
-    private int? _undoCountLimit;
 
     public ObservableCollection<IUndoableAction> ActionStack { get; } = new();
 
@@ -22,14 +19,14 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 
     public int UndoActionCount
     {
-        get => _undoActionCount;
+        get;
 
         private set
         {
-            if (_undoActionCount == value)
+            if (field == value)
                 return;
 
-            _undoActionCount = value;
+            field = value;
 
             OnPropertyChanged();
             OnPropertyChanged(nameof(RedoActionCount));
@@ -42,11 +39,11 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 
     public int? UndoCountLimit
     {
-        get => _undoCountLimit;
+        get;
 
         set
         {
-            _undoCountLimit = value;
+            field = value;
             EnforceLimit();
         }
     }
@@ -56,7 +53,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
         _combineStack.Push(new List<IUndoableAction>());
     }
 
-    public IUndoableAction EndCombineAction(string name)
+    public IUndoableAction EndCombineAction(LocalizedString name)
     {
         if (!_combineStack.TryPop(out var combineSet))
             throw new Exception("Can't call EndCombineAction() before BeginCombineAction()");

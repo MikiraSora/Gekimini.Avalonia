@@ -1,3 +1,4 @@
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.ViewModels;
 
@@ -5,7 +6,7 @@ namespace Gekimini.Avalonia.Modules.UndoRedo.ViewModels;
 
 public class HistoryItemViewModel : ViewModelBase
 {
-    private readonly string _name;
+    private readonly LocalizedString _name;
 
     private HistoryItemType _itemType;
 
@@ -14,14 +15,14 @@ public class HistoryItemViewModel : ViewModelBase
         Action = action;
     }
 
-    public HistoryItemViewModel(string name)
+    public HistoryItemViewModel(LocalizedString name)
     {
         _name = name;
     }
 
     public IUndoableAction Action { get; }
 
-    public string Name => _name ?? Action.Name;
+    public LocalizedString Name => _name ?? Action.Name;
 
     public HistoryItemType ItemType
     {

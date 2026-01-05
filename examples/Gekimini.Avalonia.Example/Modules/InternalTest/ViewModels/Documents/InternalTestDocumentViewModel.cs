@@ -252,7 +252,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     private void Increment()
     {
         var beforeValue = Value;
-        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.IncrementValue,
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.B.IncrementValue.ToLocalizedString(),
             () => Value++,
             () => Value = beforeValue));
     }
@@ -261,7 +261,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     private void Decrement()
     {
         var beforeValue = Value;
-        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.DecrementValue,
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.B.DecrementValue.ToLocalizedString(),
             () => Value--,
             () => Value = beforeValue));
     }
@@ -308,7 +308,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
     private void Multiply()
     {
         var beforeValue = Value;
-        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.MultiplyValue,
+        UndoRedoManager.ExecuteAction(LambdaUndoAction.Create(Lang.B.MultiplyValue.ToLocalizedString(),
             () => Value *= Value,
             () => Value = beforeValue));
     }

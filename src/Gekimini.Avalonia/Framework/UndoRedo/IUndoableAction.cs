@@ -1,9 +1,11 @@
 ﻿
+using Gekimini.Avalonia.Framework.Languages;
+
 namespace Gekimini.Avalonia.Framework.UndoRedo
 {
     public interface IUndoableAction
     {
-        string Name { get; }
+        LocalizedString Name { get; }
 
         void Execute();
         void Undo();
