@@ -1,6 +1,7 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Toolbox.Commands;
@@ -13,8 +14,8 @@ public class ViewToolboxCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewToolboxCommandText));
+        ProgramLanguages.B.ViewToolboxCommandText.ToLocalizedString();
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewToolboxCommandToolTip));
+        ProgramLanguages.B.ViewToolboxCommandToolTip.ToLocalizedString();
 }

@@ -13,7 +13,7 @@ public class RecentFilesCommandDefinition : CommandDefinition
 
     public override string Name => CommandName;
 
-    public override LocalizedString Text { get; } = LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.CommandRecentFiles));
+    public override LocalizedString Text { get; } = ProgramLanguages.B.CommandRecentFiles.ToLocalizedString();
 
     public override LocalizedString ToolTip { get; } = string.Empty.ToLocalizedStringByRawText();
 }

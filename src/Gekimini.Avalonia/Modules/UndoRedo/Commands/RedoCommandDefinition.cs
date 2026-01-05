@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Languages;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.UndoRedo.Commands;
@@ -24,10 +25,10 @@ public class RedoCommandDefinition : CommandDefinition
     public override string Name => CommandName;
 
     public override LocalizedString Text { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditRedoCommandText));
+        ProgramLanguages.B.EditRedoCommandText.ToLocalizedString();
 
     public override LocalizedString ToolTip { get; } =
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditRedoCommandToolTip));
+        ProgramLanguages.B.EditRedoCommandToolTip.ToLocalizedString();
 
     public override Uri IconSource => new("avares://Gekimini.Avalonia/Assets/Icons/Redo.png");
 }

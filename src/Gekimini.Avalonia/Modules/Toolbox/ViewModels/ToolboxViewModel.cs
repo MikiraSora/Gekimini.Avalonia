@@ -29,7 +29,7 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
     private Type prevType;
 
     public ToolboxViewModel(IShell shell, IToolboxService toolboxService) : base(
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ToolboxDisplayName)))
+        ProgramLanguages.B.ToolboxDisplayName.ToLocalizedString())
     {
         Dock = DockMode.Left;
 
@@ -96,7 +96,7 @@ public partial class ToolboxViewModel : ToolViewModelBase, IToolbox
                 var arr = x.ToArray();
                 var first = arr.FirstOrDefault();
                 return new ToolboxItemGroupViewModel(arr,
-                    new TemplateLocalizedString(() => first?.Category?.Text + " (Filtered)"));
+                    new TemplateLocalizedString(() => first?.Category?.Text + ProgramLanguages.ToolboxFilterMark));
             }));
 
         OnPropertyChanged(nameof(Items));

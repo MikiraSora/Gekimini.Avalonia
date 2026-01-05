@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Dialogs;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Utils;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 
 namespace Gekimini.Avalonia.Modules.Dialogs.ViewModels.CommonMessage;
 
@@ -29,8 +32,8 @@ public partial class CommonMessageDialogViewModel : DialogViewModelBase
 
     public override string Title => DialogMessageType switch
     {
-        DialogMessageType.Error => "Error",
-        DialogMessageType.Info or _ => "Info"
+        DialogMessageType.Error => ProgramLanguages.Error,
+        DialogMessageType.Info or _ => ProgramLanguages.Notify
     };
 
     [RelayCommand]

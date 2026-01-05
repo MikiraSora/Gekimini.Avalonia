@@ -41,10 +41,11 @@ public class DefaultDialogManager : IDialogManager
         await ShowDialogInternal(vm);
     }
 
-    public async Task<bool> ShowComfirmDialog(string content, string yesButtonContent = null,
+    public async Task<bool> ShowComfirmDialog(string content, string title = null, string yesButtonContent = null,
         string noButtonContent = null)
     {
-        var vm = new CommonComfirmDialogViewModel(content, yesButtonContent ?? ProgramLanguages.Comfirm,
+        var vm = new CommonComfirmDialogViewModel(title ?? ProgramLanguages.Comfirm, content,
+            yesButtonContent ?? ProgramLanguages.Comfirm,
             noButtonContent ?? ProgramLanguages.Cancel);
         await ShowDialogInternal(vm);
         return vm.ComfirmResult;

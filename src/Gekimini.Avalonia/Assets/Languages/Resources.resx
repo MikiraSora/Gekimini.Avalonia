@@ -330,4 +330,13 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Notify" xml:space="preserve">
+    <value>Notify</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ToolboxFilterMark" xml:space="preserve">
+    <value> (Filtered)</value>
+  </data>
 </root>

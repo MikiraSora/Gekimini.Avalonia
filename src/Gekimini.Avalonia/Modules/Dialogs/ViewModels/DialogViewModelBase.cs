@@ -1,4 +1,5 @@
 ﻿using AvaloniaDialogs.Views;
+using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.ViewModels;
 
 namespace Gekimini.Avalonia.Modules.Dialogs.ViewModels;

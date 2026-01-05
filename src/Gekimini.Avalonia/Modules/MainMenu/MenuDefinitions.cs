@@ -1,6 +1,6 @@
 ﻿using Gekimini.Avalonia.Assets.Languages;
-using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Menus;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gemini.Framework.Menus;
 using Injectio.Attributes;
 
@@ -12,8 +12,7 @@ public static class MenuDefinitions
     public static MenuBarDefinition MainMenuBar = new();
 
     [RegisterStaticObject]
-    public static MenuDefinition FileMenu = new(MainMenuBar, 0,
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.FileMenuText)));
+    public static MenuDefinition FileMenu = new(MainMenuBar, 0, ProgramLanguages.B.FileMenuText.ToLocalizedString());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition FileNewOpenMenuGroup = new(FileMenu, 0);
@@ -29,14 +28,14 @@ public static class MenuDefinitions
 
     [RegisterStaticObject]
     public static MenuDefinition EditMenu = new(MainMenuBar, 1,
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.EditMenuText)));
+        ProgramLanguages.B.EditMenuText.ToLocalizedString());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition EditUndoRedoMenuGroup = new(EditMenu, 0);
 
     [RegisterStaticObject]
     public static MenuDefinition ViewMenu = new(MainMenuBar, 2,
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ViewMenuText)));
+        ProgramLanguages.B.ViewMenuText.ToLocalizedString());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition ViewToolsMenuGroup = new(ViewMenu, 0);
@@ -46,22 +45,22 @@ public static class MenuDefinitions
 
     [RegisterStaticObject]
     public static MenuDefinition ToolsMenu = new(MainMenuBar, 10,
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.ToolsMenuText)));
+        ProgramLanguages.B.ToolsMenuText.ToLocalizedString());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition ToolsOptionsMenuGroup = new(ToolsMenu, 100);
 
     [RegisterStaticObject]
     public static MenuDefinition WindowMenu = new(MainMenuBar, 20,
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.WindowMenuText)));
+        ProgramLanguages.B.WindowMenuText.ToLocalizedString());
 
     [RegisterStaticObject]
     public static MenuItemGroupDefinition WindowDocumentListMenuGroup = new(WindowMenu, 10);
 
     [RegisterStaticObject]
     public static MenuDefinition HelpMenu = new(MainMenuBar, 30,
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.HelpMenuText)));
-    
+        ProgramLanguages.B.HelpMenuText.ToLocalizedString());
+
     [RegisterStaticObject]
     public static MenuItemGroupDefinition HelpMenuGroup = new(HelpMenu, 10);
 }

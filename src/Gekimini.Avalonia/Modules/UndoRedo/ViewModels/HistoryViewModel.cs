@@ -11,6 +11,7 @@ using Gekimini.Avalonia.Framework.Languages;
 using Gekimini.Avalonia.Framework.Tools;
 using Gekimini.Avalonia.Framework.UndoRedo;
 using Gekimini.Avalonia.Modules.Shell;
+using Gekimini.Avalonia.Utils.MethodExtensions;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.UndoRedo.ViewModels;
@@ -21,7 +22,7 @@ public partial class HistoryViewModel : ToolViewModelBase, IHistoryTool
     private int _selectedIndex;
 
     public HistoryViewModel(IShell shell) : base(
-        LocalizedString.CreateFromResourceKey(nameof(ProgramLanguages.HistoryDisplayName)))
+        ProgramLanguages.B.HistoryDisplayName.ToLocalizedString())
     {
         Dock = DockMode.Right;
 
