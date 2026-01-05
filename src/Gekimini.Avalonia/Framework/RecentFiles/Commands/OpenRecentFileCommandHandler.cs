@@ -59,7 +59,7 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
     {
         return EditorProviders.FirstOrDefault(x =>
             x.FileTypes.Any(t =>
-                t.Name.Equals(info.editorFileTypeName, StringComparison.OrdinalIgnoreCase)));
+                t.Id.Equals(info.EditorFileTypeId, StringComparison.OrdinalIgnoreCase)));
     }
 
     private async Task OpenRecentFileByDocument(RecentRecordInfo info)

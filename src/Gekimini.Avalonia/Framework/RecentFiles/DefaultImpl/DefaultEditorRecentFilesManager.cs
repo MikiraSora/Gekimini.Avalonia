@@ -33,7 +33,7 @@ public partial class DefaultEditorRecentFilesManager : IEditorRecentFilesManager
 
     public RecentRecordInfo PostRecent(EditorFileType editorFileType, string name, string locationDescription)
     {
-        var info = new RecentRecordInfo(editorFileType.Name, name, locationDescription, DateTime.Now);
+        var info = new RecentRecordInfo(editorFileType.Id, name, locationDescription, DateTime.Now);
 
         foreach (var deleteInfo in recentRecordInfos
                      .Where(x => x.LocationDescription == info.LocationDescription).ToArray())

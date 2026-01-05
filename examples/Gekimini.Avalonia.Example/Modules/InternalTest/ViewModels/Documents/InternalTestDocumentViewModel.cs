@@ -13,7 +13,6 @@ using Gekimini.Avalonia.Example.Modules.InternalTest.ToolboxItems;
 using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Tools;
 using Gekimini.Avalonia.Example.Modules.InternalTest.ViewModels.Windows;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Commands;
 using Gekimini.Avalonia.Framework.Dialogs;
 using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Framework.DragDrops;
@@ -105,13 +104,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
             new FilePickerOpenOptions
             {
                 Title = Lang.InternalTestDocumentFileDialogTitle,
-                FileTypeFilter = new[]
-                {
-                    new FilePickerFileType(Lang.InternalTestDocumentFileExtDesc)
-                    {
-                        Patterns = ["*.internal"]
-                    }
-                },
+                FileTypeFilter = InternalDocumentEditorProvider.SupportFileTypes.BuildFileTypeFilters(),
                 AllowMultiple = false
             })).FirstOrDefault();
 
@@ -148,14 +141,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         var newStorageFile = await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
             new FilePickerSaveOptions
             {
-                DefaultExtension = ".internal",
-                FileTypeChoices = new[]
-                {
-                    new FilePickerFileType(Lang.InternalTestDocumentFileExtDesc)
-                    {
-                        Patterns = ["*.internal"]
-                    }
-                }
+                FileTypeChoices = InternalDocumentEditorProvider.SupportFileTypes.BuildFileTypeFilters()
             });
 
         if (newStorageFile is null)
@@ -174,14 +160,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         storageFile ??= await (App.Current as App).TopLevel.StorageProvider.SaveFilePickerAsync(
             new FilePickerSaveOptions
             {
-                DefaultExtension = ".internal",
-                FileTypeChoices = new[]
-                {
-                    new FilePickerFileType(Lang.InternalTestDocumentFileExtDesc)
-                    {
-                        Patterns = ["*.internal"]
-                    }
-                }
+                FileTypeChoices = InternalDocumentEditorProvider.SupportFileTypes.BuildFileTypeFilters()
             });
 
         if (storageFile is null)
@@ -206,7 +185,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
             var bookmark = await storageFile.SaveBookmarkAsync();
             //save recent
             var recentInfo = EditorRecentFilesManager.PostRecent(
-                InternalDocumentEditorProvider.InternalDocumentEditorFileType, FileName, bookmark);
+                InternalDocumentEditorProvider.SupportFileTypes[0], FileName, bookmark);
 
             EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
         }
@@ -217,7 +196,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
 
         return true;
     }
-    
+
     private async Task<bool> DoLoad(InternalTestValueStoreData recentData)
     {
         Value = recentData.StoredValue;
@@ -231,7 +210,7 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
             var bookmark = await storageFile.SaveBookmarkAsync();
             //save recent
             var recentInfo = EditorRecentFilesManager.PostRecent(
-                InternalDocumentEditorProvider.InternalDocumentEditorFileType, FileName, bookmark);
+                InternalDocumentEditorProvider.SupportFileTypes[0], FileName, bookmark);
 
             EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
         }

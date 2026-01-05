@@ -3,7 +3,7 @@
 namespace Gekimini.Avalonia.Framework.RecentFiles;
 
 public record RecentRecordInfo(
-    string editorFileTypeName,
+    string EditorFileTypeId,
     string Name,
     string LocationDescription,
     DateTime? LastAccessTime = default);

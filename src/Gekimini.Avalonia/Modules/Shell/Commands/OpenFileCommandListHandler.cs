@@ -27,7 +27,7 @@ public partial class OpenFileCommandListHandler : CommandListHandlerBase<OpenFil
             foreach (var editorFileType in editorProvider.FileTypes)
                 commands.Add(new Command(command.CommandDefinition)
                 {
-                    Text = editorFileType.Name.ToLocalizedStringByRawText(),
+                    Text = editorFileType.Name,
                     IconSource = editorFileType.IconSource,
                     Tag = new OpenFileTag
                     {

@@ -324,4 +324,7 @@
   <data name="AboutGekiminiAvaloniaTooltip" xml:space="preserve">
     <value>查看框架 Gekimini.Avalonia 的相关信息</value>
   </data>
+  <data name="AllSupportFileTypes" xml:space="preserve">
+    <value>所有受支持的文件</value>
+  </data>
 </root>
