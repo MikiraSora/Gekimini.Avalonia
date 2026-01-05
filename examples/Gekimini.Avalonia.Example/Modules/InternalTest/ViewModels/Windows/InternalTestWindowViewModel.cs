@@ -12,8 +12,8 @@ public partial class InternalTestWindowViewModel : WindowViewModelBase
     }
 
     [ObservableProperty]
-    private partial int CurrentValue { get; set; } = 50;
-
+    public partial int CurrentValue { get; set; } = 50;
+    
     [RelayCommand]
     private void CloseWindow()
     {

@@ -327,4 +327,10 @@
   <data name="AllSupportFileTypes" xml:space="preserve">
     <value>所有受支持的文件</value>
   </data>
+  <data name="Comfirm" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
 </root>

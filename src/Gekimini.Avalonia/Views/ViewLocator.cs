@@ -38,6 +38,7 @@ public class ViewLocator : IDataTemplate
 
         //create new view
         var view = CreateView(viewTypeName);
+        //logger.LogDebugEx($"viewObject: {view?.GetType()?.FullName}");
         if (view == null)
         {
             var msg = $"<resolve type object {viewTypeName} failed; model type:{viewModel.GetType().FullName}>";
@@ -50,10 +51,7 @@ public class ViewLocator : IDataTemplate
 
         if (view is Control control)
         {
-            control.Loaded += (a, aa) =>
-            {
-                viewModel.OnViewAfterLoaded(view);
-            };
+            control.Loaded += (a, aa) => { viewModel.OnViewAfterLoaded(view); };
             control.Unloaded += (a, aa) =>
             {
                 viewModel.OnViewBeforeUnload(view);

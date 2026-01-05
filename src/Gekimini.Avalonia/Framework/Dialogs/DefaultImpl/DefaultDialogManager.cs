@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Threading;
+using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Modules.Dialogs.ViewModels;
 using Gekimini.Avalonia.Modules.Dialogs.ViewModels.CommonMessage;
 using Gekimini.Avalonia.Modules.Dialogs.Views;
@@ -42,10 +41,11 @@ public class DefaultDialogManager : IDialogManager
         await ShowDialogInternal(vm);
     }
 
-    public async Task<bool> ShowComfirmDialog(string content, string yesButtonContent = "确认",
-        string noButtonContent = "取消")
+    public async Task<bool> ShowComfirmDialog(string content, string yesButtonContent = null,
+        string noButtonContent = null)
     {
-        var vm = new CommonComfirmDialogViewModel(content, yesButtonContent, noButtonContent);
+        var vm = new CommonComfirmDialogViewModel(content, yesButtonContent ?? ProgramLanguages.Comfirm,
+            noButtonContent ?? ProgramLanguages.Cancel);
         await ShowDialogInternal(vm);
         return vm.ComfirmResult;
     }

@@ -324,4 +324,10 @@
   <data name="AboutGekiminiAvaloniaTooltip" xml:space="preserve">
     <value>Check information about framework Gekimini.Avalonia</value>
   </data>
+  <data name="Comfirm" xml:space="preserve">
+    <value>Comfirm</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

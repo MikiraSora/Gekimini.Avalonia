@@ -11,6 +11,9 @@
     <Design.DataContext>
         <windows:InternalTestWindowViewModel />
     </Design.DataContext>
-
-    <TextBlock Text="{Binding CurrentValue,StringFormat=CurrentValue:{0}}" />
+    <StackPanel>
+        <TextBlock Text="{Binding CurrentValue,StringFormat=CurrentValue:{0}}" />
+        <TextBlock Text="123" />
+        <TextBlock Text="345" Foreground="Red" />
+    </StackPanel>
 </views1:WindowViewBase>
