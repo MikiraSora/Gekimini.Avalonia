@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Dock.Model.Core;
 using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Modules.MainMenu;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
@@ -24,13 +25,20 @@ public interface IShell
     IEnumerable<IToolViewModel> Tools { get; }
     event EventHandler<IDocumentViewModel> ActiveDocumentChanged;
 
-    void ShowTool<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TTool>(bool allowDuplicate = false) where TTool : IToolViewModel;
+    event EventHandler<IDockableViewModel> DockableClosed;
+    event EventHandler<IDockableViewModel> DockableOpened;
+
+    void ShowTool<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TTool>(
+        bool allowDuplicate = false) where TTool : IToolViewModel;
+
     void ShowTool(IToolViewModel model);
     void HideTool<TTool>() where TTool : IToolViewModel;
     void HideTool(IToolViewModel model);
 
     Task OpenDocumentAsync(IDocumentViewModel model);
     Task CloseDocumentAsync(IDocumentViewModel document);
-    
+
     Task ResetLayout();
+    Task<bool> SaveLayout();
+    Task<bool> LoadLayout();
 }

@@ -1,5 +1,9 @@
-﻿using Gekimini.Avalonia.Example.Browser.Utils;
+﻿using System;
+using Gekimini.Avalonia.Example.Browser.Utils;
 using Gekimini.Avalonia.Example.Browser.Utils.Interops;
+using Gekimini.Avalonia.Framework;
+using Gekimini.Avalonia.Framework.Documents;
+using Gekimini.Avalonia.Modules.Shell;
 using Gekimini.Avalonia.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -38,6 +42,17 @@ public class ExampleBrowserApp : ExampleApp
         base.OnFrameworkInitializationCompleted();
 
         logger = ServiceProvider.GetService<ILogger<ExampleBrowserApp>>();
+        var shell = ServiceProvider.GetService<IShell>();
+
+        shell.DockableOpened += AutoSaveLayout;
+        shell.DockableClosed += AutoSaveLayout;
+    }
+
+    private void AutoSaveLayout(object sender, IDockableViewModel e)
+    {
+        if (e is not IToolViewModel)
+            return;
+        ServiceProvider.GetService<IShell>().SaveLayout();
     }
 
     protected override void DoExit(int exitCode = 0)
