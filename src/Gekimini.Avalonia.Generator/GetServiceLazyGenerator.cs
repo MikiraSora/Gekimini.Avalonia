@@ -54,6 +54,7 @@ public class GetServiceLazyGenerator : IIncrementalGenerator
 
             spc.AddSource($"{className}_{propName}_GetServiceLazy.g.cs", $@"
             using Microsoft.Extensions.DependencyInjection;
+            using Gekimini.Avalonia;
 
             namespace {ns}
             {{
