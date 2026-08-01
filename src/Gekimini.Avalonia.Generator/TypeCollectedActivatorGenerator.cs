@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Diagnostics;
@@ -31,9 +31,13 @@ public class TypeCollectedActivatorGenerator : IIncrementalGenerator
             if (activator == null) return null;
 
             // 查找所有继承自目标基类的类型
+            // partial 类会在每个声明语法节点各产生一次 TypeInfo（同一符号），
+            // 生成的字典以 FullClassName 为键，必须按键去重，否则静态构造时抛出重复键异常。
             var derivedTypes = allTypeInfos
                 .Where(type => IsDerivedFrom(type!.TypeSymbol, activator.TargetBaseTypeSymbol))
                 .Where(x => !x?.TypeSymbol.IsAbstract ?? false)
+                .GroupBy(x => x!.FullClassName)
+                .Select(g => g.First())
                 .ToList();
 
             return new ActivatorGenerationInfo
