@@ -36,6 +36,8 @@ public abstract class App : Application
     public TopLevel TopLevel => TopLevel.GetTopLevel(mainView) ??
                                 throw new InvalidOperationException("View has not been initialized");
 
+    protected virtual bool ShouldCreateMainView => true;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -65,21 +67,24 @@ public abstract class App : Application
         var viewLocator = ServiceProvider.GetService<ViewLocator>();
         DataTemplates.Add(viewLocator);
 
-        var mainViewModel = ServiceProvider.GetService<IMainView>();
-        mainView = ServiceProvider.GetService<ViewLocator>().Build(mainViewModel);
+        if (ShouldCreateMainView)
+        {
+            var mainViewModel = ServiceProvider.GetService<IMainView>();
+            mainView = ServiceProvider.GetService<ViewLocator>().Build(mainViewModel);
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow
-            {
-                Content = mainView
-            };
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-            singleViewPlatform.MainView = mainView;
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.MainWindow = new MainWindow
+                {
+                    Content = mainView
+                };
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+                singleViewPlatform.MainView = mainView;
 
-        RestoreMainWindowLocationAndSize();
+            RestoreMainWindowLocationAndSize();
 
-        serviceProvider.GetService<IStatusBar>()?.GetApplicationGlobalStatusBarItem()?.Message =
-            "Application ready.";
+            serviceProvider.GetService<IStatusBar>()?.GetApplicationGlobalStatusBarItem()?.Message =
+                "Application ready.";
+        }
 
         base.OnFrameworkInitializationCompleted();
     }
@@ -191,7 +196,8 @@ public abstract class App : Application
         //notify handlers to do something for preparing application exit. such as save log, shell layout and application settings.
         WeakReferenceMessenger.Default.Send<ApplicationQuitEvent>();
 
-        SaveMainWindowLocationAndSize();
+        if (ShouldCreateMainView)
+            SaveMainWindowLocationAndSize();
 
         return Task.CompletedTask;
     }
