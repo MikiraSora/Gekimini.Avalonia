@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -33,7 +33,7 @@ public partial class DefaultWindowManager : IWindowManager
         return ShowWindowAsyncInternal(windowView, false);
     }
 
-    public Task ShowDialogAsync(WindowViewBase windowView)
+    public Task<bool?> ShowDialogAsync(WindowViewBase windowView)
     {
         return ShowWindowAsyncInternal(windowView, true);
     }
@@ -54,7 +54,7 @@ public partial class DefaultWindowManager : IWindowManager
         return ShowWindowAsync(windowView);
     }
 
-    public Task ShowDialogAsync(WindowViewModelBase windowViewModel)
+    public Task<bool?> ShowDialogAsync(WindowViewModelBase windowViewModel)
     {
         var view = ViewLocator.Build(windowViewModel);
         if (view is not WindowViewBase windowView)
@@ -72,12 +72,12 @@ public partial class DefaultWindowManager : IWindowManager
         return Task.CompletedTask;
     }
 
-    private async Task ShowWindowAsyncInternal(WindowViewBase window, bool isModel)
+    private async Task<bool?> ShowWindowAsyncInternal(WindowViewBase window, bool isModel)
     {
         if (!TryGetCurrentWindowPanel(out var windowPanel))
         {
             Logger.LogErrorEx("WindowPanel not found in entity visual tree.");
-            return;
+            return null;
         }
 
         RestoreWindowPositionAndSize(window);
@@ -88,16 +88,15 @@ public partial class DefaultWindowManager : IWindowManager
 
         if (isModel)
         {
-            var visual = /*
-                            windowPanel.ModalDialog as Visual ??
-                            windowPanel.Windows.OfType<WindowViewBase>().FirstOrDefault(x => x.IsActive) as Visual ??
-                         */
+            var visual = windowPanel.ModalDialog as Visual ??
+                windowPanel.Windows.OfType<WindowViewBase>().FirstOrDefault(x => x.IsActive) as Visual ??
                 windowPanel;
-            await window.ShowDialog(visual);
+            return await window.ShowDialog<bool?>(visual);
         }
         else
         {
             window.Show(windowPanel);
+            return null;
         }
     }
 
