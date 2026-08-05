@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Input;
 using Gekimini.Avalonia.Framework.Commands;
@@ -16,6 +18,7 @@ public class CommandMenuItemViewModel : StandardMenuItemViewModel, ICommandUiIte
     private readonly List<StandardMenuItemViewModel> _listItems;
     private readonly StandardMenuItemViewModel _parent;
     private readonly IServiceProvider _serviceProvider;
+    private readonly SemaphoreSlim _updateSemaphore = new(1, 1);
 
     public CommandMenuItemViewModel(Command command, StandardMenuItemViewModel parent, IServiceProvider serviceProvider)
     {
@@ -48,31 +51,40 @@ public class CommandMenuItemViewModel : StandardMenuItemViewModel, ICommandUiIte
 
     CommandDefinitionBase ICommandUiItem.CommandDefinition => _command.CommandDefinition;
 
-    void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
+    async Task ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
-        if (_command != null && _command.CommandDefinition.IsList && !IsListItem)
+        await _updateSemaphore.WaitAsync();
+        try
         {
-            foreach (var listItem in _listItems)
-                _parent.Children.Remove(listItem);
+            await commandHandler.Update(_command);
 
-            _listItems.Clear();
-
-            var listCommands = new List<Command>();
-            commandHandler.Populate(_command, listCommands);
-
-            _command.Visible = false;
-
-            var startIndex = _parent.Children.IndexOf(this) + 1;
-
-            foreach (var command in listCommands)
+            if (_command != null && _command.CommandDefinition.IsList && !IsListItem)
             {
-                var newMenuItem = new CommandMenuItemViewModel(command, _parent, _serviceProvider)
+                var listCommands = new List<Command>();
+                await commandHandler.Populate(_command, listCommands);
+
+                foreach (var listItem in _listItems)
+                    _parent.Children.Remove(listItem);
+
+                _listItems.Clear();
+                _command.Visible = false;
+
+                var startIndex = _parent.Children.IndexOf(this) + 1;
+
+                foreach (var command in listCommands)
                 {
-                    IsListItem = true
-                };
-                _parent.Children.Insert(startIndex++, newMenuItem);
-                _listItems.Add(newMenuItem);
+                    var newMenuItem = new CommandMenuItemViewModel(command, _parent, _serviceProvider)
+                    {
+                        IsListItem = true
+                    };
+                    _parent.Children.Insert(startIndex++, newMenuItem);
+                    _listItems.Add(newMenuItem);
+                }
             }
+        }
+        finally
+        {
+            _updateSemaphore.Release();
         }
     }
 

@@ -18,9 +18,10 @@ public partial class SaveAllFilesCommandHandler : CommandHandlerBase<SaveAllFile
     [GetServiceLazy]
     private partial IStatusBar StatusBar { get; }
 
-    public override void Update(Command command)
+    public override Task Update(Command command)
     {
         command.Enabled = Shell?.Documents.OfType<IPersistedDocumentViewModel>().Any() ?? false;
+        return Task.CompletedTask;
     }
 
     public override async Task Run(Command command)

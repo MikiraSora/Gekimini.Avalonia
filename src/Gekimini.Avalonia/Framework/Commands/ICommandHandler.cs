@@ -17,20 +17,21 @@ public interface ICommandListHandler<out TCommandDefinition> : ICommandListHandl
 public interface ICommandHandler
 {
     IEnumerable<Type> SupportCommandDefinitionTypes { get; }
-    void Update(Command command);
+    Task Update(Command command);
     Task Run(Command command);
 }
 
 public interface ICommandListHandler : ICommandHandler
 {
-    void Populate(Command command, List<Command> commands);
+    Task Populate(Command command, List<Command> commands);
 }
 
 public abstract class CommandHandlerBase<TCommandDefinition> : ICommandHandler<TCommandDefinition>
     where TCommandDefinition : CommandDefinition
 {
-    public virtual void Update(Command command)
+    public virtual Task Update(Command command)
     {
+        return Task.CompletedTask;
     }
 
     public abstract Task Run(Command command);
@@ -49,8 +50,9 @@ public abstract class CommandListHandlerBase<TCommandListDefinition> : ICommandL
         typeof(TCommandListDefinition)
     ];
 
-    public virtual void Update(Command command)
+    public virtual Task Update(Command command)
     {
+        return Task.CompletedTask;
     }
 
     public virtual Task Run(Command command)
@@ -58,5 +60,5 @@ public abstract class CommandListHandlerBase<TCommandListDefinition> : ICommandL
         return Task.CompletedTask;
     }
 
-    public abstract void Populate(Command command, List<Command> commands);
+    public abstract Task Populate(Command command, List<Command> commands);
 }

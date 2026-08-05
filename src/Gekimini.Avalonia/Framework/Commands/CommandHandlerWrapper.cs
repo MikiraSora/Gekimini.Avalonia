@@ -11,14 +11,14 @@ namespace Gekimini.Avalonia.Framework.Commands;
 public sealed class CommandHandlerWrapper
 {
     private readonly object _commandHandler;
-    private readonly Action<object, Command, List<Command>> _populateMethod;
+    private readonly Func<object, Command, List<Command>, Task> _populateMethod;
     private readonly Func<object, Command, Task> _runMethod;
-    private readonly Action<object, Command> _updateMethod;
+    private readonly Func<object, Command, Task> _updateMethod;
 
     private CommandHandlerWrapper(
         object commandHandler,
-        Action<object, Command> updateMethod,
-        Action<object, Command, List<Command>> populateMethod,
+        Func<object, Command, Task> updateMethod,
+        Func<object, Command, List<Command>, Task> populateMethod,
         Func<object, Command, Task> runMethod)
     {
         _commandHandler = commandHandler;
@@ -33,16 +33,18 @@ public sealed class CommandHandlerWrapper
         return new CommandHandlerWrapper(commandHandler, updateMethod, null, runMethod);
     }
 
-    private static void updateMethod(object arg1, Command arg2)
+    private static Task updateMethod(object arg1, Command arg2)
     {
         if (arg1 is ICommandHandler handler)
-            handler.Update(arg2);
+            return handler.Update(arg2);
+        return Task.CompletedTask;
     }
 
-    private static void populateMethod(object arg1, Command arg2, List<Command> arg3)
+    private static Task populateMethod(object arg1, Command arg2, List<Command> arg3)
     {
         if (arg1 is ICommandListHandler handler)
-            handler.Populate(arg2, arg3);
+            return handler.Populate(arg2, arg3);
+        return Task.CompletedTask;
     }
 
     private static Task runMethod(object arg1, Command arg2)
@@ -58,17 +60,16 @@ public sealed class CommandHandlerWrapper
         return new CommandHandlerWrapper(commandListHandler, updateMethod, populateMethod, runMethod);
     }
 
-    public void Update(Command command)
+    public Task Update(Command command)
     {
-        if (_updateMethod != null)
-            _updateMethod.Invoke(_commandHandler, command);
+        return _updateMethod?.Invoke(_commandHandler, command) ?? Task.CompletedTask;
     }
 
-    public void Populate(Command command, List<Command> commands)
+    public Task Populate(Command command, List<Command> commands)
     {
         if (_populateMethod == null)
             throw new InvalidOperationException("Populate can only be called for list-type commands.");
-        _populateMethod.Invoke(_commandHandler, command, commands);
+        return _populateMethod.Invoke(_commandHandler, command, commands);
     }
 
     public async Task Run(Command command)

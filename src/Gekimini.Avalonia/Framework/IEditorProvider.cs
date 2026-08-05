@@ -36,4 +36,11 @@ public interface IEditorProvider
     /// <param name="document"></param>
     /// <returns>if return true, document will be shown in shell.</returns>
     Task<bool> TryOpen(IDocumentViewModel document, RecentRecordInfo recordInfo);
+
+    /// <summary>
+    ///     Checks whether a recent record can still be opened by this provider.
+    /// </summary>
+    /// <param name="recordInfo">The recent record to validate.</param>
+    /// <returns><see langword="true"/> when the record is still valid.</returns>
+    Task<bool> CheckIsValid(RecentRecordInfo recordInfo);
 }

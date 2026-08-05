@@ -3,6 +3,6 @@
     public interface ICommandUiItem
     {
         CommandDefinitionBase CommandDefinition { get; }
-        void Update(CommandHandlerWrapper commandHandler);
+        global::System.Threading.Tasks.Task Update(CommandHandlerWrapper commandHandler);
     }
 }

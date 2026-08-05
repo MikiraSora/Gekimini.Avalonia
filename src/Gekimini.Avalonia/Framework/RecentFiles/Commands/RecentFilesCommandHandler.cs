@@ -15,9 +15,10 @@ namespace Gekimini.Avalonia.Framework.RecentFiles.Commands
 			this.recentOpenedManager = recentOpenedManager;
 		}
 
-		public override void Update(Command command)
+		public override Task Update(Command command)
 		{
 			command.Enabled = recentOpenedManager.RecentRecordInfos.Any();
+			return Task.CompletedTask;
 		}
 
 		public override Task Run(Command command)

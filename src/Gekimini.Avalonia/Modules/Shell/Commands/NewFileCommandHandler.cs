@@ -17,7 +17,7 @@ public partial class NewFileCommandHandler : CommandListHandlerBase<NewFileComma
     [GetServiceLazy]
     private partial IEnumerable<IEditorProvider> EditorProviders { get; }
 
-    public override void Populate(Command command, List<Command> commands)
+    public override Task Populate(Command command, List<Command> commands)
     {
         foreach (var editorProvider in EditorProviders)
         {
@@ -36,10 +36,13 @@ public partial class NewFileCommandHandler : CommandListHandlerBase<NewFileComma
                     }
                 });
         }
+
+        return Task.CompletedTask;
     }
 
-    public override void Update(Command command)
+    public override Task Update(Command command)
     {
+        return Task.CompletedTask;
     }
 
     public override async Task Run(Command command)

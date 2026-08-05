@@ -51,4 +51,13 @@ public partial class InternalDocumentEditorProvider : IEditorProvider
             return false;
         return await internalTestDocumentViewModel.Load(recordInfo);
     }
+
+    public async Task<bool> CheckIsValid(RecentRecordInfo recordInfo)
+    {
+        var storageProvider = (App.Current as App)?.TopLevel?.StorageProvider;
+        if (storageProvider is null || string.IsNullOrWhiteSpace(recordInfo.LocationDescription))
+            return false;
+
+        return await storageProvider.OpenFileBookmarkAsync(recordInfo.LocationDescription) is not null;
+    }
 }

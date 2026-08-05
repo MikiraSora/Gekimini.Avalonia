@@ -31,20 +31,33 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
     [GetServiceLazy]
     private partial IDialogManager DialogManager { get; }
 
-    public override void Populate(Command command, List<Command> commands)
+    public override async Task Populate(Command command, List<Command> commands)
     {
-        var recentOpened = RecentOpenedManager.RecentRecordInfos;
+        var recentOpened = RecentOpenedManager.RecentRecordInfos.ToArray();
 
-        for (var i = 0; i < recentOpened.Count(); i++)
+        for (var i = 0; i < recentOpened.Length; i++)
         {
-            var item = recentOpened.ElementAtOrDefault(i);
+            var item = recentOpened[i];
+            var documentProvider = PickDocumentProvider(item);
             commands.Add(new Command(command.CommandDefinition)
             {
                 Text = $"_{i + 1} {item.Name} ({item.LocationDescription})".ToLocalizedStringByRawText(),
                 Tag = item,
-                Enabled = PickDocumentProvider(item) is not null
+                Enabled = documentProvider is not null && await CheckIsValid(documentProvider, item)
             });
         }
+    }
+
+    public override async Task Update(Command command)
+    {
+        if (command.Tag is not RecentRecordInfo info)
+        {
+            await base.Update(command);
+            return;
+        }
+
+        var documentProvider = PickDocumentProvider(info);
+        command.Enabled = documentProvider is not null && await CheckIsValid(documentProvider, info);
     }
 
     public override async Task Run(Command command)
@@ -60,6 +73,19 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
         return EditorProviders.FirstOrDefault(x =>
             x.FileTypes.Any(t =>
                 t.Id.Equals(info.EditorFileTypeId, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    private async Task<bool> CheckIsValid(IEditorProvider documentProvider, RecentRecordInfo info)
+    {
+        try
+        {
+            return await documentProvider.CheckIsValid(info);
+        }
+        catch (Exception e)
+        {
+            Logger.LogWarning(e, "Failed to check recent record validity: {RecentRecord}", info);
+            return false;
+        }
     }
 
     private async Task OpenRecentFileByDocument(RecentRecordInfo info)

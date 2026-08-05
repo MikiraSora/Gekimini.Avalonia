@@ -37,13 +37,13 @@ public class MenuBehavior
         return control.GetValue(UpdateCommandUiItemsProperty);
     }
 
-    private static void OnSubmenuOpened(object sender, RoutedEventArgs e)
+    private static async void OnSubmenuOpened(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuItem menuItem)
             return;
 
         var commandRouter = (App.Current as App).ServiceProvider.GetService<ICommandRouter>();
         foreach (var item in menuItem.Items.OfType<ICommandUiItem>().ToList())
-            item.Update(commandRouter.GetCommandHandler(item.CommandDefinition));
+            await item.Update(commandRouter.GetCommandHandler(item.CommandDefinition));
     }
 }

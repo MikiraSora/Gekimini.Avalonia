@@ -54,7 +54,7 @@ public class CommandUpdateDispatcherGenerator : IIncrementalGenerator
                 sb.AppendLine($"   partial class {className}");
                 sb.AppendLine("    {");
                 sb.AppendLine(
-                    "        void global::Gekimini.Avalonia.Framework.Commands.ICommandHandler.Update(global::Gekimini.Avalonia.Framework.Commands.Command command)");
+                    "        global::System.Threading.Tasks.Task global::Gekimini.Avalonia.Framework.Commands.ICommandHandler.Update(global::Gekimini.Avalonia.Framework.Commands.Command command)");
                 sb.AppendLine("        {");
                 sb.AppendLine("            switch (command.CommandDefinition)");
                 sb.AppendLine("            {");
@@ -67,6 +67,7 @@ public class CommandUpdateDispatcherGenerator : IIncrementalGenerator
                 }
 
                 sb.AppendLine("            }");
+                sb.AppendLine("            return global::System.Threading.Tasks.Task.CompletedTask;");
                 sb.AppendLine("        }");
                 sb.AppendLine("    }");
 

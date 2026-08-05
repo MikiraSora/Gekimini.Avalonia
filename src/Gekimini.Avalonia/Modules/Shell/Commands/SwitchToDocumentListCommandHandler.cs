@@ -20,7 +20,7 @@ public class SwitchToDocumentListCommandHandler : CommandListHandlerBase<SwitchT
         _serviceProvider = serviceProvider;
     }
 
-    public override void Populate(Command command, List<Command> commands)
+    public override Task Populate(Command command, List<Command> commands)
     {
         var _shell = _serviceProvider.GetService<IShell>();
 
@@ -34,6 +34,8 @@ public class SwitchToDocumentListCommandHandler : CommandListHandlerBase<SwitchT
                 Tag = document
             });
         }
+
+        return Task.CompletedTask;
     }
 
     public override Task Run(Command command)

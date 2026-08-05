@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -57,9 +58,9 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
 
     CommandDefinitionBase ICommandUiItem.CommandDefinition => _command.CommandDefinition;
 
-    void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
+    Task ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
-        // TODO?
+        return commandHandler.Update(_command);
     }
 
     public void Receive(CurrentCultureInfoChangedEvent message)

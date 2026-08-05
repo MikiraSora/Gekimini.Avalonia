@@ -16,11 +16,11 @@ public class CloseFileCommandHandler : CommandHandlerBase<CloseFileCommandDefini
         _serviceProvider = serviceProvider;
     }
 
-    public override void Update(Command command)
+    public override Task Update(Command command)
     {
         var shell = _serviceProvider.GetService<IShell>();
         command.Enabled = shell.ActiveDocument != null;
-        base.Update(command);
+        return base.Update(command);
     }
 
     public override Task Run(Command command)
