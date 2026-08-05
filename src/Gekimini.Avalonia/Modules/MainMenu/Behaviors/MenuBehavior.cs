@@ -44,6 +44,10 @@ public class MenuBehavior
 
         var commandRouter = (App.Current as App).ServiceProvider.GetService<ICommandRouter>();
         foreach (var item in menuItem.Items.OfType<ICommandUiItem>().ToList())
-            await item.Update(commandRouter.GetCommandHandler(item.CommandDefinition));
+        {
+            var commandHandler = commandRouter.GetCommandHandler(item.CommandDefinition);
+            if (commandHandler is not null)
+                await item.Update(commandHandler);
+        }
     }
 }

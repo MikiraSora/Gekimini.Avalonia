@@ -53,6 +53,9 @@ public class CommandMenuItemViewModel : StandardMenuItemViewModel, ICommandUiIte
 
     async Task ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
+        if (commandHandler is null)
+            return;
+
         await _updateSemaphore.WaitAsync();
         try
         {

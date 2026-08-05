@@ -60,7 +60,7 @@ public class CommandToolBarItemViewModel : ToolBarItemViewModelBase, ICommandUiI
 
     Task ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
     {
-        return commandHandler.Update(_command);
+        return commandHandler?.Update(_command) ?? Task.CompletedTask;
     }
 
     public void Receive(CurrentCultureInfoChangedEvent message)
