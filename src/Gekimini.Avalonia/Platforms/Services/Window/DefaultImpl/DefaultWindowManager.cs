@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Models.Settings;
@@ -30,50 +31,55 @@ public partial class DefaultWindowManager : IWindowManager
 
     public Task ShowWindowAsync(WindowViewBase windowView)
     {
-        return ShowWindowAsyncInternal(windowView, false);
+        ArgumentNullException.ThrowIfNull(windowView);
+        return RunOnUiThreadAsync(async () =>
+        {
+            await ShowWindowAsyncInternal(windowView, false);
+        });
     }
 
     public Task<bool?> ShowDialogAsync(WindowViewBase windowView)
     {
-        return ShowWindowAsyncInternal(windowView, true);
+        ArgumentNullException.ThrowIfNull(windowView);
+        return RunOnUiThreadAsync(() => ShowWindowAsyncInternal(windowView, true));
     }
 
     public Task TryCloseWindowAsync(WindowViewBase window, bool dialogResult)
     {
-        window?.Close(dialogResult);
-        return Task.CompletedTask;
+        return RunOnUiThreadAsync(() => window?.CloseAsync(dialogResult) ?? Task.CompletedTask);
     }
 
     public Task ShowWindowAsync(WindowViewModelBase windowViewModel)
     {
-        var view = ViewLocator.Build(windowViewModel);
-        if (view is not WindowViewBase windowView)
-            throw new Exception(
-                $"view type of viewModel {windowViewModel?.GetType().Name} must be subtype of WindowViewBase, but actual view type is {view?.GetType().Name}");
-
-        return ShowWindowAsync(windowView);
+        ArgumentNullException.ThrowIfNull(windowViewModel);
+        return RunOnUiThreadAsync(async () =>
+        {
+            var windowView = BuildWindow(windowViewModel);
+            await ShowWindowAsyncInternal(windowView, false);
+        });
     }
 
     public Task<bool?> ShowDialogAsync(WindowViewModelBase windowViewModel)
     {
-        var view = ViewLocator.Build(windowViewModel);
-        if (view is not WindowViewBase windowView)
-            throw new Exception(
-                $"view type of viewModel {windowViewModel?.GetType().Name} must be subtype of WindowViewBase, but actual view type is {view?.GetType().Name}");
-
-        return ShowDialogAsync(windowView);
+        ArgumentNullException.ThrowIfNull(windowViewModel);
+        return RunOnUiThreadAsync(() =>
+        {
+            var windowView = BuildWindow(windowViewModel);
+            return ShowWindowAsyncInternal(windowView, true);
+        });
     }
 
     public Task TryCloseWindowAsync(WindowViewModelBase windowViewModelBase, bool dialogResult)
     {
-        if (FindWindowViewInCurrentWindows(windowViewModelBase) is { } windowView)
-            return TryCloseWindowAsync(windowView, dialogResult);
-
-        return Task.CompletedTask;
+        ArgumentNullException.ThrowIfNull(windowViewModelBase);
+        return RunOnUiThreadAsync(() =>
+            FindWindowViewInCurrentWindows(windowViewModelBase)?.CloseAsync(dialogResult) ?? Task.CompletedTask);
     }
 
     private async Task<bool?> ShowWindowAsyncInternal(WindowViewBase window, bool isModel)
     {
+        Dispatcher.UIThread.VerifyAccess();
+
         if (!TryGetCurrentWindowPanel(out var windowPanel))
         {
             Logger.LogErrorEx("WindowPanel not found in entity visual tree.");
@@ -102,7 +108,20 @@ public partial class DefaultWindowManager : IWindowManager
 
     private void WindowOnClosed(object sender, EventArgs e)
     {
+        Dispatcher.UIThread.VerifyAccess();
         SaveWindowPositionAndSize(sender as WindowViewBase);
+    }
+
+    private WindowViewBase BuildWindow(WindowViewModelBase windowViewModel)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+
+        var view = ViewLocator.Build(windowViewModel);
+        if (view is not WindowViewBase windowView)
+            throw new Exception(
+                $"view type of viewModel {windowViewModel.GetType().Name} must be subtype of WindowViewBase, but actual view type is {view?.GetType().Name}");
+
+        return windowView;
     }
 
     private void RestoreWindowPositionAndSize(WindowViewBase windowView)
@@ -145,6 +164,8 @@ public partial class DefaultWindowManager : IWindowManager
 
     private WindowViewBase FindWindowViewInCurrentWindows(WindowViewModelBase windowViewModelBase)
     {
+        Dispatcher.UIThread.VerifyAccess();
+
         if (!TryGetCurrentWindowPanel(out var windowPanel))
             return default;
         if (windowPanel.Windows.FirstOrDefault(x => x.DataContext == windowViewModelBase) is WindowViewBase
@@ -155,6 +176,8 @@ public partial class DefaultWindowManager : IWindowManager
 
     private bool TryGetCurrentWindowPanel(out WindowsPanel windowsPanel)
     {
+        Dispatcher.UIThread.VerifyAccess();
+
         windowsPanel = default;
 
         if (Application.Current?.ApplicationLifetime is ISingleViewApplicationLifetime singleView)
@@ -164,5 +187,21 @@ public partial class DefaultWindowManager : IWindowManager
             windowsPanel ??= desktop.MainWindow?.FindDescendantOfType<WindowsPanel>(true);
 
         return windowsPanel != null;
+    }
+
+    private static async Task RunOnUiThreadAsync(Func<Task> action)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+            await action();
+        else
+            await Dispatcher.UIThread.InvokeAsync(action);
+    }
+
+    private static async Task<T> RunOnUiThreadAsync<T>(Func<Task<T>> action)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+            return await action();
+
+        return await Dispatcher.UIThread.InvokeAsync(action);
     }
 }
