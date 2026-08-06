@@ -24,30 +24,32 @@ public class WindowViewBase : ManagedWindow, IView
         if (e.NameScope.Find<Control>("PART_SystemMenu") is { } systemMenu)
             systemMenu.IsVisible = false;
 
-        //禁用（如 CanResize=false）的最小化/最大化/还原按钮直接隐藏，而不是显示为灰色。
-        foreach (var buttonName in new[] { "PART_MinimizeButton", "PART_MaximizeButton", "PART_RestoreButton" })
+        //CanResize=false 时最小化/最大化/还原按钮都会被命令系统禁用，此时直接隐藏而不是显示为灰色。
+        //不依赖按钮 IsEnabled（它由 ReactiveCommand 的 canExecute 经调度器异步驱动，时序不可靠），直接监听 CanResize。
+        systemButtons = new[]
         {
-            if (e.NameScope.Find<Button>(buttonName) is not { } button)
+            e.NameScope.Find<Button>("PART_MinimizeButton"),
+            e.NameScope.Find<Button>("PART_MaximizeButton"),
+            e.NameScope.Find<Button>("PART_RestoreButton")
+        };
+        UpdateSystemButtonsVisibility();
+    }
+
+    private Button?[] systemButtons = [];
+
+    private void UpdateSystemButtonsVisibility()
+    {
+        foreach (var button in systemButtons)
+        {
+            if (button is null)
                 continue;
 
-            UpdateDisabledSystemButtonVisibility(button);
-            button.PropertyChanged += OnSystemButtonPropertyChanged;
+            if (CanResize)
+                //可调整大小时交还模板按窗口状态（:normal/:maximized/:minimized）控制可见性。
+                button.ClearValue(Visual.IsVisibleProperty);
+            else
+                button.IsVisible = false;
         }
-    }
-
-    private static void OnSystemButtonPropertyChanged(object sender, AvaloniaPropertyChangedEventArgs e)
-    {
-        if (e.Property == Button.IsEnabledProperty && sender is Button button)
-            UpdateDisabledSystemButtonVisibility(button);
-    }
-
-    private static void UpdateDisabledSystemButtonVisibility(Button button)
-    {
-        if (button.IsEnabled)
-            //启用时交还模板按窗口状态（:normal/:maximized/:minimized）控制可见性。
-            button.ClearValue(Visual.IsVisibleProperty);
-        else
-            button.IsVisible = false;
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -62,6 +64,9 @@ public class WindowViewBase : ManagedWindow, IView
                 break;
             case nameof(Position):
                 AdjustPosition(WindowsPanel?.Bounds);
+                break;
+            case nameof(CanResize):
+                UpdateSystemButtonsVisibility();
                 break;
         }
     }
