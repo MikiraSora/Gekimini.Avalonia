@@ -10,6 +10,9 @@ namespace Gekimini.Avalonia.Example.Modules.InternalTest;
 [RegisterSingleton<IEditorProvider>]
 public partial class InternalDocumentEditorProvider : IEditorProvider
 {
+    [GetServiceLazy]
+    private partial IEditorRecentFilesManager EditorRecentFilesManager { get; }
+
     public static EditorFileType[] SupportFileTypes { get; } =
     [
         new("InternalDocumentFileType", "Internal Document File".ToLocalizedStringByRawText())
@@ -55,9 +58,18 @@ public partial class InternalDocumentEditorProvider : IEditorProvider
     public async Task<bool> CheckIsValid(RecentRecordInfo recordInfo)
     {
         var storageProvider = (App.Current as App)?.TopLevel?.StorageProvider;
-        if (storageProvider is null || string.IsNullOrWhiteSpace(recordInfo.LocationDescription))
+        if (storageProvider is null)
             return false;
 
-        return await storageProvider.OpenFileBookmarkAsync(recordInfo.LocationDescription) is not null;
+        try
+        {
+            var bookmark = EditorRecentFilesManager.ReadDataAsString(recordInfo);
+            using var file = await storageProvider.OpenFileBookmarkAsync(bookmark);
+            return file is not null;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

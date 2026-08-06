@@ -18,9 +18,11 @@ public static class IEditorRecentFilesManagerEx
     public static void WriteDataAsString(this IEditorRecentFilesManager editorRecentFilesManager,
         RecentRecordInfo recordInfo, string str)
     {
-        var json = JsonSerializer.Serialize(new StringStore {Value = str}, StringStore.JsonTypeInfo);
-        editorRecentFilesManager.WriteData(recordInfo, Encoding.UTF8.GetBytes(json));
+        editorRecentFilesManager.WriteData(recordInfo, EncodeDataAsString(str));
     }
+
+    public static byte[] EncodeDataAsString(string str) =>
+        JsonSerializer.SerializeToUtf8Bytes(new StringStore {Value = str}, StringStore.JsonTypeInfo);
 
     public class StringStore
     {

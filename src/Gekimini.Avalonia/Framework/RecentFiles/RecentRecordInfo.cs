@@ -6,4 +6,5 @@ public record RecentRecordInfo(
     string EditorFileTypeId,
     string Name,
     string LocationDescription,
-    DateTime? LastAccessTime = default);
+    DateTime? LastAccessTime = default,
+    Guid RecordId = default);

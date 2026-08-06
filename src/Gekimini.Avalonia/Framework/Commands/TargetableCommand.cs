@@ -32,18 +32,28 @@ public class TargetableCommand : ICommand
 
     public async void Execute(object parameter)
     {
-        var commandHandler = _commandRouter.GetCommandHandler(_command.CommandDefinition);
-        if (commandHandler is null)
-            return;
+        try
+        {
+            var commandHandler = _commandRouter.GetCommandHandler(_command.CommandDefinition);
+            if (commandHandler is null)
+                return;
 
-        if (_pendingUpdateTask is not null)
-            await _pendingUpdateTask;
-        else
-            await commandHandler.Update(_command);
+            if (_pendingUpdateTask is not null)
+                await _pendingUpdateTask;
+            else
+                await commandHandler.Update(_command);
 
-        _hasUpdateResult = true;
-        if (_command.Enabled)
-            await commandHandler.Run(_command);
+            _hasUpdateResult = true;
+            if (_command.Enabled)
+                await commandHandler.Run(_command);
+        }
+        catch (Exception e)
+        {
+            _command.Enabled = false;
+            _hasUpdateResult = true;
+            Trace.TraceError($"Failed to execute command {_command.CommandDefinition.GetType().FullName}: {e}");
+            CommandManager.InvalidateRequerySuggested("commandExecutionFailed");
+        }
     }
 
     private void BeginUpdate(CommandHandlerWrapper commandHandler)

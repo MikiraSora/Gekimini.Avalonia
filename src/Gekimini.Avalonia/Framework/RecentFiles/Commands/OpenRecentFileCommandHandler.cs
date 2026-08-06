@@ -31,8 +31,12 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
     [GetServiceLazy]
     private partial IDialogManager DialogManager { get; }
 
+    [GetServiceLazy]
+    private partial IRecentRecordValidityCoordinator ValidityCoordinator { get; }
+
     public override async Task Populate(Command command, List<Command> commands)
     {
+        ValidityCoordinator.BeginValidationGeneration();
         var recentOpened = RecentOpenedManager.RecentRecordInfos.ToArray();
 
         for (var i = 0; i < recentOpened.Length; i++)
@@ -75,7 +79,20 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
                 t.Id.Equals(info.EditorFileTypeId, StringComparison.OrdinalIgnoreCase)));
     }
 
-    private async Task<bool> CheckIsValid(IEditorProvider documentProvider, RecentRecordInfo info)
+    private Task<bool> CheckIsValid(
+        IEditorProvider documentProvider,
+        RecentRecordInfo info,
+        bool forceFresh = false)
+    {
+        if (RecentOpenedManager.IsMarkedInvalid(info))
+            return Task.FromResult(false);
+
+        return forceFresh
+            ? ValidityCoordinator.CheckFreshAsync(info, () => CheckProviderIsValid(documentProvider, info))
+            : ValidityCoordinator.GetOrCheckAsync(info, () => CheckProviderIsValid(documentProvider, info));
+    }
+
+    private async Task<bool> CheckProviderIsValid(IEditorProvider documentProvider, RecentRecordInfo info)
     {
         try
         {
@@ -97,6 +114,9 @@ public partial class OpenRecentFileCommandHandler : CommandListHandlerBase<OpenR
             await DialogManager.ShowMessageDialog(ProgramLanguages.NoDocumentSupportOpenRecentInfo, DialogMessageType.Error);
             return;
         }
+
+        if (!await CheckIsValid(documentProvider, info, forceFresh: true))
+            return;
 
         var doc = documentProvider.Create();
 

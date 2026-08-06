@@ -183,11 +183,11 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         if (storageFile.CanBookmark)
         {
             var bookmark = await storageFile.SaveBookmarkAsync();
-            //save recent
-            var recentInfo = EditorRecentFilesManager.PostRecent(
-                InternalDocumentEditorProvider.SupportFileTypes[0], FileName, bookmark);
-
-            EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
+            EditorRecentFilesManager.PostRecent(
+                InternalDocumentEditorProvider.SupportFileTypes[0],
+                FileName,
+                storageFile.Name,
+                IEditorRecentFilesManagerEx.EncodeDataAsString(bookmark));
         }
 
         FileName = storageFile.Name;
@@ -208,11 +208,11 @@ public partial class InternalTestDocumentViewModel : DocumentViewModelBase, IPer
         if (storageFile is not null && storageFile.CanBookmark)
         {
             var bookmark = await storageFile.SaveBookmarkAsync();
-            //save recent
-            var recentInfo = EditorRecentFilesManager.PostRecent(
-                InternalDocumentEditorProvider.SupportFileTypes[0], FileName, bookmark);
-
-            EditorRecentFilesManager.WriteDataAsString(recentInfo, bookmark);
+            EditorRecentFilesManager.PostRecent(
+                InternalDocumentEditorProvider.SupportFileTypes[0],
+                FileName,
+                storageFile.Name,
+                IEditorRecentFilesManagerEx.EncodeDataAsString(bookmark));
         }
 
         return true;
