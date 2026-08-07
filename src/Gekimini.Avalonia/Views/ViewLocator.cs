@@ -51,11 +51,17 @@ public class ViewLocator : IDataTemplate
 
         if (view is Control control)
         {
-            control.Loaded += (a, aa) => { viewModel.OnViewAfterLoaded(view); };
+            control.Loaded += (a, aa) =>
+            {
+                // A view may move between visual roots, such as a ToolBar and its overflow popup.
+                if (control.DataContext is null)
+                    control.DataContext = viewModel;
+
+                viewModel.OnViewAfterLoaded(view);
+            };
             control.Unloaded += (a, aa) =>
             {
                 viewModel.OnViewBeforeUnload(view);
-                control.DataContext = null;
             };
 
             control.DataContext = viewModel;

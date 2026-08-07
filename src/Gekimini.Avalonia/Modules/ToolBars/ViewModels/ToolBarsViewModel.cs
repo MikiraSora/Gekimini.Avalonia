@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Controls;
-using Avalonia.Controls.ToolBar.Controls;
 using Avalonia.Layout;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gekimini.Avalonia.Modules.ToolBars.Controls;
 using Gekimini.Avalonia.Modules.ToolBars.Views;
 using Gekimini.Avalonia.ViewModels;
 using Gekimini.Avalonia.Views;
@@ -39,7 +39,7 @@ public partial class ToolBarsViewModel : ViewModelBase, IToolBars
             return;
 
         foreach (var toolBar in Items)
-            toolBarTray.ToolBars.Add(new ToolBar
+            toolBarTray.ToolBars.Add(new AdaptiveToolBar
             {
                 ItemsSource = toolBar,
                 Orientation = Orientation.Horizontal,
