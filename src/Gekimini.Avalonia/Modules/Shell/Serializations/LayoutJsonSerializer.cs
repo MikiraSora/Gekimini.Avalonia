@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using Dock.Model.Controls;
@@ -10,6 +11,7 @@ using Gekimini.Avalonia.Modules.Shell.Serializations.Layouts;
 using Gekimini.Avalonia.Modules.Shell.ViewModels;
 using Gekimini.Avalonia.Utils;
 using Injectio.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Modules.Shell.Serializations;
@@ -193,8 +195,7 @@ public class LayoutJsonSerializer : IDockSerializer
             return tool;
         }
 
-        if (TypeCollectedActivatorHelper<IToolViewModel>.TryCreateInstance(serviceProvider, layoutTool.ContextType,
-                out var toolViewModel))
+        if (TryResolveToolViewModel(layoutTool.ContextType, out var toolViewModel))
         {
             var toolContainer = new ToolContainerViewModel
             {
@@ -208,6 +209,44 @@ public class LayoutJsonSerializer : IDockSerializer
             $"Can't find deserialize layoutTool to dockable: layoutTool.ToolType = {layoutTool.ContextType}");
 
         return default;
+    }
+
+    private bool TryResolveToolViewModel(string contextTypeName, out IToolViewModel toolViewModel)
+    {
+        toolViewModel = null;
+
+        if (!string.IsNullOrWhiteSpace(contextTypeName))
+        {
+            // 布局里保存的是具体 ViewModel 类型名。优先复用 DI 容器中已注册的实例
+            // （比如 [RegisterSingleton<IFoo>] 注册的单例），保证恢复出的工具面板
+            // 与其它代码通过 IoC.Get<IFoo>() 拿到的是同一个实例；
+            // 否则面板会绑定到一个无人更新的新实例上，内容永远为空。
+            var contextType = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType(contextTypeName, throwOnError: false))
+                .FirstOrDefault(type => type is not null && typeof(IToolViewModel).IsAssignableFrom(type));
+
+            if (contextType is not null)
+            {
+                if (serviceProvider.GetService(contextType) is IToolViewModel registeredInstance)
+                {
+                    toolViewModel = registeredInstance;
+                    return true;
+                }
+
+                var interfaceInstance = contextType.GetInterfaces()
+                    .Select(iface => serviceProvider.GetService(iface))
+                    .FirstOrDefault(instance => instance is not null && instance.GetType() == contextType);
+
+                if (interfaceInstance is IToolViewModel typedInstance)
+                {
+                    toolViewModel = typedInstance;
+                    return true;
+                }
+            }
+        }
+
+        return TypeCollectedActivatorHelper<IToolViewModel>.TryCreateInstance(serviceProvider, contextTypeName,
+            out toolViewModel);
     }
 
     private IRootDock DeserializeToDockableObject(IRootDock rootDock,

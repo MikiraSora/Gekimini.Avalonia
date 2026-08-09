@@ -303,11 +303,28 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
             addTools.Clear();
             addedDocuments.Clear();
+            cachedIdToToolContainerMap.Clear();
+            cachedIdToDocumentContainerMap.Clear();
 
-            addTools.AddRange(Factory.Find(_ => true).OfType<IToolViewModel>());
+            // 恢复出的工具是 ToolContainerViewModel（它本身不是 IToolViewModel），
+            // 实际的工具 ViewModel 在它的 Context 里。按 Context 重建工具清单和
+            // 去重缓存，保证 ShowTool 的重复打开检查与 HideTool 能识别已恢复的工具。
+            // 注意不能用 Factory.Find()：它依赖视图附着后注册的 DockControls，
+            // 而布局恢复发生在视图附着之前，会找不到任何 dockable。
+            foreach (var toolContainer in EnumerateDockables(dockable).OfType<ToolContainerViewModel>())
+            {
+                if (toolContainer.Context is IToolViewModel toolViewModel)
+                {
+                    addTools.Add(toolViewModel);
+                    cachedIdToToolContainerMap[GetId(toolViewModel)] = toolContainer;
+                }
+            }
+
             logger.LogDebugEx(
                 $"Deserialized tools: {string.Join(", ", addTools.Select(x => x.GetType().Name))}");
-            addedDocuments.AddRange(Factory.Find(_ => true).OfType<IDocumentViewModel>());
+            addedDocuments.AddRange(EnumerateDockables(dockable).OfType<DocumentContainerViewModel>()
+                .Select(x => x.Context)
+                .OfType<IDocumentViewModel>());
             logger.LogDebugEx(
                 $"Deserialized documents: {string.Join(", ", addedDocuments.Select(x => x.GetType().Name))}");
 
@@ -319,6 +336,16 @@ public partial class ShellViewModel : ViewModelBase, IShell,
                 DialogMessageType.Error);
             return false;
         }
+    }
+
+    private static IEnumerable<IDockable> EnumerateDockables(IDockable dockable)
+    {
+        yield return dockable;
+
+        if (dockable is IDock { VisibleDockables: not null } dock)
+            foreach (var child in dock.VisibleDockables)
+            foreach (var descendant in EnumerateDockables(child))
+                yield return descendant;
     }
 
     private string GetId(IDockableViewModel dockableViewModel)
