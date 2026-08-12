@@ -29,6 +29,15 @@ public partial class DefaultWindowManager : IWindowManager
     [GetServiceLazy]
     private partial ViewLocator ViewLocator { get; }
 
+    public WindowViewBase FindExistingWindow(WindowViewModelBase windowViewModel)
+    {
+        ArgumentNullException.ThrowIfNull(windowViewModel);
+
+        return Dispatcher.UIThread.CheckAccess()
+            ? FindWindowViewInCurrentWindows(windowViewModel)
+            : Dispatcher.UIThread.Invoke(() => FindWindowViewInCurrentWindows(windowViewModel));
+    }
+
     public Task ShowWindowAsync(WindowViewBase windowView)
     {
         ArgumentNullException.ThrowIfNull(windowView);
@@ -73,7 +82,7 @@ public partial class DefaultWindowManager : IWindowManager
     {
         ArgumentNullException.ThrowIfNull(windowViewModelBase);
         return RunOnUiThreadAsync(() =>
-            FindWindowViewInCurrentWindows(windowViewModelBase)?.CloseAsync(dialogResult) ?? Task.CompletedTask);
+            FindExistingWindow(windowViewModelBase)?.CloseAsync(dialogResult) ?? Task.CompletedTask);
     }
 
     private async Task<bool?> ShowWindowAsyncInternal(WindowViewBase window, bool isModel)
@@ -168,10 +177,9 @@ public partial class DefaultWindowManager : IWindowManager
 
         if (!TryGetCurrentWindowPanel(out var windowPanel))
             return default;
-        if (windowPanel.Windows.FirstOrDefault(x => x.DataContext == windowViewModelBase) is WindowViewBase
-            windowView)
-            return windowView;
-        return default;
+        return windowPanel.Windows
+            .OfType<WindowViewBase>()
+            .FirstOrDefault(window => ReferenceEquals(window.DataContext, windowViewModelBase));
     }
 
     private bool TryGetCurrentWindowPanel(out WindowsPanel windowsPanel)
