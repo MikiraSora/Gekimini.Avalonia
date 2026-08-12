@@ -34,5 +34,6 @@
         </Style>
     </views:ViewBase.Styles>
 
-    <controls:MenuEx ItemsSource="{Binding MenuItems}" />
+    <controls:MenuEx AutoHide="{Binding AutoHide}"
+                     ItemsSource="{Binding MenuItems}" />
 </views:ViewBase>

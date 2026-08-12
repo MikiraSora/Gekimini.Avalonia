@@ -12,16 +12,17 @@ namespace Gekimini.Avalonia.Modules.MainMenu.ViewModels;
 public class MainMenuViewModel : ViewModelBase, IMenu
 {
     private bool _autoHide;
+    private readonly GekiminiSetting gekiminiSetting;
 
     public MainMenuViewModel(IMenuBuilder menuBuilder, ISettingManager settingManager)
     {
-        var gekiminiSetting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
+        gekiminiSetting = settingManager.GetSetting(GekiminiSetting.JsonTypeInfo);
         _autoHide = gekiminiSetting.AutoHideMainMenu;
+        gekiminiSetting.PropertyChanged += OnSettingPropertyChanged;
 
         menuBuilder.BuildMenuBar(MenuDefinitions.MainMenuBar, this);
     }
 
-    //todo not support
     public bool AutoHide
     {
         get => _autoHide;
@@ -37,4 +38,10 @@ public class MainMenuViewModel : ViewModelBase, IMenu
     }
 
     public ObservableCollection<MenuItemViewModelBase> MenuItems { get; set; } = [];
+
+    private void OnSettingPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(GekiminiSetting.AutoHideMainMenu))
+            AutoHide = gekiminiSetting.AutoHideMainMenu;
+    }
 }
