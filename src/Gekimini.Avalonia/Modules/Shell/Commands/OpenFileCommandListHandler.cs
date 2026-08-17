@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Gekimini.Avalonia.Attributes;
@@ -21,9 +22,6 @@ public partial class OpenFileCommandListHandler : CommandListHandlerBase<OpenFil
     {
         foreach (var editorProvider in EditorProviders)
         {
-            if (!editorProvider.CanCreateNew)
-                continue;
-
             foreach (var editorFileType in editorProvider.FileTypes)
                 commands.Add(new Command(command.CommandDefinition)
                 {
@@ -52,6 +50,8 @@ public partial class OpenFileCommandListHandler : CommandListHandlerBase<OpenFil
         var shouldShow = await tag.EditorProvider.TryOpen(editor);
         if (shouldShow)
             await Shell.OpenDocumentAsync(editor);
+        else if (editor is IDisposable disposable)
+            disposable.Dispose();
     }
 
     public class OpenFileTag

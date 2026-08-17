@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Gekimini.Avalonia.Attributes;
@@ -53,6 +54,8 @@ public partial class NewFileCommandHandler : CommandListHandlerBase<NewFileComma
         var shouldShow = await tag.EditorProvider.TryNew(editor);
         if (shouldShow)
             await Shell.OpenDocumentAsync(editor);
+        else if (editor is IDisposable disposable)
+            disposable.Dispose();
     }
 
     public class NewFileTag
