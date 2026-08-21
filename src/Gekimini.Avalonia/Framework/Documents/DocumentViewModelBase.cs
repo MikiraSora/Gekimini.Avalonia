@@ -60,13 +60,13 @@ public abstract partial class DocumentViewModelBase : ViewModelBase, IDocumentVi
     }
 
     [GenerateCommandUpdateDispatcher<SaveFileAsCommandDefinition>]
-    protected void UpdateSaveFileAsCommand(Command command)
+    protected virtual void UpdateSaveFileAsCommand(Command command)
     {
         command.Enabled = this is IPersistedDocumentViewModel;
     }
 
     [GenerateCommandRunDispatcher<SaveFileAsCommandDefinition>]
-    protected Task RunSaveFileAsCommand(Command command)
+    protected virtual Task RunSaveFileAsCommand(Command command)
     {
         if (this is IPersistedDocumentViewModel persistedDocumentViewModel)
             return persistedDocumentViewModel.SaveAs();
@@ -74,13 +74,13 @@ public abstract partial class DocumentViewModelBase : ViewModelBase, IDocumentVi
     }
 
     [GenerateCommandUpdateDispatcher<SaveFileCommandDefinition>]
-    protected void UpdateSaveFileCommand(Command command)
+    protected virtual void UpdateSaveFileCommand(Command command)
     {
         command.Enabled = this is IPersistedDocumentViewModel;
     }
 
     [GenerateCommandRunDispatcher<SaveFileCommandDefinition>]
-    protected Task RunSaveFileCommand(Command command)
+    protected virtual Task RunSaveFileCommand(Command command)
     {
         if (this is IPersistedDocumentViewModel persistedDocumentViewModel)
             return persistedDocumentViewModel.Save();
@@ -88,13 +88,13 @@ public abstract partial class DocumentViewModelBase : ViewModelBase, IDocumentVi
     }
 
     [GenerateCommandUpdateDispatcher<UndoCommandDefinition>]
-    protected void UpdateUndoCommand(Command command)
+    protected virtual void UpdateUndoCommand(Command command)
     {
         command.Enabled = UndoRedoManager.CanUndo;
     }
 
     [GenerateCommandUpdateDispatcher<RedoCommandDefinition>]
-    protected void UpdateRedoCommand(Command command)
+    protected virtual void UpdateRedoCommand(Command command)
     {
         command.Enabled = UndoRedoManager.CanRedo;
     }
@@ -105,21 +105,21 @@ public abstract partial class DocumentViewModelBase : ViewModelBase, IDocumentVi
         {
             case nameof(IUndoRedoManager.CanRedo):
             case nameof(IUndoRedoManager.CanUndo):
-                CommandManager.InvalidateRequerySuggested(); 
+                CommandManager.InvalidateRequerySuggested();
                 break;
         }
     }
 
 
     [GenerateCommandRunDispatcher<RedoCommandDefinition>]
-    protected Task RunRedoCommand(Command command)
+    protected virtual Task RunRedoCommand(Command command)
     {
         UndoRedoManager.Redo(1);
         return Task.CompletedTask;
     }
 
     [GenerateCommandRunDispatcher<UndoCommandDefinition>]
-    protected Task RunUndoCommand(Command command)
+    protected virtual Task RunUndoCommand(Command command)
     {
         UndoRedoManager.Undo(1);
         return Task.CompletedTask;
