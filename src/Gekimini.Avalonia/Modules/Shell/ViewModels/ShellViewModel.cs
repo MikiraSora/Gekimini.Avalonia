@@ -101,6 +101,10 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         ToolBars = toolBars;
         MainMenu = mainMenu;
         printLogger = loggerFactory.CreateLogger("DumpDock");
+
+        // 没有这行注册，App.CanExit 的 ApplicationAskQuitEvent 与退出版的 ApplicationQuitEvent
+        // 都无人应答：退出脏确认与退出时布局保存从未生效过。
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     public void Receive(ApplicationAskQuitEvent message)
