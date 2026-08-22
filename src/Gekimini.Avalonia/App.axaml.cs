@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -28,6 +29,7 @@ public abstract class App : Application
 {
     private ILogger<App> logger;
     private Control mainView;
+    private int isExitInProgress;
     private IServiceProvider serviceProvider;
 
     public IServiceProvider ServiceProvider =>
@@ -173,18 +175,30 @@ public abstract class App : Application
     /// <returns></returns>
     public virtual async Task<bool> TryExit()
     {
-        logger.LogInformationEx("Begin.");
-
-        var canExit = await CanExit();
-        logger.LogInformationEx($"CanExit() canExit: {canExit}");
-        if (!canExit)
+        // 防重入：脏文档确认对话框打开期间，再次触发退出（连点 X、菜单退出）
+        // 不得并发进入第二轮确认；本次尝试直接视为未退出。
+        if (Interlocked.CompareExchange(ref isExitInProgress, 1, 0) != 0)
             return false;
 
-        await PrepareExit();
-        logger.LogInformationEx("PrepareExit() pass");
+        try
+        {
+            logger?.LogInformationEx("Begin.");
 
-        DoExit();
-        return true;
+            var canExit = await CanExit();
+            logger?.LogInformationEx($"CanExit() canExit: {canExit}");
+            if (!canExit)
+                return false;
+
+            await PrepareExit();
+            logger?.LogInformationEx("PrepareExit() pass");
+
+            DoExit();
+            return true;
+        }
+        finally
+        {
+            Interlocked.Exchange(ref isExitInProgress, 0);
+        }
     }
 
     /// <summary>
