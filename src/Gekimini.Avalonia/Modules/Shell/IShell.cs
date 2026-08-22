@@ -37,6 +37,7 @@ public interface IShell
 
     Task OpenDocumentAsync(IDocumentViewModel model);
     Task CloseDocumentAsync(IDocumentViewModel document);
+    Task<RequestDocumentCloseResult> TryCloseDocumentAsync(IDocumentViewModel document);
 
     Task ResetLayout();
     Task<bool> SaveLayout();

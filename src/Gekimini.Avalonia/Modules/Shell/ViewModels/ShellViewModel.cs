@@ -17,6 +17,8 @@ using Gekimini.Avalonia.Framework.Documents;
 using Gekimini.Avalonia.Models.Events;
 using Gekimini.Avalonia.Models.Settings;
 using Gekimini.Avalonia.Modules.MainMenu;
+using Gekimini.Avalonia.Modules.Documents.Models;
+using Gekimini.Avalonia.Modules.Documents.ViewModels;
 using Gekimini.Avalonia.Modules.Shell.Views;
 using Gekimini.Avalonia.Modules.StatusBar;
 using Gekimini.Avalonia.Modules.ToolBars;
@@ -211,6 +213,71 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         }
 
         return Task.CompletedTask;
+    }
+
+    public async Task<RequestDocumentCloseResult> TryCloseDocumentAsync(IDocumentViewModel model)
+    {
+        if (model is null)
+            return RequestDocumentCloseResult.Closed;
+
+        var result = await ConfirmCloseDocumentAsync(model);
+        if (result != RequestDocumentCloseResult.Closed)
+            return result;
+
+        RemoveDocumentCore(model);
+        return RequestDocumentCloseResult.Closed;
+    }
+
+    private async Task<RequestDocumentCloseResult> ConfirmCloseDocumentAsync(IDocumentViewModel model)
+    {
+        if (model is not IPersistedDocumentViewModel persistedDocumentViewModel ||
+            !persistedDocumentViewModel.IsDirty)
+            return RequestDocumentCloseResult.Closed;
+
+        cachedIdToDocumentContainerMap.TryGetValue(GetId(model), out var documentContainer);
+        var documentName = documentContainer?.Title ?? model.Title?.Text ?? string.Empty;
+
+        var dialog = new SaveDirtyDocumentDialogViewModel
+        {
+            DocumentName = documentName
+        };
+        await dialogManager.ShowDialog(dialog);
+
+        switch (dialog.Result)
+        {
+            case DialogResult.Yes:
+                var isSaveSuccess = await persistedDocumentViewModel.Save();
+                if (!isSaveSuccess)
+                {
+                    await dialogManager.ShowMessageDialog(
+                        ProgramLanguages.DocumentSaveFailedAndCancelledQuit.FormatEx(documentName));
+                    return RequestDocumentCloseResult.SaveFailed;
+                }
+
+                return RequestDocumentCloseResult.Closed;
+            case DialogResult.No:
+                //user cancel save this document, just continue.
+                return RequestDocumentCloseResult.Closed;
+            case DialogResult.Cancel:
+            default:
+                //user cancel the close process.
+                return RequestDocumentCloseResult.Cancelled;
+        }
+    }
+
+    private void RemoveDocumentCore(IDocumentViewModel model)
+    {
+        var id = GetId(model);
+
+        if (!cachedIdToDocumentContainerMap.TryGetValue(id, out var documentContainer))
+        {
+            logger.LogWarningEx($"Close document {id} but can't find its container.");
+            return;
+        }
+
+        logger.LogInformationEx($"Close document {id}: {model.GetType().Name}");
+        Factory.RemoveDocument(documentContainer);
+        cachedIdToDocumentContainerMap.Remove(id);
     }
 
     public async Task ResetLayout()
