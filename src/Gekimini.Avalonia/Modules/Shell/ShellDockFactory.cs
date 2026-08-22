@@ -6,13 +6,9 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
-using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Attributes;
 using Gekimini.Avalonia.Framework;
-using Gekimini.Avalonia.Framework.Dialogs;
-using Gekimini.Avalonia.Modules.Documents.Models;
-using Gekimini.Avalonia.Modules.Documents.ViewModels;
-using Gekimini.Avalonia.Utils.MethodExtensions;
+using Gekimini.Avalonia.Framework.Documents;
 using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.Shell;
@@ -30,7 +26,7 @@ public sealed partial class ShellDockFactory : Factory, IFactory
     }
 
     [GetServiceLazy]
-    private partial IDialogManager DialogManager { get; }
+    private partial IShell Shell { get; }
 
     public override IRootDock CreateLayout()
     {
@@ -156,17 +152,33 @@ public sealed partial class ShellDockFactory : Factory, IFactory
     public override async void CloseDockable(IDockable dockable)
     {
         if (dockable is IDocument document)
-            if (!await CanCloseDocument(document))
+        {
+            if (document.Context is IDocumentViewModel documentViewModel &&
+                await Shell.TryCloseDocumentAsync(documentViewModel) != RequestDocumentCloseResult.Closed)
                 //todo log it
                 return;
+
+            // Documents known to the shell were already removed by the close protocol.
+            // Containers without a shell entry still need a direct layout removal.
+            if (dockable.Owner is IDock dock && dock.VisibleDockables?.Contains(dockable) == true)
+            {
+                var documentIdx = dock.VisibleDockables.IndexOf(dockable);
+
+                base.CloseDockable(dockable);
+
+                dock.ActiveDockable = dock.VisibleDockables.ElementAtOrDefault(Math.Max(0, documentIdx - 1));
+            }
+
+            return;
+        }
 
         var beforeDock = dockable.Owner;
         var beforeIdx = (beforeDock as IDock)?.VisibleDockables?.IndexOf(dockable) ?? -1;
 
         base.CloseDockable(dockable);
 
-        if (beforeDock is IDock dock)
-            dock.ActiveDockable = dock.VisibleDockables.ElementAtOrDefault(Math.Max(0, beforeIdx - 1));
+        if (beforeDock is IDock ownerDock)
+            ownerDock.ActiveDockable = ownerDock.VisibleDockables.ElementAtOrDefault(Math.Max(0, beforeIdx - 1));
     }
 
     private IDock FindOrCreateToolDock(DockMode dock)
@@ -285,43 +297,5 @@ public sealed partial class ShellDockFactory : Factory, IFactory
     public void RemoveDocument(IDocument dockable)
     {
         RemoveDockable(dockable, false);
-    }
-
-    public async Task<bool> CanCloseDocument(IDocument document)
-    {
-        if (document?.Context is not IPersistedDocumentViewModel persistedDocumentViewModel)
-            return true;
-
-        if (!persistedDocumentViewModel.IsDirty)
-            return true;
-
-        var dialog = new SaveDirtyDocumentDialogViewModel
-        {
-            DocumentName = document.Title
-        };
-        await DialogManager.ShowDialog(dialog);
-
-        switch (dialog.Result)
-        {
-            case DialogResult.Yes:
-                var isSaveSuccess = await persistedDocumentViewModel.Save();
-                if (!isSaveSuccess)
-                {
-                    await DialogManager.ShowMessageDialog(
-                        ProgramLanguages.DocumentSaveFailedAndCancelledQuit.FormatEx(document.Title));
-                    return false;
-                }
-
-                break;
-            case DialogResult.No:
-                //user cancel save this document, just continue.
-                break;
-            case DialogResult.Cancel:
-            default:
-                //user cancel application exit process.
-                return false;
-        }
-
-        return true;
     }
 }

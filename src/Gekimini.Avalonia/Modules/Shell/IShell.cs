@@ -36,7 +36,6 @@ public interface IShell
     void HideTool(IToolViewModel model);
 
     Task OpenDocumentAsync(IDocumentViewModel model);
-    Task CloseDocumentAsync(IDocumentViewModel document);
     Task<RequestDocumentCloseResult> TryCloseDocumentAsync(IDocumentViewModel document);
 
     Task ResetLayout();

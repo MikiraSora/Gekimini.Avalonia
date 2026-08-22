@@ -26,6 +26,6 @@ public class CloseFileCommandHandler : CommandHandlerBase<CloseFileCommandDefini
     public override Task Run(Command command)
     {
         var shell = _serviceProvider.GetService<IShell>();
-        return shell.CloseDocumentAsync(shell.ActiveDocument);
+        return shell.TryCloseDocumentAsync(shell.ActiveDocument);
     }
 }

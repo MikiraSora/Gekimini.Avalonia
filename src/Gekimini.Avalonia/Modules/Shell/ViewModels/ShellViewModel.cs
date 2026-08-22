@@ -195,26 +195,6 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         return Task.CompletedTask;
     }
 
-    public Task CloseDocumentAsync(IDocumentViewModel model)
-    {
-        if (model is null)
-            return Task.CompletedTask;
-        var id = GetId(model);
-
-        if (cachedIdToDocumentContainerMap.TryGetValue(id, out var documentContainer))
-        {
-            logger.LogInformationEx($"Close document {id}: {model.GetType().Name}");
-            Factory.RemoveDocument(documentContainer);
-            cachedIdToDocumentContainerMap.Remove(id);
-        }
-        else
-        {
-            logger.LogWarningEx($"Close document {id} but can't find its container.");
-        }
-
-        return Task.CompletedTask;
-    }
-
     public async Task<RequestDocumentCloseResult> TryCloseDocumentAsync(IDocumentViewModel model)
     {
         if (model is null)
@@ -285,7 +265,7 @@ public partial class ShellViewModel : ViewModelBase, IShell,
         foreach (var tool in Tools.ToArray())
             HideTool(tool);
         foreach (var document in Documents.ToArray())
-            await CloseDocumentAsync(document);
+            await TryCloseDocumentAsync(document);
 
         var newLayout = Factory.CreateLayout();
         Factory.InitLayout(newLayout);
@@ -559,18 +539,12 @@ public partial class ShellViewModel : ViewModelBase, IShell,
 
     private async Task<bool> OnApplicationAskQuit(ApplicationAskQuitEvent message)
     {
-        foreach (var document in Documents)
+        // Only guard the quit flow here; documents must stay open so the process can
+        // either continue running (cancelled) or exit together with them.
+        foreach (var document in Documents.ToArray())
         {
-            var id = GetId(document);
-            if (cachedIdToDocumentContainerMap.TryGetValue(id, out var documentContainer))
-            {
-                if (!await Factory.CanCloseDocument(documentContainer))
-                    return false;
-            }
-            else
-            {
-                logger.LogWarningEx($"can't find document container {id} to ask quit.");
-            }
+            if (await ConfirmCloseDocumentAsync(document) != RequestDocumentCloseResult.Closed)
+                return false;
         }
 
         return true;
