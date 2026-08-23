@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Framework.Languages;
+using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Framework.UndoRedo.DefaultImpl;
 
@@ -10,6 +11,12 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 {
     private readonly Stack<List<IUndoableAction>> _combineStack = new();
 
+    private readonly ILogger<DefaultUndoRedoManager> logger;
+
+    public DefaultUndoRedoManager(ILogger<DefaultUndoRedoManager> logger)
+    {
+        this.logger = logger;
+    }
     public ObservableCollection<IUndoableAction> ActionStack { get; } = new();
 
     public IUndoableAction CurrentAction => UndoActionCount > 0 ? ActionStack[UndoActionCount - 1] : null;
@@ -51,6 +58,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
     public void BeginCombineAction()
     {
         _combineStack.Push(new List<IUndoableAction>());
+        logger.LogDebug("Begin combine action.");
     }
 
     public IUndoableAction EndCombineAction(LocalizedString name)
@@ -59,11 +67,13 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
             throw new Exception("Can't call EndCombineAction() before BeginCombineAction()");
 
         var compositeAction = new CompositeUndoAction(name, combineSet);
+        logger.LogDebug("End combine action '{Name}' with {Count} actions.", name, combineSet.Count);
         return compositeAction;
     }
 
     public void ExecuteAction(IUndoableAction action)
     {
+        logger.LogInformation("Execute undoable action '{Name}'.", action.Name);
         if (_combineStack.TryPeek(out var combineSet))
         {
             combineSet.Add(action);
@@ -94,6 +104,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
         if (actionCount <= 0 || actionCount > UndoActionCount)
             throw new ArgumentOutOfRangeException(nameof(actionCount));
 
+        logger.LogInformation("Undo x{Count}.", actionCount);
         OnBegin();
 
         try
@@ -113,6 +124,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
     {
         if (action == null)
             throw new ArgumentNullException(nameof(action));
+        logger.LogInformation("UndoTo target '{Name}'.", action.Name);
 
         if (UndoActionCount < 1)
             throw new InvalidOperationException();
@@ -135,6 +147,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
         if (UndoActionCount <= 0)
             return;
 
+        logger.LogInformation("UndoAll x{Count}.", UndoActionCount);
         for (var i = UndoActionCount - 1; i >= 0; i--)
             ActionStack[i].Undo();
 
@@ -148,6 +161,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
         if (actionCount <= 0 || actionCount > RedoActionCount)
             throw new ArgumentOutOfRangeException(nameof(actionCount));
 
+        logger.LogInformation("Redo x{Count}.", actionCount);
         OnBegin();
 
         try
@@ -167,6 +181,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
     {
         if (action == null)
             throw new ArgumentNullException(nameof(action));
+        logger.LogInformation("RedoTo target '{Name}'.", action.Name);
 
         if (RedoActionCount < 1)
             throw new InvalidOperationException();
@@ -186,6 +201,7 @@ internal class DefaultUndoRedoManager : ObservableObject, IUndoRedoManager
 
     public void Clear()
     {
+        logger.LogInformation("Clear {Count} undoable actions.", UndoActionCount);
         ActionStack.Clear();
         UndoActionCount = 0;
     }

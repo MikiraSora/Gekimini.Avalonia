@@ -10,6 +10,7 @@ using Gekimini.Avalonia.Utils.MethodExtensions;
 using Gekimini.Avalonia.Views;
 using Injectio.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Gekimini.Avalonia.Framework.Commands;
 
@@ -17,6 +18,7 @@ namespace Gekimini.Avalonia.Framework.Commands;
 public class CommandRouter : ICommandRouter
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<CommandHandlerWrapper> commandHandlerLogger;
 
     private readonly Dictionary<Type, CommandHandlerWrapper> cachedCommandDefinitionToGloablHandlerMap = new();
     private readonly Dictionary<Type, HashSet<Type>> cachedHandlerSupportDefinitionTypesMap = new();
@@ -24,11 +26,12 @@ public class CommandRouter : ICommandRouter
     private readonly ViewLocator viewLocator;
 
     public CommandRouter(IEnumerable<ICommandHandler> globalCommandHandlers, ViewLocator viewLocator,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
     {
         this.globalCommandHandlers = globalCommandHandlers.ToArray();
         this.viewLocator = viewLocator;
         _serviceProvider = serviceProvider;
+        commandHandlerLogger = loggerFactory.CreateLogger<CommandHandlerWrapper>();
     }
 
     public CommandHandlerWrapper GetCommandHandler(CommandDefinitionBase commandDefinition)
@@ -141,13 +144,13 @@ public class CommandRouter : ICommandRouter
         return null;
     }
 
-    private static CommandHandlerWrapper CreateCommandHandlerWrapper(
+    private CommandHandlerWrapper CreateCommandHandlerWrapper(
         Type commandDefinitionType, object commandHandler)
     {
         if (commandHandler is ICommandListHandler handler)
-            return CommandHandlerWrapper.FromCommandListHandler(handler);
+            return CommandHandlerWrapper.FromCommandListHandler(handler, commandHandlerLogger);
         if (commandHandler is ICommandHandler handler2)
-            return CommandHandlerWrapper.FromCommandHandler(handler2);
+            return CommandHandlerWrapper.FromCommandHandler(handler2, commandHandlerLogger);
         throw new InvalidOperationException();
     }
 }
