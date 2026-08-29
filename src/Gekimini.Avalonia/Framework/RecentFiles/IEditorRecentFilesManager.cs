@@ -19,8 +19,6 @@ public interface IEditorRecentFilesManager
         string locationDescription,
         byte[] data = null);
 
-    bool RemoveRecent(Guid recordId);
-
     void ClearAllRecordsAndDatas();
 
     byte[] ReadData(RecentRecordInfo info);
