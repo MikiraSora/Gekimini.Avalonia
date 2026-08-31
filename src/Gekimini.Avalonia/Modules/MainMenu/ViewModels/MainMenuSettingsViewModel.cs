@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gekimini.Avalonia.Assets.Languages;
 using Gekimini.Avalonia.Framework.Languages;
@@ -11,7 +13,7 @@ using Injectio.Attributes;
 
 namespace Gekimini.Avalonia.Modules.MainMenu.ViewModels;
 
-[RegisterTransient<ISettingsEditor>]
+[RegisterSingleton<ISettingsEditor>]
 public partial class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
 {
     private readonly ILanguageManager _languageManager;
@@ -58,16 +60,45 @@ public partial class MainMenuSettingsViewModel : ViewModelBase, ISettingsEditor
 
     public void ApplyChanges()
     {
-        _themeManager.CurrentColorTheme = SelectedColorTheme;
-        _themeManager.CurrentControlTheme = SelectedControlTheme;
+        if (SelectedColorTheme is not null)
+            _themeManager.CurrentColorTheme = SelectedColorTheme;
+        if (SelectedControlTheme is not null)
+            _themeManager.CurrentControlTheme = SelectedControlTheme;
 
         _languageManager.SetLanguage(SelectedLanguage);
 
-        settings.ColorThemeName = _themeManager.CurrentColorTheme.Name;
-        settings.ControlThemeName = _themeManager.CurrentControlTheme.Name;
+        settings.ColorThemeName = _themeManager.CurrentColorTheme?.Name ?? "Light";
+        settings.ControlThemeName = _themeManager.CurrentControlTheme?.Name ?? "Fluent";
         settings.AutoHideMainMenu = AutoHideMainMenu;
         settings.LanguageCode = _languageManager.GetCurrentLanguage();
 
         _settingManager.SaveSetting(settings, GekiminiSetting.JsonTypeInfo);
     }
+
+    public void ResetDefault()
+    {
+        AutoHideMainMenu = false;
+        SelectedColorTheme = FindColorTheme(_themeManager.AvaliableColorThemes, "Light")
+                             ?? _themeManager.CurrentColorTheme
+                             ?? _themeManager.AvaliableColorThemes?.FirstOrDefault();
+        SelectedControlTheme = FindControlTheme(_themeManager.AvaliableControlThemes, "Fluent")
+                               ?? _themeManager.CurrentControlTheme
+                               ?? _themeManager.AvaliableControlThemes?.FirstOrDefault();
+
+        var availableLanguages = Languages?.ToArray() ?? [];
+        SelectedLanguage = availableLanguages.FirstOrDefault(
+                               language => language.Equals("Default", StringComparison.OrdinalIgnoreCase))
+                           ?? "Default";
+
+        // Reset is an explicit user action, so persist and apply it immediately.
+        ApplyChanges();
+    }
+
+    private static IColorTheme FindColorTheme(IEnumerable<IColorTheme> themes, string name) =>
+        themes?.FirstOrDefault(theme =>
+            theme?.Name?.Equals(name, StringComparison.OrdinalIgnoreCase) == true);
+
+    private static IControlTheme FindControlTheme(IEnumerable<IControlTheme> themes, string name) =>
+        themes?.FirstOrDefault(theme =>
+            theme?.Name?.Equals(name, StringComparison.OrdinalIgnoreCase) == true);
 }

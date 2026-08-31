@@ -6,4 +6,6 @@ public interface ISettingsEditor
     string SettingsPagePath { get; }
 
     void ApplyChanges();
+
+    void ResetDefault();
 }

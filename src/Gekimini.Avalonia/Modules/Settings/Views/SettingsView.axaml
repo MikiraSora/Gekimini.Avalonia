@@ -30,6 +30,11 @@
         <TreeView x:Name="treeView" ItemsSource="{Binding Pages}"
                   SelectedItem="{Binding SelectedPage}"
                   SelectionMode="AlwaysSelected">
+            <TreeView.Styles>
+                <Style Selector="TreeViewItem">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.Styles>
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Children}">
                     <TextBlock Text="{Binding Name}" />
