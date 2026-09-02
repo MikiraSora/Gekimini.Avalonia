@@ -30,6 +30,7 @@ public abstract class App : Application
     private Control mainView;
     private int isExitInProgress;
     private IServiceProvider serviceProvider;
+    private bool applicationServicesInitialized;
 
     public IServiceProvider ServiceProvider =>
         serviceProvider ?? throw new InvalidOperationException("DI has not been initialized.");
@@ -42,35 +43,51 @@ public abstract class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        InitializeApplicationServices();
 
 #if DEBUG
         this.AttachDeveloperTools();
 #endif
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    /// <summary>
+    /// Initializes the DI container and services that do not require UI related.
+    /// </summary>
+    protected void InitializeApplicationServices()
     {
-        InitailizeServices();
+        if (applicationServicesInitialized)
+            return;
+
+        var serviceCollection = new ServiceCollection();
+        RegisterServices(serviceCollection);
+        serviceProvider = serviceCollection.BuildServiceProvider();
 
         logger = ServiceProvider.GetService<ILogger<App>>();
 
-        var dockLogger = ServiceProvider.GetService<ILoggerFactory>().CreateLogger("ShellDock");
+        var dockLogger = ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("ShellDock");
         var dockLogFunc = (string str) => dockLogger.LogDebugEx(str, "DiagnosticsLogHandler");
         DockSettings.DiagnosticsLogHandler = DockSettings.DiagnosticsLogHandler is { } prevHandler
             ? prevHandler + dockLogFunc
             : dockLogFunc;
 
+        ServiceProvider.GetRequiredService<IThemeManager>().Initalize();
+        ServiceProvider.GetRequiredService<ILanguageManager>().Initialize();
 
-        ServiceProvider.GetService<IThemeManager>().Initalize();
-        ServiceProvider.GetService<ILanguageManager>().Initialize();
-
-        var viewLocator = ServiceProvider.GetService<ViewLocator>();
+        var viewLocator = ServiceProvider.GetRequiredService<ViewLocator>();
         DataTemplates.Add(viewLocator);
+
+        applicationServicesInitialized = true;
+    }
+
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        base.OnFrameworkInitializationCompleted();
 
         if (ShouldCreateMainView)
         {
-            var mainViewModel = ServiceProvider.GetService<IMainView>();
-            mainView = ServiceProvider.GetService<ViewLocator>().Build(mainViewModel);
+            var mainViewModel = ServiceProvider.GetRequiredService<IMainView>();
+            mainView = ServiceProvider.GetRequiredService<ViewLocator>().Build(mainViewModel);
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 desktop.MainWindow = new MainWindow
@@ -82,11 +99,9 @@ public abstract class App : Application
 
             RestoreMainWindowLocationAndSize();
 
-            serviceProvider.GetService<IStatusBar>()?.GetApplicationGlobalStatusBarItem()?.Message =
+            ServiceProvider.GetService<IStatusBar>()?.GetApplicationGlobalStatusBarItem()?.Message =
                 "Application ready.";
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
 
     private void RestoreMainWindowLocationAndSize()
@@ -136,17 +151,6 @@ public abstract class App : Application
         serviceCollection.AddGekiminiAvalonia();
     }
 
-    private void InitailizeServices()
-    {
-        if (serviceProvider is not null)
-            throw new Exception("InitServiceProvider() has been called.");
-
-        var serviceCollection = new ServiceCollection();
-
-        RegisterServices(serviceCollection);
-
-        serviceProvider = serviceCollection.BuildServiceProvider();
-    }
 
     /// <summary>
     ///     check if Application can exit safety
