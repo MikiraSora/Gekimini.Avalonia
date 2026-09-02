@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 
@@ -6,8 +6,8 @@ namespace Gekimini.Avalonia.Modules.ToolBars.Controls;
 
 public sealed class AdaptiveToolBar : global::Avalonia.Controls.ToolBar.Controls.ToolBar
 {
-    private Control overflowButton;
-    private Border mainPanelBorder;
+    private Control? overflowButton;
+    private Border? mainPanelBorder;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {

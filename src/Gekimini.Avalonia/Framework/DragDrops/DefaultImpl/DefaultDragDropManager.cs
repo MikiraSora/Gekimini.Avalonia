@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Input;
@@ -22,9 +22,14 @@ public class DefaultDragDropManager : IDragDropManager
         dataTransferItem.Set(DragDropDataFormat, guid);
         dataTransfer.Add(dataTransferItem);
 
+        if (e is not PointerPressedEventArgs pointerPressedEventArgs)
+        {
+            stateStoreMap.Remove(guid);
+            return;
+        }
         stateStoreMap[guid] = state;
 
-        await DragDrop.DoDragDropAsync(e, dataTransfer, move);
+        await DragDrop.DoDragDropAsync(pointerPressedEventArgs, dataTransfer, move);
     }
 
     public bool TryGetDragData(DragEventArgs e, out object state)

@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using Dock.Settings;
@@ -61,7 +60,6 @@ public abstract class App : Application
             ? prevHandler + dockLogFunc
             : dockLogFunc;
 
-        BindingPlugins.DataValidators.Clear();
 
         ServiceProvider.GetService<IThemeManager>().Initalize();
         ServiceProvider.GetService<ILanguageManager>().Initialize();

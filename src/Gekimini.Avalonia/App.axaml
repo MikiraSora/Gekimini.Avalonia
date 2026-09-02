@@ -11,7 +11,7 @@
         <dialogHostAvalonia:DialogHostStyles />
         <DockFluentTheme />
         <status:StatusBarTheme />
-        <StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/Avalonia.Controls.ToolBar.axaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.ToolBar/Themes/ToolBarControls.Avalonia.axaml" />
         <windowManager:WindowManagerTheme />
 
         <!---->
@@ -29,7 +29,7 @@
     <Application.Resources>
         <!--容器背景色(比如window控件背景色)-->
         <SolidColorBrush x:Key="ContainerBackgroundBrush" Color="{DynamicResource SystemRegionColor}" />
-        
+
         <!--容器标题字体色-->
         <SolidColorBrush x:Key="ContainerTitleForegroundBrush" Color="{DynamicResource SystemAltHighColor}" />
 

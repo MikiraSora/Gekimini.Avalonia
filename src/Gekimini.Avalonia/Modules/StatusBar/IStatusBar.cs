@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using DynamicData.Binding;
+using System.Collections.Generic;
 using Gekimini.Avalonia.Modules.StatusBar.ViewModels;
 using StatusBar.Avalonia;
 
@@ -10,6 +8,6 @@ namespace Gekimini.Avalonia.Modules.StatusBar;
 public interface IStatusBar
 {
     StatusBarManager StatusBarManager { get; }
-    
+
     IReadOnlyList<StatusBarItemViewModel> Items { get; }
 }

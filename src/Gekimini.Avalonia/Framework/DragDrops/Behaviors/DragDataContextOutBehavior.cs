@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -14,11 +14,12 @@ public class DragDataContextOutBehavior : Behavior<Control>
 
     private bool _draggingItem;
     private Point _mouseStartPosition;
+    private PointerPressedEventArgs _triggerEvent;
 
     protected override void OnAttachedToVisualTree()
     {
         base.OnAttachedToVisualTree();
-        
+
         AssociatedObject.PointerMoved += AssociatedObjectOnPointerMoved;
         AssociatedObject.PointerPressed += AssociatedObjectOnPointerPressed;
         AssociatedObject.PointerReleased += AssociatedObjectOnPointerReleased;
@@ -27,16 +28,24 @@ public class DragDataContextOutBehavior : Behavior<Control>
     private void AssociatedObjectOnPointerReleased(object sender, PointerReleasedEventArgs e)
     {
         _draggingItem = false;
+        _triggerEvent = null;
     }
 
     private void AssociatedObjectOnPointerPressed(object sender, PointerPressedEventArgs e)
     {
+        if (!e.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
+        {
+            _triggerEvent = null;
+            return;
+        }
+
         _mouseStartPosition = e.GetPosition(e.Source as Control);
+        _triggerEvent = e;
     }
 
     private void AssociatedObjectOnPointerMoved(object sender, PointerEventArgs e)
     {
-        if (_draggingItem)
+        if (_draggingItem || _triggerEvent is null)
             return;
 
         // Get the current mouse position
@@ -55,7 +64,7 @@ public class DragDataContextOutBehavior : Behavior<Control>
                 return;
 
             (App.Current as App).ServiceProvider.GetService<IDragDropManager>()
-                .StartDragDropEvent(e, dataContext, DragDropEffects.Move);
+                .StartDragDropEvent(_triggerEvent, dataContext, DragDropEffects.Move);
 
             _draggingItem = true;
         }
@@ -68,5 +77,6 @@ public class DragDataContextOutBehavior : Behavior<Control>
         AssociatedObject.PointerMoved -= AssociatedObjectOnPointerMoved;
         AssociatedObject.PointerPressed -= AssociatedObjectOnPointerPressed;
         AssociatedObject.PointerReleased -= AssociatedObjectOnPointerReleased;
+        _triggerEvent = null;
     }
 }

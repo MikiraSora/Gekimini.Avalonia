@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,7 +54,7 @@ public static class CommandManager
         RaiseRequerySuggested(targetElement, args, reason);
     }
 
-    private static void GotFocusEventHandler(InputElement targetElement, GotFocusEventArgs args)
+    private static void GotFocusEventHandler(InputElement targetElement, FocusChangedEventArgs args)
     {
         RaiseRequerySuggested(targetElement, args, "gotFocus");
     }
