@@ -17,10 +17,10 @@ public static class CommandManager
 
     static CommandManager()
     {
-        //InputElement.GotFocusEvent.AddClassHandler<InputElement>(GotFocusEventHandler);
-        //InputElement.KeyDownEvent.AddClassHandler<InputElement>(KeyDownEventHandler, RoutingStrategies.Tunnel);
-        //InputElement.LostFocusEvent.AddClassHandler<InputElement>((s, e) => CommonEventHandler(s, e, "lostFocus"));
-        //InputElement.PointerPressedEvent.AddClassHandler<InputElement>((s, e) => CommonEventHandler(s, e, "pointerPressed"));
+        InputElement.GotFocusEvent.AddClassHandler<InputElement>(GotFocusEventHandler);
+        InputElement.KeyDownEvent.AddClassHandler<InputElement>(KeyDownEventHandler, RoutingStrategies.Tunnel);
+        InputElement.LostFocusEvent.AddClassHandler<InputElement>((s, e) => CommonEventHandler(s, e, "lostFocus"));
+        InputElement.PointerPressedEvent.AddClassHandler<InputElement>((s, e) => CommonEventHandler(s, e, "pointerPressed"));
     }
 
     public static event EventHandler RequerySuggested
