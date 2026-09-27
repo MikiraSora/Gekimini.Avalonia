@@ -8,6 +8,9 @@ namespace Gekimini.Avalonia.Framework.Markup;
 
 public class TranslateExtension
 {
+    private static readonly CompiledBindingPath textPath =
+        CompiledBinding.Create<ILocalizedTextSource, string>(source => source.Text).Path!;
+
     private readonly ILocalizedTextSource textSource;
 
     public TranslateExtension(ILocalizedTextSource textSource)
@@ -20,12 +23,10 @@ public class TranslateExtension
         if (textSource == null)
             return "<i18n:null-text-source>";
 
-        var binding = new Binding(nameof(ILocalizedTextSource.Text))
+        return new CompiledBinding(textPath)
         {
             Source = textSource,
             Mode = BindingMode.OneWay
         };
-
-        return binding;
     }
 }
